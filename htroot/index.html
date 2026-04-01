@@ -42,7 +42,59 @@
       });
     });
     </script>
-    <style type="text/css">.twitter-typeahead {margin: 0px;padding: 0px;top:3px;}</style> <!-- fix for input window -->
+    <style type="text/css">
+      .twitter-typeahead {margin: 0px;padding: 0px;top:3px;} /* fix for input window */
+      /* Mobile-friendly search options layout */
+      .search-options-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        max-width: 700px;
+        margin: 0.5rem 0;
+      }
+      .search-option-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 0.5rem;
+      }
+      .search-option-label {
+        flex: 0 0 160px;
+        font-weight: normal;
+      }
+      .search-option-value {
+        flex: 1 1 auto;
+      }
+      /* Responsive query operator reference */
+      .query-ops-section {
+        max-width: 100%;
+        box-sizing: border-box;
+      }
+      .query-ops-section dt {
+        width: auto;
+        max-width: 160px;
+      }
+      .query-ops-inner {
+        max-width: 100%;
+        box-sizing: border-box;
+      }
+      .query-ops-inner dt {
+        width: auto;
+      }
+      @media (max-width: 600px) {
+        .search-option-label {
+          flex: 0 0 100%;
+          font-weight: bold;
+        }
+        .query-ops-section, .query-ops-inner {
+          width: 100% !important;
+        }
+        .query-ops-section dt, .query-ops-inner dt {
+          width: auto !important;
+          float: none;
+        }
+      }
+    </style>
   </head>
   <body id="index" onload="#(focus)#::document.getElementById('search').focus()#(/focus)#">
     #(topmenu)#
@@ -95,77 +147,73 @@
       ::
       </fieldset>
        
-      <table role="presentation">
-        <tr>
-          <td><label id="maxResultsLabel">Results per page</label>:</td>
-          <td>
-          	<fieldset aria-labelledby="maxResultsLabel">
-            	<input type="radio" name="maximumRecords" id="mr10" value="10" #(count-10)#::checked="checked"#(/count-10)#/><label for="mr10">10</label>
-            	<input type="radio" name="maximumRecords" id="mr50" value="50" #(count-50)#::checked="checked"#(/count-50)#/><label for="mr50">50</label>
-            	<input type="radio" name="maximumRecords" id="mr100" value="100" #(count-100)#::checked="checked"#(/count-100)#/><label for="mr100">100</label>
+      <div class="search-options-grid">
+        <div class="search-option-row">
+          <span class="search-option-label"><label id="maxResultsLabel">Results per page</label>:</span>
+          <span class="search-option-value">
+            <fieldset aria-labelledby="maxResultsLabel">
+              <input type="radio" name="maximumRecords" id="mr10" value="10" #(count-10)#::checked="checked"#(/count-10)#/><label for="mr10">10</label>
+              <input type="radio" name="maximumRecords" id="mr50" value="50" #(count-50)#::checked="checked"#(/count-50)#/><label for="mr50">50</label>
+              <input type="radio" name="maximumRecords" id="mr100" value="100" #(count-100)#::checked="checked"#(/count-100)#/><label for="mr100">100</label>
             </fieldset>
-          </td>
-        </tr>
+          </span>
+        </div>
         #(resource-select)#::
-        <tr>
-          <td><label id="resourceLabel">Resource</label>:</td>
-          <td>
-          	<fieldset aria-labelledby="resourceLabel">
-            	<input type="radio" name="resource" id="rglobal" value="global" checked="checked" /><label for="rglobal">the peer-to-peer network</label>
-            	<input type="radio" name="resource" id="rlocal" value="local"><label for="rlocal">only the local index</label>
+        <div class="search-option-row">
+          <span class="search-option-label"><label id="resourceLabel">Resource</label>:</span>
+          <span class="search-option-value">
+            <fieldset aria-labelledby="resourceLabel">
+              <input type="radio" name="resource" id="rglobal" value="global" checked="checked" /><label for="rglobal">the peer-to-peer network</label>
+              <input type="radio" name="resource" id="rlocal" value="local"><label for="rlocal">only the local index</label>
             </fieldset>
-          </td>::
-          <td><label id="resourceLabel">Resource</label>:</td>
-          <td>
-          	<fieldset aria-labelledby="resourceLabel">
-            	<input type="radio" name="resource" id="rglobal" value="global"/><label for="rglobal">the peer-to-peer network</label>
-            	<input type="radio" name="resource" id="rlocal" value="local" checked="checked"/><label for="rlocal">only the local index</label>
+          </span>::
+          <span class="search-option-label"><label id="resourceLabel">Resource</label>:</span>
+          <span class="search-option-value">
+            <fieldset aria-labelledby="resourceLabel">
+              <input type="radio" name="resource" id="rglobal" value="global"/><label for="rglobal">the peer-to-peer network</label>
+              <input type="radio" name="resource" id="rlocal" value="local" checked="checked"/><label for="rlocal">only the local index</label>
             </fieldset>
-          </td>
-        </tr>
+          </span>
+        </div>
         #(/resource-select)#
-        <tr>
-          <td>
-            <label for="prefermaskfilter">Prefer mask</label>:
-          </td>
-          <td>
+        <div class="search-option-row">
+          <span class="search-option-label"><label for="prefermaskfilter">Prefer mask</label>:</span>
+          <span class="search-option-value">
             #(prefermaskoptions)#
             <input id="prefermaskfilter" name="prefermaskfilter" type="text" size="12" maxlength="80" value="#[prefermaskfilter]#" />
             ::
             <input type="radio" name="prefermask" value="yes" checked="checked" /> restrict on <input name="prefermaskfilter" type="text" size="12" maxlength="80" value="#[prefermaskfilter]#" />
             <input type="radio" name="prefermask" value="no" /> show all
             #(/prefermaskoptions)#
-          </td>
-        </tr>
-        <tr>
-          <td>
-            Constraints:
-          </td>
-          <td>
+          </span>
+        </div>
+        <div class="search-option-row">
+          <span class="search-option-label">Constraints:</span>
+          <span class="search-option-value">
             <input type="checkbox" id="indexof" name="indexof" #[indexofChecked]# /> <label for="indexof">only index pages</label>
-          </td>
-        </tr>
-        <tr>
-          <td><label id="mediaSearchLabel">Media search</label>:</td>
-          <td>
-          	<fieldset aria-labelledby="mediaSearchLabel">
-            	<label title="Extend media search results (images, videos or applications specific) to pages including such medias (provides generally more results, but eventually less relevant).">
-            		<input type="radio" name="strictContentDom" value="false" #(search.strictContentDom)#checked="checked"::#(/search.strictContentDom)#/> Extended
-            	</label>
-            	<label title="Strictly limit media search results (images, videos or applications specific) to indexed documents matching exactly the desired content domain.">
-            		<input type="radio" name="strictContentDom" value="true" #(search.strictContentDom)#::checked="checked"#(/search.strictContentDom)#> Strict
-            	</label>
+          </span>
+        </div>
+        <div class="search-option-row">
+          <span class="search-option-label"><label id="mediaSearchLabel">Media search</label>:</span>
+          <span class="search-option-value">
+            <fieldset aria-labelledby="mediaSearchLabel">
+              <label title="Extend media search results (images, videos or applications specific) to pages including such medias (provides generally more results, but eventually less relevant).">
+                <input type="radio" name="strictContentDom" value="false" #(search.strictContentDom)#checked="checked"::#(/search.strictContentDom)#/> Extended
+              </label>
+              <label title="Strictly limit media search results (images, videos or applications specific) to indexed documents matching exactly the desired content domain.">
+                <input type="radio" name="strictContentDom" value="true" #(search.strictContentDom)#::checked="checked"#(/search.strictContentDom)#> Strict
+              </label>
             </fieldset>
-          </td>
-        </tr>
-      </table>
+          </span>
+        </div>
+      </div>
       
       <h4>Query Operators</h4>
 
-      <dl style="width:700px">
-      <dt style="width:100px">restrictions</dt>
+      <dl class="query-ops-section">
+      <dt>restrictions</dt>
       <dd>
-        <dl style="width:500px">
+        <dl class="query-ops-inner">
           <dt>inurl:&lt;phrase&gt;</dt>
           <dd>only urls with the &lt;phrase&gt; in the url</dd>
           <dt>inlink:&lt;phrase&gt;</dt>
@@ -196,18 +244,18 @@
           <dd>only files from a local file system (<a href="ConfigBasic.html">Intranet Indexing</a> must be selected)</dd>
         </dl>
       </dd>
-      <dt style="width:100px">spatial restrictions</dt>
+      <dt>spatial restrictions</dt>
       <dd>
-        <dl style="width:500px">
+        <dl class="query-ops-inner">
           <dt>/location</dt>
           <dd>only documents having location metadata (geographical coordinates)</dd>
           <dt>/radius/&lt;latitude&gt;/&lt;longitude&gt;/&lt;distance&gt;</dt>
           <dd>only documents within a square zone embracing a circle of given radius (in decimal degrees) around the specified latitude and longitude (in decimal degrees)</dd>
         </dl>
       </dd>
-      <dt style="width:100px">ranking modifier</dt>
+      <dt>ranking modifier</dt>
       <dd>
-        <dl style="width:500px">
+        <dl class="query-ops-inner">
           <dt>/date</dt>
           <dd>sort by date (latest first)</dd>
           <dt>/near</dt>
@@ -219,9 +267,9 @@
         </dl>
       </dd>
       #(heuristic)#::
-      <dt style="width:100px">heuristics</dt>
+      <dt>heuristics</dt>
       <dd>
-        <dl style="width:500px">
+        <dl class="query-ops-inner">
           <dt>/heuristic</dt>
           <dd>add search results from external opensearch systems</dd>
         </dl>
@@ -231,19 +279,19 @@
       
       <h4>Search Navigation</h4>
 
-      <dl style="width:700px">
-      <dt style="width:100px">keyboard shortcuts</dt>
+      <dl class="query-ops-section">
+      <dt>keyboard shortcuts</dt>
       <dd>
-        <dl style="width:500px">
+        <dl class="query-ops-inner">
           <dt><a href="https://en.wikipedia.org/wiki/Access_key">Access key</a> modifier + n</dt>
           <dd>next result page</dd>
           <dt><a href="https://en.wikipedia.org/wiki/Access_key">Access key</a> modifier + p</dt>
           <dd>previous result page</dd>
         </dl>
       </dd>
-      <dt style="width:100px">automatic result retrieval</dt>
+      <dt>automatic result retrieval</dt>
       <dd>
-        <dl style="width:500px">
+        <dl class="query-ops-inner">
           <dt>browser integration</dt>
           <dd>after searching, click-open on the default search engine in the upper right search field of your browser and select 'Add "YaCy Search.."'</dd>
           <dt>search as rss feed</dt>
