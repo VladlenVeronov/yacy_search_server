@@ -77,6 +77,35 @@
     });
   </script>
   <style type="text/css">.twitter-typeahead {margin: 0px;padding: 0px;top:2px;}</style> <!-- fix for input window -->
+  <style type="text/css">
+    @media (max-width: 767px) {
+      form.search.small {
+        width: calc(100vw - 20px);
+        left: 10px;
+        right: 10px;
+        box-sizing: border-box;
+      }
+      .input-group {
+        max-width: 100% !important;
+      }
+      #api {
+        display: none;
+      }
+      .col-sm-8.main {
+        padding-top: 55px;
+      }
+      #progressbar > span {
+        font-size: 11px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        width: 100% !important;
+      }
+      .sidebar {
+        margin-top: 10px;
+      }
+    }
+  </style>
 </head>
 <body id="yacysearch" #(focus)#::onLoad="document.searchform.query.focus();"#(/focus)#>
 
@@ -108,7 +137,7 @@ Use the RSS search result format to add static searches to your RSS reader, if y
 </div> <!-- close the starter-template, to open a row -->
 
   <div class="row">
-    <div class="col-sm-8 col-sm-offset-4 col-md-9 col-md-offset-3 main">
+    <div class="col-xs-12 col-sm-8 col-sm-offset-4 col-md-9 col-md-offset-3 main">
 #(topmenu)#
 <form class="search small" name="searchform" method="get" accept-charset="UTF-8" style="position:fixed;top:8px;z-index:1052;">
 ::
@@ -156,7 +185,7 @@ Use the RSS search result format to add static searches to your RSS reader, if y
 	<div id="results"></div>
     <div class="progress" style="margin-top:10px;margin-bottom:0px;">
       <div class="progress-bar progress-bar-info" id="progressbar" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width:0%;">
-        <span style="position:absolute;display:block;text-align:left;width:85%;color:black;">&nbsp;&nbsp;&nbsp;<strong id="offset">#[offset]#</strong>-<strong id="itemscount">#[itemscount]#</strong> of <strong id="totalcount">#[totalcount]#</strong> 
+        <span style="position:absolute;display:block;text-align:left;width:85%;max-width:100%;color:black;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">&nbsp;&nbsp;&nbsp;<strong id="offset">#[offset]#</strong>-<strong id="itemscount">#[itemscount]#</strong> of <strong id="totalcount">#[totalcount]#</strong>
         #(globalresults)#::; (<strong id="localIndexCount">#[localIndexCount]#</strong> local, <strong id="remoteIndexCount">#[remoteIndexCount]#</strong> remote from <strong id="remotePeerCount">#[remotePeerCount]#</strong> YaCy peers).#(/globalresults)# 
         	<span id="feedingStatus" style="visibility: hidden;" class="glyphicon glyphicon-transfer" title="YaCy server is fetching results from available data sources."></span>
         </span>
@@ -272,7 +301,7 @@ document.getElementById("Enter").innerHTML = "search again";
 
 </div> <!-- close main -->
 
-<div class="col-sm-4 col-md-3 sidebar" id="sidebar">
+<div class="col-xs-12 col-sm-4 col-md-3 sidebar" id="sidebar">
 <!-- navigation begin -->
 #(jsResort)#
 <!--#include virtual="yacysearchtrailer.html?eventID=#[eventID]#" -->
