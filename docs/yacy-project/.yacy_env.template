@@ -1,0 +1,17 @@
+# YACY local development env-vars
+# Copy to ~/.yacy_env and fill in real values. NEVER commit real keys.
+#
+# Required for vector indexing post-commit hook
+# (docs/yacy-project/scripts/install_hook.sh + reindex_vectors.py)
+
+export SUPABASE_URL="https://your-project-ref.supabase.co"
+export SUPABASE_SERVICE_KEY="your-service-key-here"
+export OPENAI_API_KEY="your-openai-key-here"
+
+# Optional: HuggingFace token for embeddings model (intfloat/multilingual-e5-base)
+export HF_TOKEN="your-hf-token-here"
+
+# Optional: Telegram bot for daily-agent reports
+# (docs/yacy-project/scripts/daily_agent.sh)
+export TG_BOT_TOKEN=""
+export TG_CHAT_ID=""

@@ -34,3 +34,8 @@ yacy.log
 /lib
 vagrant_yacy/.vagrant/
 .gradle
+
+# YACY project meta — runtime artefacts (do not commit)
+docs/yacy-project/scripts/*.log
+docs/yacy-project/scripts/__pycache__/
+docs/yacy-project/.yacy_env
