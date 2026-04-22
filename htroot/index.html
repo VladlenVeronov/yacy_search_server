@@ -1,104 +1,113 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     #(forward)#::<meta http-equiv="REFRESH" content="0; url=#[target]#" />#(/forward)#
-    <title>YaCy '#[clientname]#': Search Page</title>
-    #%env/templates/metas.template%#
+    <title>YaCy '#[clientname]#': Search</title>
+    #%env/templates/yacy-public-meta.template%#
     <link rel="alternate" type="application/rss+xml" title="Search for #[former]#" href="yacysearch.rss?query=#[former]#" />
     <link rel="search" type="application/opensearchdescription+xml" title="YaCy '#[clientname]#'" href="opensearchdescription.xml" />
-    <script type="text/javascript" src="env/bootstrap/js/typeahead.jquery.js"></script>
-    <script type="text/javascript" src="js/html.js"></script>
-    <script type="text/javascript">
-    $(document).ready(function() {
-      var suggestTimeoutId = null;
-      
-      /* Configure the search input field to get suggestions on key strokes */
-      $('#search').typeahead({hint:false,highlight:true,minLength:1}, {
-    	name: 'states',
-    	displayKey: 'value',
-    	source: function(query, render) {
-    		if(suggestTimeoutId != null) {
-    			/* Remove delayed call not yet done */
-    			clearTimeout(suggestTimeoutId);
-    		}
-			/* Limit the rate of calls to the suggest API by adding a delay before effective call */
-    		suggestTimeoutId = setTimeout(function() {
-    	       	 $.getJSON("suggest.json?q=" + query, function(data) {
-    	            var parsed = [];
-    	             for (var i = 0; i < data[1].length; i++) {
-    	                 var row = data[1][i];
-    	                 if (row) {
-    	                     parsed[parsed.length] = {
-    	                         data: [row],
-    	                         value: row,
-    	                         result: row
-    	                     };  
-    	                 };
-    	             };
-    	             render(parsed); 
-    	           });
-    		}, 300);
-    	}
-      });
-    });
-    </script>
-    <style type="text/css">
-      .twitter-typeahead {margin: 0px;padding: 0px;top:3px;} /* fix for input window */
-    </style>
-  </head>
-  <body id="index" onload="#(focus)#::document.getElementById('search').focus()#(/focus)#">
-    #(topmenu)#
-    #%env/templates/embeddedheader.template%#
-    ::
-    #%env/templates/simpleSearchHeader.template%#
-    <script type="text/javascript">
-      document.getElementById("header_websearch").className += " active";
-    </script>
-    #(/topmenu)#
-    
-    <!-- this is the single exception in page design where we do not want a top-left application icon because we show a big one in the middle of the page -->
-	<script>document.getElementById("greeting-icon").src="env/grafics/invisible.png"</script>
-	
-	<h2 class="yacy"><a href="#[promoteSearchPageGreeting.homepage]#" class="yacylogo"><img src="#[promoteSearchPageGreeting.largeImage]#" alt="#[promoteSearchPageGreeting.imageAlt]#" style="margin: auto;"/></a></h2>
-    <h2 class="yacy">#[promoteSearchPageGreeting]#</h2>
+</head>
+<body id="index" class="min-h-screen bg-white text-gray-900 flex flex-col">
 
-    <form class="search form-inline" action="yacysearch.html" method="get" id="searchform" accept-charset="UTF-8">
-      <fieldset class="maininput">
-        <div class="input-group">
-          <input name="query" id="search" type="text" size="40" maxlength="80" value="#[former]#" #(focus)#::autofocus="autofocus"#(/focus)# onFocus="this.select()" class="form-control searchinput typeahead" />
-          <div class="input-group-btn">
-            <button id="Enter" name="Enter" class="btn btn-primary" type="submit">Search</button>
-          </div>
+#%env/templates/yacy-public-header.template%#
+
+<main class="flex-1 flex items-center justify-center px-4">
+    <div class="w-full max-w-2xl text-center -mt-12">
+
+        <!-- Hero logo (configurable via admin → portal settings) -->
+        <div class="mb-8">
+            <a href="#[promoteSearchPageGreeting.homepage]#" class="inline-block">
+                <img src="#[promoteSearchPageGreeting.largeImage]#"
+                     alt="#[promoteSearchPageGreeting.imageAlt]#"
+                     class="h-20 sm:h-24 mx-auto" />
+            </a>
         </div>
-    	#(authSearch)#::
-  		<input type="hidden" name="auth" id="auth" value=""/>
-  		#(/authSearch)#
-        <input type="hidden" name="verify" value="#[search.verify]#" />
-        #(searchdomswitches)#::
-        <div class="yacysearch">
-	        #(searchtext)#::<label><input type="radio" id="text" name="contentdom" value="text" #(check)#::checked="checked"#(/check)# />&nbsp;Text&nbsp;&nbsp;</label>#(/searchtext)#
-	        #(searchimage)#::<label><input type="radio" id="image" name="contentdom" value="image" #(check)#::checked="checked"#(/check)# />&nbsp;Images&nbsp;&nbsp;</label>#(/searchimage)#
-	        #(searchaudio)#::<label><input type="radio" id="audio" name="contentdom" value="audio" #(check)#::checked="checked"#(/check)# />&nbsp;Audio&nbsp;&nbsp;</label>#(/searchaudio)#
-	        #(searchvideo)#::<label><input type="radio" id="video" name="contentdom" value="video" #(check)#::checked="checked"#(/check)# />&nbsp;Video&nbsp;&nbsp;</label>#(/searchvideo)#
-	        #(searchapp)#::<label><input type="radio" id="app" name="contentdom" value="app" #(check)#::checked="checked"#(/check)# />&nbsp;Applications</label>#(/searchapp)#
-	        <a href="index.html?searchoptions=1#(authSearch)#::&auth#(/authSearch)#" onclick="this.href='index.html?searchoptions=1#(authSearch)#::&auth#(/authSearch)#&amp;former='+encodeURIComponent(document.getElementById('search').value)+'&amp;contentdom='+radioValue(document.getElementById('searchform').contentdom);" style="display:none;">more options...</a>
-        </div>
-        #(/searchdomswitches)#
-        <input type="hidden" name="nav" value="#[search.navigation]#" />
-        <input type="hidden" name="startRecord" id="startRecord" value="0" />
-        <input type="hidden" name="indexof" value="off" />
-        <input type="hidden" name="meanCount" value="5" />
-        <input type="hidden" name="resource" value="global" />
-        <input type="hidden" name="prefermaskfilter" value="" />
-        <input type="hidden" name="maximumRecords" value="#[maximumRecords]#" />
-        <input id="timezoneOffset" type="hidden" name="timezoneOffset" value=""><script>document.getElementById("timezoneOffset").value = new Date().getTimezoneOffset();</script>
-      </fieldset>
-    </form>
-    
-    #(topmenu)#
-    #%env/templates/embeddedfooter.template%#
-    ::
-    #%env/templates/simplefooter.template%#
-    #(/topmenu)#
-  </body>
+
+        <form action="yacysearch.html" method="get" id="searchform" accept-charset="UTF-8">
+            <div class="relative">
+                <input name="query" id="search" type="text" maxlength="200"
+                       value="#[former]#"
+                       #(focus)#::autofocus="autofocus"#(/focus)#
+                       onfocus="this.select()"
+                       placeholder="Search the open web…"
+                       autocomplete="off"
+                       class="yacy-search-input w-full pl-12 pr-28 py-4 text-base sm:text-lg border border-gray-300 rounded-full shadow-sm focus:shadow-md transition" />
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                     class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
+                    <path fill-rule="evenodd" d="M10.5 3.75a6.75 6.75 0 1 0 0 13.5 6.75 6.75 0 0 0 0-13.5ZM2.25 10.5a8.25 8.25 0 1 1 14.59 5.28l4.69 4.69a.75.75 0 1 1-1.06 1.06l-4.69-4.69A8.25 8.25 0 0 1 2.25 10.5Z" clip-rule="evenodd" />
+                </svg>
+                <button id="Enter" name="Enter" type="submit"
+                        class="absolute right-2 top-1/2 -translate-y-1/2 px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-full transition">
+                    Search
+                </button>
+            </div>
+
+            #(authSearch)#::<input type="hidden" name="auth" id="auth" value=""/>#(/authSearch)#
+            <input type="hidden" name="verify" value="#[search.verify]#" />
+            <input type="hidden" name="nav" value="#[search.navigation]#" />
+            <input type="hidden" name="startRecord" id="startRecord" value="0" />
+            <input type="hidden" name="indexof" value="off" />
+            <input type="hidden" name="meanCount" value="5" />
+            <input type="hidden" name="resource" value="global" />
+            <input type="hidden" name="prefermaskfilter" value="" />
+            <input type="hidden" name="maximumRecords" value="#[maximumRecords]#" />
+            <input id="timezoneOffset" type="hidden" name="timezoneOffset" value="" />
+            <script>document.getElementById("timezoneOffset").value = new Date().getTimezoneOffset();</script>
+
+            #(searchdomswitches)#::
+            <fieldset class="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm text-gray-700">
+                #(searchtext)#::
+                <label class="inline-flex items-center gap-1.5 cursor-pointer">
+                    <input type="radio" id="text" name="contentdom" value="text" #(check)#::checked="checked"#(/check)#
+                           class="w-4 h-4 text-blue-600 focus:ring-blue-500" />
+                    Text
+                </label>
+                #(/searchtext)#
+                #(searchimage)#::
+                <label class="inline-flex items-center gap-1.5 cursor-pointer">
+                    <input type="radio" id="image" name="contentdom" value="image" #(check)#::checked="checked"#(/check)#
+                           class="w-4 h-4 text-blue-600 focus:ring-blue-500" />
+                    Images
+                </label>
+                #(/searchimage)#
+                #(searchaudio)#::
+                <label class="inline-flex items-center gap-1.5 cursor-pointer">
+                    <input type="radio" id="audio" name="contentdom" value="audio" #(check)#::checked="checked"#(/check)#
+                           class="w-4 h-4 text-blue-600 focus:ring-blue-500" />
+                    Audio
+                </label>
+                #(/searchaudio)#
+                #(searchvideo)#::
+                <label class="inline-flex items-center gap-1.5 cursor-pointer">
+                    <input type="radio" id="video" name="contentdom" value="video" #(check)#::checked="checked"#(/check)#
+                           class="w-4 h-4 text-blue-600 focus:ring-blue-500" />
+                    Video
+                </label>
+                #(/searchvideo)#
+                #(searchapp)#::
+                <label class="inline-flex items-center gap-1.5 cursor-pointer">
+                    <input type="radio" id="app" name="contentdom" value="app" #(check)#::checked="checked"#(/check)#
+                           class="w-4 h-4 text-blue-600 focus:ring-blue-500" />
+                    Apps
+                </label>
+                #(/searchapp)#
+            </fieldset>
+            #(/searchdomswitches)#
+        </form>
+
+        <p class="mt-10 text-sm text-gray-500">
+            #[promoteSearchPageGreeting]#
+        </p>
+
+    </div>
+</main>
+
+<footer class="border-t border-gray-200 py-4">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-wrap justify-between items-center gap-2 text-xs text-gray-500">
+        <span>YaCy — open, decentralized search</span>
+        <a href="ConfigBasic.html" class="hover:text-blue-600 transition">Admin</a>
+    </div>
+</footer>
+
+</body>
 </html>

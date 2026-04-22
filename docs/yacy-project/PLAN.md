@@ -45,11 +45,11 @@
 - [x] MOBILE FIX: Виправити сторінку результатів пошуку на мобільних (yacysearch.html)
 - [x] CLEANUP: Вимкнути/приховати "Розширений пошук" з головної — винести в окрему сторінку
 - [x] CLEANUP: Прибрати всі зовнішні посилання / трекери з шаблонів (гілка вже є: feature/remove-third-party-links) — runtime fetches видалено: Vimeo, OSM/OpenLayers, Java applet, amung.us, ICQ/Yahoo trackers; commit 725cfa13a
-- [ ] DESIGN: Встановити Tailwind CSS через CDN у базовий layout шаблон
-- [ ] DESIGN: Нова головна сторінка — чисто, світла тема, великий пошуковий рядок по центру
-- [ ] DESIGN: Нова сторінка результатів — картки результатів замість списку, favicon сайту, URL, сніпет
-- [ ] DESIGN: Хедер — логотип зліва, пошуковий рядок по центру, кнопка меню справа + кнопка Login
-- [ ] DESIGN: Меню-bottomsheet справа — грід іконок з ресурсами (підготовка структури, дані поки порожні)
+- [x] DESIGN: Tailwind CSS LOCALLY (not CDN — третьосторонні fetches заборонені) → `htroot/env/css/tailwind.min.css`
+- [x] DESIGN: Нова головна сторінка — світла тема, hero з великим пошуком, content-type radios → `htroot/index.html`
+- [x] DESIGN: Нова сторінка результатів — картки замість списку (favicon + URL + title + сніпет + meta) → `htroot/yacysearchitem.html`
+- [x] DESIGN: Хедер — логотип зліва, кнопка меню справа + Login → `htroot/env/templates/yacy-public-header.template`
+- [x] DESIGN: Меню-bottomsheet справа — grid іконок (placeholders, дані з admin пізніше) → той же header template
 - [ ] SOLR: Увімкнути full-text індексування контенту сторінок (не тільки теги/мета)
 - [ ] SOLR: Налаштувати сортування за замовченням — свіжий контент перший (boost по даті)
 - [ ] BUG: Зібрати і зафіксувати всі критичні баги з шаблонів і бекенду (issue list)

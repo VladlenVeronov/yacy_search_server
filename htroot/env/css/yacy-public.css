@@ -1,0 +1,105 @@
+/* YACY public-facing pages — small overrides on top of Tailwind */
+
+/* Smooth right-side bottomsheet drawer */
+.yacy-drawer {
+    transform: translateX(100%);
+    transition: transform 0.25s ease-out;
+}
+.yacy-drawer.open {
+    transform: translateX(0);
+}
+.yacy-drawer-backdrop {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease-out;
+}
+.yacy-drawer-backdrop.open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Search input focus accent */
+.yacy-search-input:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    border-color: #3b82f6;
+}
+
+/* Result cards (yacysearchitem.html) */
+.yacy-result {
+    padding: 16px 0;
+    border-bottom: 1px solid #e5e7eb;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+.yacy-result__head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+.yacy-result__favicon {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+}
+.yacy-result__url {
+    font-size: 13px;
+    color: #4b5563;
+    line-height: 1.3;
+    word-break: break-all;
+}
+.yacy-result__url a {
+    color: inherit;
+    text-decoration: none;
+}
+.yacy-result__url a:hover {
+    text-decoration: underline;
+}
+.yacy-result__title {
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 1.4;
+    margin: 4px 0 6px;
+}
+.yacy-result__title a {
+    color: #1d4ed8;
+    text-decoration: none;
+}
+.yacy-result__title a:hover {
+    text-decoration: underline;
+}
+.yacy-result__title a:visited {
+    color: #6b21a8;
+}
+.yacy-result__snippet {
+    font-size: 14px;
+    color: #374151;
+    line-height: 1.5;
+    margin: 0 0 8px;
+}
+.yacy-result__meta {
+    font-size: 12px;
+    color: #6b7280;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
+.yacy-result__meta a {
+    color: #6b7280;
+    text-decoration: none;
+}
+.yacy-result__meta a:hover {
+    color: #1d4ed8;
+    text-decoration: underline;
+}
+.yacy-result__meta-sep::before {
+    content: "·";
+    margin-right: 8px;
+    color: #d1d5db;
+}
+.yacy-result__actions {
+    margin-left: auto;
+    display: flex;
+    gap: 6px;
+}
