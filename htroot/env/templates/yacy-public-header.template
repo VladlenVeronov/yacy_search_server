@@ -38,10 +38,8 @@
     </button>
   </div>
 
-  <!-- Resource grid (data wired via admin later — empty placeholders for now) -->
   <div class="p-4 grid grid-cols-3 gap-3">
-    <!-- Placeholder slot, repeated; admin CRUD will populate via #{resources}# loop later -->
-    <a href="#" class="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-gray-100 transition text-center">
+    <a href="javascript:void(0)" class="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-gray-100 transition text-center">
       <span class="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center text-gray-400">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
           <path d="M11.25 4.533A9.707 9.707 0 0 0 6 3a9.735 9.735 0 0 0-3.25.555.75.75 0 0 0-.5.707v14.25a.75.75 0 0 0 1 .707A8.237 8.237 0 0 1 6 18.75c1.995 0 3.823.707 5.25 1.886V4.533ZM12.75 20.636A8.214 8.214 0 0 1 18 18.75c.966 0 1.89.166 2.75.47a.75.75 0 0 0 1-.708V4.262a.75.75 0 0 0-.5-.707A9.735 9.735 0 0 0 18 3a9.707 9.707 0 0 0-5.25 1.533v16.103Z" />
@@ -49,12 +47,11 @@
       </span>
       <span class="text-xs text-gray-700">Placeholder</span>
     </a>
-    <!-- (Repeat 5 more for visual layout) -->
-    <a href="#" class="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-gray-100 transition text-center"><span class="w-12 h-12 rounded-lg bg-gray-100"></span><span class="text-xs text-gray-700">—</span></a>
-    <a href="#" class="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-gray-100 transition text-center"><span class="w-12 h-12 rounded-lg bg-gray-100"></span><span class="text-xs text-gray-700">—</span></a>
-    <a href="#" class="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-gray-100 transition text-center"><span class="w-12 h-12 rounded-lg bg-gray-100"></span><span class="text-xs text-gray-700">—</span></a>
-    <a href="#" class="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-gray-100 transition text-center"><span class="w-12 h-12 rounded-lg bg-gray-100"></span><span class="text-xs text-gray-700">—</span></a>
-    <a href="#" class="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-gray-100 transition text-center"><span class="w-12 h-12 rounded-lg bg-gray-100"></span><span class="text-xs text-gray-700">—</span></a>
+    <a href="javascript:void(0)" class="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-gray-100 transition text-center"><span class="w-12 h-12 rounded-lg bg-gray-100"></span><span class="text-xs text-gray-700">—</span></a>
+    <a href="javascript:void(0)" class="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-gray-100 transition text-center"><span class="w-12 h-12 rounded-lg bg-gray-100"></span><span class="text-xs text-gray-700">—</span></a>
+    <a href="javascript:void(0)" class="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-gray-100 transition text-center"><span class="w-12 h-12 rounded-lg bg-gray-100"></span><span class="text-xs text-gray-700">—</span></a>
+    <a href="javascript:void(0)" class="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-gray-100 transition text-center"><span class="w-12 h-12 rounded-lg bg-gray-100"></span><span class="text-xs text-gray-700">—</span></a>
+    <a href="javascript:void(0)" class="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-gray-100 transition text-center"><span class="w-12 h-12 rounded-lg bg-gray-100"></span><span class="text-xs text-gray-700">—</span></a>
   </div>
 
   <p class="px-4 pb-4 text-xs text-gray-500">Resources can be added through the admin panel (coming soon).</p>
