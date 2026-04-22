@@ -21,8 +21,38 @@
 /* Search input focus accent */
 .yacy-search-input:focus {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
-    border-color: #3b82f6;
+    box-shadow: 0 1px 6px rgba(32, 33, 36, 0.10);
+    border-color: rgba(0, 0, 0, 0.12);
+}
+.yacy-search-input:hover {
+    box-shadow: 0 1px 6px rgba(32, 33, 36, 0.10);
+}
+
+/* Pill-style content-type tabs */
+.yacy-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 14px;
+    border-radius: 9999px;
+    font-size: 13px;
+    color: #4b5563;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    user-select: none;
+}
+.yacy-pill:hover {
+    background: #f3f4f6;
+    color: #111827;
+}
+.yacy-pill input[type="radio"] {
+    display: none;
+}
+.yacy-pill.is-active,
+.yacy-pill input[type="radio"]:checked ~ * ,
+label.yacy-pill:has(input[type="radio"]:checked) {
+    background: #eff6ff;
+    color: #1d4ed8;
+    font-weight: 500;
 }
 
 /* Result cards (yacysearchitem.html) */
