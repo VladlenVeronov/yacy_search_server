@@ -50,8 +50,8 @@
 - [x] DESIGN: Нова сторінка результатів — картки замість списку (favicon + URL + title + сніпет + meta) → `htroot/yacysearchitem.html`
 - [x] DESIGN: Хедер — логотип зліва, кнопка меню справа + Login → `htroot/env/templates/yacy-public-header.template`
 - [x] DESIGN: Меню-bottomsheet справа — grid іконок (placeholders, дані з admin пізніше) → той же header template
-- [ ] SOLR: Увімкнути full-text індексування контенту сторінок (не тільки теги/мета)
-- [ ] SOLR: Налаштувати сортування за замовченням — свіжий контент перший (boost по даті)
+- [x] SOLR: Увімкнути full-text індексування контенту сторінок — `text_t` ("all visible text") вже активний у `defaults/solr.collection.schema:217` і входить у boost fields дефолтного профілю (`text_t^1.0`); full-text індексація не була вимкнена
+- [x] SOLR: Сортування за свіжістю — додано multiplicative recency boost у `Default Profile` (tmpb.0): `recip(ms(NOW,last_modified),1e-11,1,1)` — ~3-річний half-life, м'якший за `/date` профіль (1-річний)
 - [ ] BUG: Зібрати і зафіксувати всі критичні баги з шаблонів і бекенду (issue list)
 
 ---
