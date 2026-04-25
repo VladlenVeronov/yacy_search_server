@@ -62,8 +62,8 @@
 - [~] VECTORS: PostgreSQL + pgvector — локально на Mac ✅ (DB `yacy_pages`, HNSW cosine). Прод `168.231.108.21` — ще не розгорнуто
 - [x] VECTORS: Python мікросервіс (FastAPI) — `vector_service/` на порту 8001. Endpoints `/health`, `/index`, `/search`, `/doc/{id}`. Модель `intfloat/multilingual-e5-base` (768d, multilingual, локально). Idempotency через content_hash. Cross-lingual перевірено (UA query → EN doc)
 - [x] VECTORS: Sync-скрипт `docs/yacy-project/scripts/sync_pages.py` — cursor-mark пагінація по Solr `collection1`, state-file у `docs/yacy-project/.sync_pages.state` (gitignored), `load_date_dt` як watermark. Готове під cron nightly
-- [ ] RANKING: Реалізувати hybrid scoring = 60% semantic similarity + 25% freshness + 15% domain quality
-- [ ] RANKING: Domain quality score — не кількість беклінків, а: HTTPS + швидкість + без реклами/трекерів
+- [x] RANKING: Реалізувати hybrid scoring = 60% semantic similarity + 25% freshness + 15% domain quality — `/rank` endpoint у `vector_service/main.py`. Ваги в `config.py` (`weight_semantic` / `weight_freshness` / `weight_quality`), freshness через exp decay (half-life 365 днів). Кандидати без embedding не випадають — лишаються з semantic=0
+- [~] RANKING: Domain quality score — не кількість беклінків, а: HTTPS + швидкість + без реклами/трекерів — поточна версія в `_quality_score()` рахує лише HTTPS (1.0 vs 0.3). Швидкість + ads/трекери чекають crawl-time сигналів з боку YaCy
 - [ ] RANKING: Видалити або мінімізувати вплив PageRank/backlinks на ранжування
 - [ ] SEARCH: Інтеграція векторного пошуку в YaCy — Python сервіс як додатковий ранкер
 - [ ] SEARCH: Підтримка довгих запитів (зараз обрізає) — збільшити ліміт, semantic chunking

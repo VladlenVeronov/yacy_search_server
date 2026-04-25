@@ -39,6 +39,7 @@ the server begins accepting requests.
 | GET    | `/health`           | —                                | DB ping + model info               |
 | POST   | `/index`            | `IndexRequest`                   | Upsert; skips re-embed if hash unchanged |
 | POST   | `/search`           | `SearchRequest`                  | Cosine-ranked nearest neighbors    |
+| POST   | `/rank`             | `RankRequest`                    | Hybrid re-rank for a Solr candidate set |
 | DELETE | `/doc/{id}`         | —                                | Remove a single document           |
 
 ### Smoke test
@@ -59,6 +60,44 @@ curl -s -X POST localhost:8001/search -H 'content-type: application/json' -d '{
 }' | jq
 ```
 
+### Hybrid re-rank (`/rank`)
+
+`/search` returns nearest-neighbours over the entire pgvector store. `/rank`
+takes an existing candidate set (typically Solr's BM25 top-N) and re-orders
+it using the Phase 2 hybrid formula:
+
+```
+score = 0.60 · semantic + 0.25 · freshness + 0.15 · quality
+```
+
+- **semantic** — cosine similarity of the candidate's embedding to the query.
+  `0` for candidates not yet embedded; the candidate stays in the result list
+  but rides only on freshness + quality.
+- **freshness** — `exp(-age_days / 365)`. Falls back to `0.5` when
+  `last_modified` is unknown.
+- **quality** — URL-only placeholder: HTTPS = 1.0, HTTP = 0.3. Will be
+  replaced by crawl-time signals (page speed, ad/tracker presence) once
+  those are surfaced from the YaCy side.
+
+Weights and the freshness half-life are tunable in `config.py` /
+environment.
+
+```bash
+curl -s -X POST localhost:8001/rank -H 'content-type: application/json' -d '{
+  "query": "thought experiment with a feline in a box",
+  "candidates": [
+    {"id": "doc-cat-recent-https"},
+    {"id": "doc-cat-old-http"},
+    {"id": "doc-missing-no-row", "url": "https://other.example/x", "last_modified": "2026-04-15T00:00:00Z"}
+  ],
+  "limit": 10
+}' | jq
+```
+
+For each hit the response breaks the score into its three components plus
+an `embedded` flag, so the caller can debug ordering or surface a
+"semantic match" badge in the UI.
+
 ## Why not just YaCy's existing Solr?
 
 Solr does BM25 + boost functions well, but ranks on lexical match.
@@ -66,8 +105,7 @@ Solr does BM25 + boost functions well, but ranks on lexical match.
 share zero token overlap; Solr returns nothing useful, the vector layer
 ranks them as near-identical.
 
-The plan (see `docs/yacy-project/PLAN.md`, Phase 2) is hybrid scoring:
-60% semantic (this service) + 25% freshness + 15% domain quality.
+See `/rank` above for how the two layers combine.
 
 ## Production deploy
 

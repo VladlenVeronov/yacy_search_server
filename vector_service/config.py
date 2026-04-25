@@ -16,5 +16,12 @@ class Settings(BaseSettings):
     server_host: str = "127.0.0.1"
     server_port: int = 8001
 
+    # Hybrid ranking weights (must sum to 1.0). See PLAN.md Phase 2.
+    weight_semantic: float = 0.60
+    weight_freshness: float = 0.25
+    weight_quality: float = 0.15
+    # Exponential decay half-life for freshness; matches the soft Solr profile.
+    freshness_half_life_days: float = 365.0
+
 
 settings = Settings()
