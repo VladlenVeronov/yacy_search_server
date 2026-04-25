@@ -52,7 +52,7 @@
 - [x] DESIGN: Меню-bottomsheet справа — grid іконок (placeholders, дані з admin пізніше) → той же header template
 - [x] SOLR: Увімкнути full-text індексування контенту сторінок — `text_t` ("all visible text") вже активний у `defaults/solr.collection.schema:217` і входить у boost fields дефолтного профілю (`text_t^1.0`); full-text індексація не була вимкнена
 - [x] SOLR: Сортування за свіжістю — додано multiplicative recency boost у `Default Profile` (tmpb.0): `recip(ms(NOW,last_modified),1e-11,1,1)` — ~3-річний half-life, м'якший за `/date` профіль (1-річний)
-- [ ] BUG: Зібрати і зафіксувати всі критичні баги з шаблонів і бекенду (issue list)
+- [x] BUG: Зібрати і зафіксувати всі критичні баги — issue list у `docs/yacy-project/ISSUES.md`. 🔴 OOM при snippet extraction виправлено (cap 100k chars у `SentenceReader`), 🟠 P2P-issues задокументовано для Phase 4
 
 ---
 
