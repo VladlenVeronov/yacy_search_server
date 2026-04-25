@@ -65,7 +65,7 @@
 - [x] RANKING: Реалізувати hybrid scoring = 60% semantic similarity + 25% freshness + 15% domain quality — `/rank` endpoint у `vector_service/main.py`. Ваги в `config.py` (`weight_semantic` / `weight_freshness` / `weight_quality`), freshness через exp decay (half-life 365 днів). Кандидати без embedding не випадають — лишаються з semantic=0
 - [~] RANKING: Domain quality score — не кількість беклінків, а: HTTPS + швидкість + без реклами/трекерів — поточна версія в `_quality_score()` рахує лише HTTPS (1.0 vs 0.3). Швидкість + ads/трекери чекають crawl-time сигналів з боку YaCy
 - [ ] RANKING: Видалити або мінімізувати вплив PageRank/backlinks на ранжування
-- [ ] SEARCH: Інтеграція векторного пошуку в YaCy — Python сервіс як додатковий ранкер
+- [~] SEARCH: Інтеграція векторного пошуку в YaCy — Python сервіс як додатковий ранкер. Зроблено: `VectorRankClient` (нова клас `source/net/yacy/search/ranking/VectorRankClient.java`), хук у `SearchEvent.addNodes()` робить один `/rank` POST на батч Solr-кандидатів, `addResult()` застосовує hybrid score замість легасі `score*128 + postRanking`. Конфіг через env (`VECTOR_RANK_ENABLED`/`URL`/`TIMEOUT_MS`) з fallback на `vector_rank.*` у `yacy.init`. Default OFF. Локальна латентність ~20ms після прогріву. Залишилось: RWI-результати поки лишаються з оригінальним ranking — потребує hook у `drainRWIStackToResult` (Solr-результати домінують у топі тож вплив незначний)
 - [ ] SEARCH: Підтримка довгих запитів (зараз обрізає) — збільшити ліміт, semantic chunking
 - [ ] SEARCH: Автодоповнення пошуку — на базі популярних запитів з БД
 - [ ] AI UNSATISFIED: Трекінг кліків — якщо 0 кліків на результати → запит незадоволений

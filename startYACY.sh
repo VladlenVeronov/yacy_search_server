@@ -1,4 +1,15 @@
 #!/usr/bin/env sh
+
+# Load operator env (vector_rank URL/flag, secrets, etc.) before any Java
+# invocation so System.getenv() sees these inside YaCy. See
+# docs/yacy-project/.yacy_env.template for the supported variables.
+if [ -f "$HOME/.yacy_env" ]; then
+    . "$HOME/.yacy_env"
+fi
+if [ -f ".yacy_env" ]; then
+    . ".yacy_env"
+fi
+
 JAVA="`which java`"
 CONFIGFILE="DATA/SETTINGS/yacy.conf"
 LOGFILE="yacy.log"

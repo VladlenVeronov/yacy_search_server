@@ -1454,3 +1454,12 @@ ai.shield.limit-all = false
 ai.shield.all.per-minute = 16
 ai.shield.all.per-hour = 240
 ai.shield.all.per-day = 480
+
+# Hybrid semantic re-ranking via the external Python vector_service.
+# Each value is overridden by the corresponding env var if set:
+#   VECTOR_RANK_ENABLED, VECTOR_RANK_URL, VECTOR_RANK_TIMEOUT_MS
+# This indirection keeps the same code working on Mac (localhost) and on
+# the production server (internal service URL) — only the env changes.
+vector_rank.enabled = false
+vector_rank.url = http://127.0.0.1:8001/rank
+vector_rank.timeout_ms = 1500

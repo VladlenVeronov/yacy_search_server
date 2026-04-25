@@ -106,14 +106,29 @@ def _build_index_payload(doc: dict) -> dict | None:
         # YaCy has plenty of those (redirects, thin pages) and they poison the
         # vector space.
         return None
+    # Several Solr fields come back as single-item lists (multivalued schema).
+    # Unwrap to the first non-empty value so the vector_service Pydantic
+    # schema accepts them.
+    title = doc.get("title")
+    if isinstance(title, list):
+        title = title[0] if title else None
+    host = doc.get("host_s")
+    if isinstance(host, list):
+        host = host[0] if host else None
+    lang = doc.get("language_s")
+    if isinstance(lang, list):
+        lang = lang[0] if lang else None
+    last_modified = doc.get("last_modified")
+    if isinstance(last_modified, list):
+        last_modified = last_modified[0] if last_modified else None
     return {
         "id": doc_id,
         "url": url,
-        "title": doc.get("title") or None,
+        "title": title or None,
         "summary": text,
-        "host": doc.get("host_s") or None,
-        "lang": doc.get("language_s") or None,
-        "last_modified": doc.get("last_modified") or None,
+        "host": host or None,
+        "lang": lang or None,
+        "last_modified": last_modified or None,
     }
 
 
