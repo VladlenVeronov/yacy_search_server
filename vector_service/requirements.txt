@@ -1,0 +1,9 @@
+fastapi>=0.115
+uvicorn[standard]>=0.32
+asyncpg>=0.30
+pgvector>=0.3.6
+sentence-transformers>=3.3
+torch>=2.5
+pydantic>=2.10
+pydantic-settings>=2.6
+numpy>=1.26

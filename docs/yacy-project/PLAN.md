@@ -59,9 +59,9 @@
 ## ФАЗА 2 — ЯКІСТЬ ПОШУКУ (Тижні 4-7)
 *Мета: результати які реально корисні*
 
-- [ ] VECTORS: Розгорнути PostgreSQL + pgvector на сервері 168.231.108.21
-- [ ] VECTORS: Створити Python мікросервіс (FastAPI) для semantic search — порт 8001
-- [ ] VECTORS: Векторизація індексованих сторінок по крону (нічна задача, малий трафік)
+- [~] VECTORS: PostgreSQL + pgvector — локально на Mac ✅ (DB `yacy_pages`, HNSW cosine). Прод `168.231.108.21` — ще не розгорнуто
+- [x] VECTORS: Python мікросервіс (FastAPI) — `vector_service/` на порту 8001. Endpoints `/health`, `/index`, `/search`, `/doc/{id}`. Модель `intfloat/multilingual-e5-base` (768d, multilingual, локально). Idempotency через content_hash. Cross-lingual перевірено (UA query → EN doc)
+- [x] VECTORS: Sync-скрипт `docs/yacy-project/scripts/sync_pages.py` — cursor-mark пагінація по Solr `collection1`, state-file у `docs/yacy-project/.sync_pages.state` (gitignored), `load_date_dt` як watermark. Готове під cron nightly
 - [ ] RANKING: Реалізувати hybrid scoring = 60% semantic similarity + 25% freshness + 15% domain quality
 - [ ] RANKING: Domain quality score — не кількість беклінків, а: HTTPS + швидкість + без реклами/трекерів
 - [ ] RANKING: Видалити або мінімізувати вплив PageRank/backlinks на ранжування
