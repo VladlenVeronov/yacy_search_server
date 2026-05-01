@@ -34,7 +34,10 @@
                        onfocus="this.select()"
                        placeholder="Search the open web…"
                        autocomplete="off"
+                       role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="suggest-list" aria-haspopup="listbox"
                        class="yacy-search-input w-full pl-12 pr-4 py-3 text-base border border-gray-300 rounded-full transition" />
+                <ul id="suggest-list" role="listbox"
+                    class="hidden absolute z-10 left-0 right-0 mt-2 bg-white border border-gray-200 rounded-2xl shadow-lg py-2 max-h-80 overflow-y-auto"></ul>
             </div>
 
             <div class="mt-5 flex justify-center">
@@ -101,6 +104,85 @@
         <a href="ConfigBasic.html" class="hover:text-blue-600 transition">Admin</a>
     </div>
 </footer>
+
+<script>
+(function () {
+    const input = document.getElementById('search');
+    const list = document.getElementById('suggest-list');
+    if (!input || !list) return;
+
+    let items = [];
+    let active = -1;
+    let lastQ = '';
+    let timer = 0;
+    let abort = null;
+
+    function close() {
+        list.classList.add('hidden');
+        list.innerHTML = '';
+        items = [];
+        active = -1;
+        input.setAttribute('aria-expanded', 'false');
+    }
+
+    function render() {
+        list.innerHTML = items.map((s, i) => {
+            const cls = 'px-4 py-2 cursor-pointer text-sm ' + (i === active ? 'bg-blue-50 text-blue-700' : 'hover:bg-gray-50');
+            return '<li role="option" data-i="' + i + '" class="' + cls + '">' + s.replace(/[<>&"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c])) + '</li>';
+        }).join('');
+        list.classList.toggle('hidden', items.length === 0);
+        input.setAttribute('aria-expanded', items.length ? 'true' : 'false');
+    }
+
+    function select(i) {
+        if (i < 0 || i >= items.length) return;
+        input.value = items[i];
+        close();
+        document.getElementById('searchform').submit();
+    }
+
+    async function fetchSuggest(q) {
+        if (abort) abort.abort();
+        abort = new AbortController();
+        try {
+            const r = await fetch('suggest.json?q=' + encodeURIComponent(q) + '&count=8', { signal: abort.signal });
+            if (!r.ok) return;
+            const data = await r.json();
+            // OpenSearch shape: ["query", ["s1","s2",...]]
+            if (q !== input.value.trim()) return;
+            items = Array.isArray(data) && Array.isArray(data[1]) ? data[1].slice(0, 8) : [];
+            active = -1;
+            render();
+        } catch (_) { /* aborted */ }
+    }
+
+    input.addEventListener('input', () => {
+        const q = input.value.trim();
+        if (q === lastQ) return;
+        lastQ = q;
+        clearTimeout(timer);
+        if (q.length < 2) { close(); return; }
+        timer = setTimeout(() => fetchSuggest(q), 120);
+    });
+
+    input.addEventListener('keydown', (e) => {
+        if (list.classList.contains('hidden')) return;
+        if (e.key === 'ArrowDown') { e.preventDefault(); active = Math.min(active + 1, items.length - 1); render(); }
+        else if (e.key === 'ArrowUp') { e.preventDefault(); active = Math.max(active - 1, -1); render(); }
+        else if (e.key === 'Enter' && active >= 0) { e.preventDefault(); select(active); }
+        else if (e.key === 'Escape') { close(); }
+    });
+
+    list.addEventListener('mousedown', (e) => {
+        const li = e.target.closest('li[data-i]');
+        if (li) { e.preventDefault(); select(parseInt(li.dataset.i, 10)); }
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!list.contains(e.target) && e.target !== input) close();
+    });
+})();
+</script>
 
 </body>
 </html>

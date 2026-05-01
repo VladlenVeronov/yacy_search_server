@@ -35,3 +35,28 @@ CREATE INDEX IF NOT EXISTS pages_last_modified_idx ON pages (last_modified DESC 
 CREATE INDEX IF NOT EXISTS pages_embedding_hnsw_idx
     ON pages USING hnsw (embedding vector_cosine_ops)
     WITH (m = 16, ef_construction = 64);
+
+-- Query log: every search the public UI performs. Used for autocomplete and
+-- to detect "unsatisfied" queries (zero results or zero clicks) so the
+-- crawler can be steered toward gaps in the index.
+CREATE TABLE IF NOT EXISTS query_logs (
+    id              bigserial PRIMARY KEY,
+    query           text NOT NULL,
+    result_count    int  NOT NULL DEFAULT 0,
+    clicked_count   int  NOT NULL DEFAULT 0,
+    ts              timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS query_logs_query_idx ON query_logs (lower(query));
+CREATE INDEX IF NOT EXISTS query_logs_ts_idx    ON query_logs (ts DESC);
+
+-- Per-result click events. One row per click.
+CREATE TABLE IF NOT EXISTS query_clicks (
+    id          bigserial PRIMARY KEY,
+    query       text NOT NULL,
+    doc_id      text,
+    url         text,
+    position    int,
+    ts          timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS query_clicks_query_idx ON query_clicks (lower(query));
+CREATE INDEX IF NOT EXISTS query_clicks_ts_idx    ON query_clicks (ts DESC);

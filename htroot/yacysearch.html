@@ -353,6 +353,62 @@ function latestinfo() {
 window.setTimeout(latestinfo, 500); // we need that to get a correct pagination bar at the end of the page
 </script>
 
+<script>
+// AI-Unsatisfied tracking: log every search and every result click to the
+// vector service. Fire-and-forget; failures are silent so they never block
+// the user. The vector service exposes /api/vector/* via traefik.
+(function () {
+    const params = new URLSearchParams(window.location.search);
+    const q = (params.get('query') || params.get('q') || '').trim();
+    if (!q) return;
+
+    function send(path, body) {
+        const data = JSON.stringify(body);
+        if (navigator.sendBeacon) {
+            try {
+                navigator.sendBeacon('/api/vector' + path, new Blob([data], { type: 'application/json' }));
+                return;
+            } catch (_) { /* fall through */ }
+        }
+        fetch('/api/vector' + path, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: data,
+            keepalive: true,
+        }).catch(() => {});
+    }
+
+    // Log the search itself once the page settles. Result count is read from
+    // the trailer DOM (#offset / .num-results) — fall back to 0 if absent.
+    window.addEventListener('load', () => {
+        let count = 0;
+        const el = document.querySelector('.num-results');
+        if (el) {
+            const m = el.textContent.match(/\d+/g);
+            if (m && m.length) count = parseInt(m[m.length - 1], 10) || 0;
+        }
+        send('/track-search', { query: q, result_count: count });
+    });
+
+    // Delegate result-link clicks. Every result anchor lives inside
+    // article.yacy-result; we use the urlhash from the link id when present.
+    document.addEventListener('mousedown', (e) => {
+        const a = e.target.closest('article.yacy-result a[href]');
+        if (!a) return;
+        const article = a.closest('article.yacy-result');
+        const articles = Array.from(document.querySelectorAll('article.yacy-result'));
+        const pos = articles.indexOf(article);
+        const idAttr = (a.id || '').replace(/^url/, '') || null;
+        send('/track-click', {
+            query: q,
+            doc_id: idAttr,
+            url: a.href,
+            position: pos >= 0 ? pos : null,
+        });
+    }, { capture: true });
+})();
+</script>
+
 #%env/templates/footer.template%#
 </body>
 </html>

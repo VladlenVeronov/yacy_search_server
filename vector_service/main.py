@@ -235,3 +235,80 @@ async def rank(req: RankRequest):
     if req.limit is not None:
         hits = hits[: req.limit]
     return hits
+
+
+# ---------------------------------------------------------------------------
+# Search analytics: feeds autocomplete and the unsatisfied-query crawler
+# ---------------------------------------------------------------------------
+
+
+class TrackSearchRequest(BaseModel):
+    query: str = Field(..., min_length=1, max_length=500)
+    result_count: int = Field(default=0, ge=0)
+
+
+class TrackClickRequest(BaseModel):
+    query: str = Field(..., min_length=1, max_length=500)
+    doc_id: Optional[str] = None
+    url: Optional[str] = None
+    position: Optional[int] = Field(default=None, ge=0)
+
+
+@app.post("/track-search")
+async def track_search(req: TrackSearchRequest):
+    async with pool().acquire() as con:
+        await con.execute(
+            "INSERT INTO query_logs (query, result_count) VALUES ($1, $2)",
+            req.query.strip(), req.result_count,
+        )
+    return {"ok": True}
+
+
+@app.post("/track-click")
+async def track_click(req: TrackClickRequest):
+    q = req.query.strip()
+    async with pool().acquire() as con:
+        async with con.transaction():
+            await con.execute(
+                """
+                INSERT INTO query_clicks (query, doc_id, url, position)
+                VALUES ($1, $2, $3, $4)
+                """,
+                q, req.doc_id, req.url, req.position,
+            )
+            # Bump click count on the most recent matching log entry so the
+            # /unsatisfied query can use it directly.
+            await con.execute(
+                """
+                UPDATE query_logs SET clicked_count = clicked_count + 1
+                 WHERE id = (
+                    SELECT id FROM query_logs
+                     WHERE lower(query) = lower($1)
+                     ORDER BY ts DESC LIMIT 1
+                 )
+                """,
+                q,
+            )
+    return {"ok": True}
+
+
+@app.get("/unsatisfied")
+async def unsatisfied(hours: int = 168, limit: int = 100):
+    """Top recent queries with zero clicks. Crawler picks from this list to
+    fill index gaps. Default window: 7 days."""
+    async with pool().acquire() as con:
+        rows = await con.fetch(
+            """
+            SELECT lower(query) AS query, COUNT(*) AS searches,
+                   SUM(result_count) AS total_results,
+                   SUM(clicked_count) AS clicks
+              FROM query_logs
+             WHERE ts > now() - ($1 || ' hours')::interval
+             GROUP BY lower(query)
+            HAVING SUM(clicked_count) = 0
+             ORDER BY searches DESC
+             LIMIT $2
+            """,
+            str(hours), limit,
+        )
+    return [dict(r) for r in rows]
