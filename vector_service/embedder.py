@@ -30,10 +30,57 @@ def _embed_query(text: str) -> np.ndarray:
     return get_model().encode(f"query: {text}", normalize_embeddings=True)
 
 
+# e5-base accepts ~512 tokens. ~1500 chars stays safely inside that.
+_CHUNK_CHARS = 1500
+
+
+def _split_chunks(text: str) -> list[str]:
+    if len(text) <= _CHUNK_CHARS:
+        return [text]
+    # Prefer paragraph boundaries; fall back to fixed-width slices.
+    paras = [p.strip() for p in text.split("\n\n") if p.strip()]
+    chunks: list[str] = []
+    buf = ""
+    for p in paras:
+        if len(buf) + len(p) + 2 <= _CHUNK_CHARS:
+            buf = (buf + "\n\n" + p) if buf else p
+        else:
+            if buf:
+                chunks.append(buf)
+            if len(p) <= _CHUNK_CHARS:
+                buf = p
+            else:
+                for i in range(0, len(p), _CHUNK_CHARS):
+                    chunks.append(p[i : i + _CHUNK_CHARS])
+                buf = ""
+    if buf:
+        chunks.append(buf)
+    return chunks
+
+
 def _embed_passages(texts: list[str]) -> list[np.ndarray]:
-    prefixed = [f"passage: {t}" for t in texts]
-    arr = get_model().encode(prefixed, normalize_embeddings=True, batch_size=16)
-    return list(arr)
+    """Mean-pool per-chunk embeddings so long passages aren't silently
+    truncated to the model's 512-token window. Each input text is split into
+    ~1500-char chunks (paragraph-aware), embedded together in one batch,
+    then averaged and L2-renormalized."""
+    flat: list[str] = []
+    spans: list[tuple[int, int]] = []
+    for t in texts:
+        chunks = _split_chunks(t)
+        start = len(flat)
+        flat.extend(f"passage: {c}" for c in chunks)
+        spans.append((start, start + len(chunks)))
+
+    arr = get_model().encode(flat, normalize_embeddings=True, batch_size=16)
+    out: list[np.ndarray] = []
+    for s, e in spans:
+        if e - s == 1:
+            out.append(arr[s])
+        else:
+            v = np.mean(arr[s:e], axis=0)
+            n = np.linalg.norm(v)
+            out.append(v / n if n > 0 else v)
+    return out
 
 
 async def embed_query(text: str) -> np.ndarray:
