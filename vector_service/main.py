@@ -8,6 +8,7 @@ from typing import Optional
 from urllib.parse import urlparse
 
 from fastapi import FastAPI, Header, HTTPException
+from prometheus_fastapi_instrumentator import Instrumentator
 from pydantic import BaseModel, Field
 
 from config import settings
@@ -24,6 +25,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="YACY Vector Service", version="0.1.0", lifespan=lifespan)
+Instrumentator().instrument(app).expose(app)
 
 
 class IndexRequest(BaseModel):
