@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>VIR GOO — Submit your site</title>
+  #%env/templates/yacy-public-meta.template%#
+</head>
+<body class="min-h-screen bg-gray-50 text-gray-900">
+
+#%env/templates/yacy-public-header.template%#
+
+<main class="max-w-2xl mx-auto px-4 py-10">
+  <h1 class="text-2xl font-semibold mb-2">Submit a site for indexing</h1>
+  <p class="text-sm text-gray-600 mb-6">
+    Tell us about a website worth adding to our index. We crawl
+    submissions after a quick admin check. We don't index spam, casino,
+    porn, surveillance-heavy news outlets, or major social platforms —
+    they have plenty of visibility elsewhere.
+  </p>
+
+  <form id="form" class="bg-white border border-gray-200 rounded-lg p-5 space-y-4">
+    <label class="block">
+      <span class="text-sm font-medium">Site URL <span class="text-red-500">*</span></span>
+      <input id="url" type="url" required maxlength="500"
+             placeholder="https://example.org"
+             class="mt-1 w-full px-3 py-2 border border-gray-300 rounded text-sm" />
+      <span class="text-xs text-gray-500">Must be HTTPS or HTTP. We'll crawl the domain it points to.</span>
+    </label>
+
+    <label class="block">
+      <span class="text-sm font-medium">Contact email <span class="text-gray-400">(optional)</span></span>
+      <input id="email" type="email" maxlength="200"
+             placeholder="you@example.org"
+             class="mt-1 w-full px-3 py-2 border border-gray-300 rounded text-sm" />
+      <span class="text-xs text-gray-500">We may write back if your site needs follow-up.</span>
+    </label>
+
+    <label class="block">
+      <span class="text-sm font-medium">What's on this site? <span class="text-gray-400">(optional)</span></span>
+      <textarea id="description" rows="3" maxlength="1000"
+                placeholder="A short description — topic, language, why it belongs in an open search engine"
+                class="mt-1 w-full px-3 py-2 border border-gray-300 rounded text-sm"></textarea>
+    </label>
+
+    <button type="submit"
+            class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded">
+      Submit
+    </button>
+    <p id="msg" class="text-sm hidden"></p>
+  </form>
+</main>
+
+<script>
+(function () {
+  const form = document.getElementById('form');
+  const msg = document.getElementById('msg');
+
+  function show(kind, text) {
+    msg.textContent = text;
+    msg.className = 'text-sm ' + (kind === 'ok' ? 'text-green-700' : kind === 'warn' ? 'text-yellow-700' : 'text-red-600');
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const body = {
+      url: document.getElementById('url').value.trim(),
+      contact_email: document.getElementById('email').value.trim() || null,
+      description: document.getElementById('description').value.trim() || null,
+    };
+    if (!body.url) { show('err', 'URL is required'); return; }
+    show('ok', 'Sending…');
+    try {
+      const r = await fetch('/api/vector/submit-site', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      const data = await r.json();
+      if (!r.ok) { show('err', 'Server error: HTTP ' + r.status); return; }
+      if (data.status === 'duplicate') {
+        show('warn', data.message || 'Already submitted recently.');
+      } else if (data.status === 'rejected') {
+        show('warn', 'Auto-rejected: ' + (data.reject_reason || 'site does not meet our policy'));
+      } else if (data.status === 'pending') {
+        show('ok', 'Thanks — submission #' + data.id + ' is in the admin queue.');
+        form.reset();
+      } else {
+        show('ok', 'Submitted (#' + data.id + ', status: ' + data.status + ')');
+      }
+    } catch (err) {
+      show('err', 'Network error: ' + err.message);
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

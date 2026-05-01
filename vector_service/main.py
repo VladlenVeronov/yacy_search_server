@@ -293,6 +293,150 @@ async def track_click(req: TrackClickRequest):
 
 
 # ---------------------------------------------------------------------------
+# Webmaster submissions (Phase 3)
+# ---------------------------------------------------------------------------
+
+
+# Substring patterns picked up from yacy DATA/LISTS/list.black at startup.
+# We don't try to perfectly mirror YaCy's regex matcher — a substring check
+# is enough to reject the obvious cases at submission time. The crawler
+# itself is the real authority.
+_BLACKLIST_HINTS = (
+    "wikipedia", "wikimedia", "wikidata", "wikinews", "wikiquote",
+    "wikiversity", "wikivoyage", "wiktionary", "wikibooks", "mediawiki",
+    "facebook", "instagram", "tiktok", "twitter", "x.com", "youtube",
+    "reddit", "quora", "pinterest", "linkedin",
+    "amazon", "ebay", "aliexpress", "wish.com", "dhgate", "banggood",
+    "shein", "temu",
+    "rt.com", "rt.ru", "sputnik", "tass.ru", "ria.ru", "vesti.ru",
+    "1tv.ru", "russia.tv", "ntv.ru", "lenta.ru", "regnum.ru",
+    "tsargrad.tv", "ren.tv", "kommersant.ru", "gazeta.ru", "iz.ru",
+    "kp.ru", "aif.ru", "life.ru", "novayagazeta.ru", "fontanka.ru",
+    "meduza.io", "pravda.ru", "smart-lab.ru", "3dnews.ru",
+    "porn", "xxx", "xnxx", "xvideos", "xhamster", "brazzers", "onlyfans",
+    "chaturbate", "redtube", "youporn", "pornhub", "spankbang",
+    "tube8", "eporner", "beeg", "cam4", "livejasmin",
+    "bis.org", "ecb.europa.eu", "federalreserve.gov", "imf.org",
+    "worldbank.org", "weforum.org", "atlanticcouncil.org", "globalresearch.ca",
+)
+
+
+def _classify_url(url: str) -> tuple[str, Optional[str]]:
+    """Returns (host, reject_reason). reject_reason is None if accepted."""
+    try:
+        parsed = urlparse(url)
+    except ValueError:
+        return ("", "malformed url")
+    if parsed.scheme not in ("http", "https"):
+        return ("", "scheme must be http(s)")
+    host = (parsed.hostname or "").lower()
+    if not host or "." not in host:
+        return (host, "missing/invalid host")
+    lower_url = url.lower()
+    for hint in _BLACKLIST_HINTS:
+        if hint in lower_url:
+            return (host, f"matches blacklist hint: {hint}")
+    return (host, None)
+
+
+class SubmitSiteRequest(BaseModel):
+    url: str = Field(..., min_length=8, max_length=500)
+    contact_email: Optional[str] = Field(default=None, max_length=200)
+    description: Optional[str] = Field(default=None, max_length=1000)
+
+
+class SubmissionItem(BaseModel):
+    id: int
+    url: str
+    host: str
+    contact_email: Optional[str] = None
+    description: Optional[str] = None
+    status: str
+    reject_reason: Optional[str] = None
+    submitted_at: datetime
+    processed_at: Optional[datetime] = None
+
+
+@app.post("/submit-site")
+async def submit_site(req: SubmitSiteRequest):
+    host, reject = _classify_url(req.url.strip())
+    initial_status = "rejected" if reject else "pending"
+    async with pool().acquire() as con:
+        # Reject duplicate pending submissions for the same host within 7 days
+        # so the public form can't be used to flood the admin queue.
+        if not reject:
+            dup = await con.fetchval(
+                """
+                SELECT id FROM webmaster_submissions
+                 WHERE host = $1
+                   AND status IN ('pending', 'approved', 'crawled')
+                   AND submitted_at > now() - interval '7 days'
+                 LIMIT 1
+                """, host,
+            )
+            if dup:
+                return {"ok": False, "status": "duplicate",
+                        "message": "This host was already submitted in the last 7 days."}
+        row = await con.fetchrow(
+            """
+            INSERT INTO webmaster_submissions
+                (url, host, contact_email, description, status, reject_reason)
+            VALUES ($1, $2, $3, $4, $5, $6)
+            RETURNING id, status
+            """,
+            req.url.strip(), host, req.contact_email, req.description,
+            initial_status, reject,
+        )
+    return {"ok": True, "id": row["id"], "status": row["status"], "reject_reason": reject}
+
+
+@app.get("/admin/submissions", response_model=list[SubmissionItem])
+async def submissions_list(status: Optional[str] = None, limit: int = 200,
+                            authorization: Optional[str] = Header(default=None)):
+    _require_admin(authorization)
+    where = "WHERE status = $1" if status else ""
+    args: list = [status] if status else []
+    args.append(limit)
+    n = len(args)
+    async with pool().acquire() as con:
+        rows = await con.fetch(
+            f"""
+            SELECT id, url, host, contact_email, description, status,
+                   reject_reason, submitted_at, processed_at
+              FROM webmaster_submissions
+              {where}
+             ORDER BY submitted_at DESC
+             LIMIT ${n}
+            """, *args,
+        )
+    return [SubmissionItem(**dict(r)) for r in rows]
+
+
+@app.post("/admin/submissions/{sub_id}/decision")
+async def submissions_decide(sub_id: int,
+                              decision: str,
+                              reason: Optional[str] = None,
+                              authorization: Optional[str] = Header(default=None)):
+    _require_admin(authorization)
+    if decision not in ("approved", "rejected", "crawled"):
+        raise HTTPException(status_code=400, detail="decision must be approved|rejected|crawled")
+    async with pool().acquire() as con:
+        row = await con.fetchrow(
+            """
+            UPDATE webmaster_submissions
+               SET status = $2,
+                   reject_reason = $3,
+                   processed_at = now()
+             WHERE id = $1
+            RETURNING id, status
+            """, sub_id, decision, reason,
+        )
+    if row is None:
+        raise HTTPException(status_code=404, detail="not found")
+    return {"ok": True, **dict(row)}
+
+
+# ---------------------------------------------------------------------------
 # Services menu (Phase 3 admin)
 # ---------------------------------------------------------------------------
 

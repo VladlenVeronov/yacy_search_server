@@ -61,6 +61,23 @@ CREATE TABLE IF NOT EXISTS query_clicks (
 CREATE INDEX IF NOT EXISTS query_clicks_query_idx ON query_clicks (lower(query));
 CREATE INDEX IF NOT EXISTS query_clicks_ts_idx    ON query_clicks (ts DESC);
 
+-- Webmaster submissions: public form lets anyone submit a site for indexing.
+-- Auto-validated against the blacklist on insert; admin approves/rejects.
+CREATE TABLE IF NOT EXISTS webmaster_submissions (
+    id              bigserial PRIMARY KEY,
+    url             text NOT NULL,
+    host            text NOT NULL,
+    contact_email   text,
+    description     text,
+    status          text NOT NULL DEFAULT 'pending',  -- pending|approved|rejected|crawled
+    reject_reason   text,
+    submitted_at    timestamptz NOT NULL DEFAULT now(),
+    processed_at    timestamptz,
+    submitter_ip    inet
+);
+CREATE INDEX IF NOT EXISTS webmaster_status_idx ON webmaster_submissions (status, submitted_at DESC);
+CREATE INDEX IF NOT EXISTS webmaster_host_idx   ON webmaster_submissions (host);
+
 -- Services menu: rendered in the public drawer (right-side bottomsheet).
 -- Managed via /admin-services.html behind the Authorization: Bearer header
 -- (ADMIN_TOKEN env). Icon is a URL (favicon, CDN-free hosted asset, etc.).

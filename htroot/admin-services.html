@@ -60,6 +60,24 @@
     </div>
     <div id="unsat-list" class="divide-y divide-gray-200"></div>
   </section>
+
+  <section id="subs-block" class="bg-white border border-gray-200 rounded-lg p-5 mt-6 hidden">
+    <div class="flex items-center justify-between mb-3">
+      <h2 class="text-lg font-semibold">Webmaster submissions
+        <span class="ml-2 text-xs font-normal text-gray-500">(public form: <a href="/submit-site.html" class="text-blue-600 hover:underline">/submit-site.html</a>)</span>
+      </h2>
+      <div class="flex items-center gap-2">
+        <select id="subs-filter" class="text-sm border border-gray-300 rounded px-2 py-1">
+          <option value="pending" selected>pending</option>
+          <option value="approved">approved</option>
+          <option value="crawled">crawled</option>
+          <option value="rejected">rejected</option>
+          <option value="">all</option>
+        </select>
+        <button id="subs-reload" class="text-xs text-blue-600 hover:underline">Reload</button>
+      </div>
+    </div>
+    <div id="subs-list" class="divide-y divide-gray-200"></div>
 </main>
 
 <script>
@@ -179,13 +197,76 @@
     }
   }
 
+  async function loadSubs() {
+    const status = document.getElementById('subs-filter').value;
+    const list = document.getElementById('subs-list');
+    list.innerHTML = '<p class="text-sm text-gray-500 py-3">Loading…</p>';
+    try {
+      const url = API + '/admin/submissions' + (status ? '?status=' + status : '');
+      const r = await fetch(url, { headers: authHeader() });
+      if (!r.ok) throw new Error('http ' + r.status);
+      const items = await r.json();
+      if (!items.length) {
+        list.innerHTML = '<p class="text-sm text-gray-500 py-3">No submissions matching this filter.</p>';
+        return;
+      }
+      const fmt = (s) => new Date(s).toISOString().replace('T', ' ').slice(0, 16);
+      list.innerHTML = items.map(s => {
+        const statusBadge = s.status === 'pending'  ? 'bg-yellow-100 text-yellow-700'
+                          : s.status === 'approved' ? 'bg-blue-100 text-blue-700'
+                          : s.status === 'crawled'  ? 'bg-green-100 text-green-700'
+                          :                            'bg-gray-200 text-gray-600';
+        return `
+          <div class="py-3 flex items-start gap-3">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2">
+                <span class="text-xs px-2 py-0.5 rounded ${statusBadge}">${esc(s.status)}</span>
+                <a href="${esc(s.url)}" target="_blank" rel="noopener" class="text-sm font-medium text-blue-600 hover:underline truncate">${esc(s.url)}</a>
+              </div>
+              <div class="text-xs text-gray-500 mt-0.5">${fmt(s.submitted_at)} · ${esc(s.host)}${s.contact_email ? ' · ' + esc(s.contact_email) : ''}</div>
+              ${s.description ? `<div class="text-xs text-gray-600 mt-1">${esc(s.description)}</div>` : ''}
+              ${s.reject_reason ? `<div class="text-xs text-red-600 mt-1">reject: ${esc(s.reject_reason)}</div>` : ''}
+            </div>
+            <div class="flex flex-col gap-1 shrink-0">
+              ${s.status === 'pending' ? `
+                <a href="/CrawlStartExpert.html?crawlingURL=${encodeURIComponent(s.url)}" target="_blank"
+                   class="text-xs px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded text-center">Crawl</a>
+                <button data-decide="${s.id}" data-action="approved"
+                        class="text-xs px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded">Approve</button>
+                <button data-decide="${s.id}" data-action="rejected"
+                        class="text-xs px-2 py-1 text-red-600 hover:bg-red-50 rounded">Reject</button>
+              ` : `<button data-decide="${s.id}" data-action="pending"
+                            class="text-xs text-gray-500 hover:underline">Reopen</button>`}
+            </div>
+          </div>`;
+      }).join('');
+      list.querySelectorAll('[data-decide]').forEach(b => b.addEventListener('click', () => decideSub(b.dataset.decide, b.dataset.action)));
+    } catch (e) {
+      list.innerHTML = '<p class="text-sm text-red-600 py-3">Failed: ' + esc(e.message) + '</p>';
+    }
+  }
+
+  async function decideSub(id, action) {
+    let reason = null;
+    if (action === 'rejected') {
+      reason = prompt('Reject reason (optional):') || null;
+    }
+    const r = await fetch(API + '/admin/submissions/' + id + '/decision?decision=' + action + (reason ? '&reason=' + encodeURIComponent(reason) : ''), {
+      method: 'POST', headers: authHeader(),
+    });
+    if (!r.ok) { alert('Failed: HTTP ' + r.status); return; }
+    loadSubs();
+  }
+
   function showAuthed() {
     formBlock.classList.remove('hidden');
     listBlock.classList.remove('hidden');
     document.getElementById('unsat-block').classList.remove('hidden');
+    document.getElementById('subs-block').classList.remove('hidden');
     document.getElementById('auth-block').classList.add('hidden');
     loadList();
     loadUnsat();
+    loadSubs();
   }
 
   tokenSave.addEventListener('click', () => {
@@ -198,6 +279,8 @@
   document.getElementById('f-clear').addEventListener('click', clearForm);
   document.getElementById('unsat-reload').addEventListener('click', loadUnsat);
   document.getElementById('unsat-window').addEventListener('change', loadUnsat);
+  document.getElementById('subs-reload').addEventListener('click', loadSubs);
+  document.getElementById('subs-filter').addEventListener('change', loadSubs);
 
   if (getToken()) showAuthed();
 })();
