@@ -27,6 +27,23 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="YACY Vector Service", version="0.1.0", lifespan=lifespan)
 Instrumentator().instrument(app).expose(app)
 
+import redis.asyncio as _redis
+import json as _cjson
+import os as _cos
+_REDIS_URL = _cos.environ.get("REDIS_URL", "")
+_redis_client = None
+
+
+def _get_redis():
+    global _redis_client
+    if not _REDIS_URL:
+        return None
+    if _redis_client is None:
+        _redis_client = _redis.from_url(_REDIS_URL, decode_responses=True)
+    return _redis_client
+
+
+
 
 class IndexRequest(BaseModel):
     id: str = Field(..., min_length=1)
@@ -102,6 +119,16 @@ async def index(req: IndexRequest):
 
 @app.post("/search", response_model=list[SearchHit])
 async def search(req: SearchRequest):
+    cache_key = "search:" + req.query.lower().strip() + ":" + str(req.limit)
+    rdb = _get_redis()
+    if rdb is not None:
+        try:
+            cached = await rdb.get(cache_key)
+            if cached:
+                return [SearchHit(**h) for h in _cjson.loads(cached)]
+        except Exception:
+            pass
+
     qvec = await embed_query(req.query)
     async with pool().acquire() as con:
         rows = await con.fetch(
@@ -115,7 +142,13 @@ async def search(req: SearchRequest):
             """,
             qvec, req.limit,
         )
-    return [SearchHit(**dict(row)) for row in rows]
+    hits = [SearchHit(**dict(row)) for row in rows]
+    if rdb is not None:
+        try:
+            await rdb.setex(cache_key, 300, _cjson.dumps([h.model_dump() for h in hits]))
+        except Exception:
+            pass
+    return hits
 
 
 @app.delete("/doc/{doc_id}")

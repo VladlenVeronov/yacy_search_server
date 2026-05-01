@@ -18,7 +18,7 @@
             <span class="block text-5xl sm:text-6xl font-light tracking-tight text-gray-900">
                 VIR <span class="text-blue-600 font-semibold">GOO</span>
             </span>
-            <span class="block mt-2 text-sm text-gray-500">open · decentralized · yours</span>
+            <span class="block mt-2 text-sm text-gray-500">відкритий · децентралізований · твій</span>
         </h1>
 
         <form action="yacysearch.html" method="get" id="searchform" accept-charset="UTF-8">
@@ -32,7 +32,7 @@
                        value="#[former]#"
                        #(focus)#::autofocus="autofocus"#(/focus)#
                        onfocus="this.select()"
-                       placeholder="Search the open web…"
+                       placeholder="Шукати у відкритій мережі…"
                        autocomplete="off"
                        role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="suggest-list" aria-haspopup="listbox"
                        class="yacy-search-input w-full pl-12 pr-4 py-3 text-base border border-gray-300 rounded-full transition" />
@@ -64,31 +64,31 @@
                 #(searchtext)#::
                 <label class="yacy-pill #(check)#::is-active#(/check)#">
                     <input type="radio" name="contentdom" value="text" #(check)#::checked="checked"#(/check)# />
-                    <span>Text</span>
+                    <span>Текст</span>
                 </label>
                 #(/searchtext)#
                 #(searchimage)#::
                 <label class="yacy-pill #(check)#::is-active#(/check)#">
                     <input type="radio" name="contentdom" value="image" #(check)#::checked="checked"#(/check)# />
-                    <span>Images</span>
+                    <span>Зображення</span>
                 </label>
                 #(/searchimage)#
                 #(searchaudio)#::
                 <label class="yacy-pill #(check)#::is-active#(/check)#">
                     <input type="radio" name="contentdom" value="audio" #(check)#::checked="checked"#(/check)# />
-                    <span>Audio</span>
+                    <span>Аудіо</span>
                 </label>
                 #(/searchaudio)#
                 #(searchvideo)#::
                 <label class="yacy-pill #(check)#::is-active#(/check)#">
                     <input type="radio" name="contentdom" value="video" #(check)#::checked="checked"#(/check)# />
-                    <span>Video</span>
+                    <span>Відео</span>
                 </label>
                 #(/searchvideo)#
                 #(searchapp)#::
                 <label class="yacy-pill #(check)#::is-active#(/check)#">
                     <input type="radio" name="contentdom" value="app" #(check)#::checked="checked"#(/check)# />
-                    <span>Apps</span>
+                    <span>Програми</span>
                 </label>
                 #(/searchapp)#
             </div>
@@ -100,12 +100,12 @@
 
 <footer class="border-t border-gray-200 py-4">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-wrap justify-between items-center gap-3 text-xs text-gray-500">
-        <span>VIR GOO — open, decentralized search · powered by YaCy</span>
+        <span>VIR GOO — відкритий децентралізований пошук · powered by YaCy</span>
         <div class="flex items-center gap-4">
             <a href="about.html" class="hover:text-blue-600 transition">Про проєкт</a>
-            <a href="submit-site.html" class="hover:text-blue-600 transition">Submit a site</a>
-            <a href="cabinet.html" class="hover:text-blue-600 transition">My cabinet</a>
-            <a href="ConfigBasic.html" class="hover:text-blue-600 transition">Admin</a>
+            <a href="submit-site.html" class="hover:text-blue-600 transition">Подати сайт</a>
+            <a href="cabinet.html" class="hover:text-blue-600 transition">Мій кабінет</a>
+            <a href="ConfigBasic.html" class="hover:text-blue-600 transition">Адмін</a>
         </div>
     </div>
 </footer>
@@ -189,5 +189,6 @@
 })();
 </script>
 
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("/sw.js").catch(()=>{});}</script>
 </body>
 </html>

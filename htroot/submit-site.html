@@ -5,6 +5,8 @@
   <title>VIR GOO — Подати your site</title>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#2563eb">
   <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
   <meta name="referrer" content="no-referrer-when-downgrade" />
   <meta name="description" content="YaCy — open, decentralized search" />
@@ -195,5 +197,6 @@
 })();
 </script>
 
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("/sw.js").catch(()=>{});}</script>
 </body>
 </html>

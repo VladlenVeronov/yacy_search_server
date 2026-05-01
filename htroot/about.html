@@ -8,6 +8,8 @@
   <meta name="description" content="Відкритий, децентралізований пошуковик. Без PageRank, трекерів і реклами." />
   <link rel="stylesheet" type="text/css" href="env/css/tailwind.min.css" />
   <link rel="stylesheet" type="text/css" href="env/css/yacy-public.css" />
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#2563eb">
   <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
 </head>
 <body class="min-h-screen bg-white text-gray-900">
@@ -128,5 +130,6 @@ docker compose up -d</pre>
   </div>
 </footer>
 
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("/sw.js").catch(()=>{});}</script>
 </body>
 </html>
