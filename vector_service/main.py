@@ -1024,3 +1024,97 @@ async def subs_scan(authorization: Optional[str] = Header(default=None)):
                     s["id"],
                 )
     return {"checked": len(subs), "new_results": len(summary), "items": summary}
+
+
+# ---------------------------------------------------------------------------
+# Admin gap-analysis chat — free-form questions to the LLM with index context
+# ---------------------------------------------------------------------------
+
+
+_ADMIN_CHAT_PROMPT = (
+    "You are an analytics assistant for the VIR GOO open search engine. "
+    "The admin asks questions about the index, what content is missing, "
+    "what to crawl next, what queries fail. Answer concisely (under 250 words), "
+    "in the language of the admin's question. When suggesting URLs always use "
+    "HTTPS and stay clear of: Wikipedia, Wikimedia, Reddit, Quora, "
+    "X/Twitter, Facebook, Instagram, TikTok, YouTube, Pinterest, LinkedIn, "
+    "Amazon, Aliexpress, Temu, RT/TASS/RIA/Sputnik, porn, casino. Prefer "
+    "primary sources, official docs, EFF/FSF/IETF references, established "
+    "open-source projects. If asked to start a crawl, list the URLs and tell "
+    "the admin to use the 'Seed' button — you cannot crawl yourself."
+)
+
+
+class AdminChatRequest(BaseModel):
+    message: str = Field(..., min_length=1, max_length=2000)
+    context_unsat_hours: int = Field(default=168, ge=1, le=8760)
+
+
+@app.post("/admin/chat")
+async def admin_chat(req: AdminChatRequest, authorization: Optional[str] = Header(default=None)):
+    """LLM gap-analysis chat. Pulls index stats + recent unsatisfied
+    queries as context, then sends to the configured LLM. Returns the
+    raw assistant message — frontend renders it as plain text."""
+    _require_admin(authorization)
+    if not settings.llm_api_url or not settings.llm_api_key:
+        raise HTTPException(status_code=503, detail="LLM not configured")
+    import httpx
+
+    async with pool().acquire() as con:
+        stats = await con.fetchrow(
+            """SELECT COUNT(*) AS pages, COUNT(embedding) AS embedded,
+                      (SELECT COUNT(*) FROM query_logs
+                        WHERE ts > now() - interval '7 days') AS searches_7d,
+                      (SELECT COUNT(*) FROM webmaster_submissions
+                        WHERE status = 'pending') AS pending_subs
+                 FROM pages"""
+        )
+        unsat = await con.fetch(
+            """SELECT lower(query) AS query, COUNT(*) AS searches
+                 FROM query_logs
+                WHERE ts > now() - ($1 || ' hours')::interval
+                GROUP BY lower(query)
+               HAVING SUM(clicked_count) = 0
+                ORDER BY searches DESC
+                LIMIT 20""",
+            str(req.context_unsat_hours),
+        )
+
+    ctx_lines = [
+        f"Index stats: {stats['pages']} pages ({stats['embedded']} embedded).",
+        f"Searches in last 7 days: {stats['searches_7d']}.",
+        f"Pending webmaster submissions: {stats['pending_subs']}.",
+    ]
+    if unsat:
+        ctx_lines.append("Top unsatisfied queries (no clicks) in window:")
+        for u in unsat:
+            ctx_lines.append(f"  - {u['query']}  ({u['searches']} searches)")
+    context = "\n".join(ctx_lines)
+
+    payload = {
+        "model": settings.llm_model,
+        "messages": [
+            {"role": "system", "content": _ADMIN_CHAT_PROMPT},
+            {"role": "system", "content": f"Live context:\n{context}"},
+            {"role": "user", "content": req.message},
+        ],
+        "temperature": 0.4,
+        "max_tokens": 600,
+    }
+    try:
+        async with httpx.AsyncClient(timeout=settings.llm_timeout_s) as cli:
+            r = await cli.post(
+                settings.llm_api_url.rstrip("/") + "/chat/completions",
+                headers={"Authorization": f"Bearer {settings.llm_api_key}"},
+                json=payload,
+            )
+            if r.status_code != 200:
+                raise HTTPException(status_code=502, detail=f"LLM error [{r.status_code}]: {r.text[:300]}")
+            data = r.json()
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=502, detail=f"LLM call failed: {type(e).__name__}: {str(e)[:200]}")
+
+    msg = data["choices"][0]["message"]["content"]
+    return {"reply": msg, "context_used": context}

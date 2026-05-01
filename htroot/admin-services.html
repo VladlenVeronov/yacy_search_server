@@ -375,6 +375,7 @@
     listBlock.classList.remove('hidden');
     document.getElementById('unsat-block').classList.remove('hidden');
     document.getElementById('subs-block').classList.remove('hidden');
+    document.getElementById('chat-block').classList.remove('hidden');
     document.getElementById('auth-block').classList.add('hidden');
     loadList();
     loadUnsat();
@@ -393,6 +394,44 @@
   document.getElementById('unsat-window').addEventListener('change', loadUnsat);
   document.getElementById('subs-reload').addEventListener('click', loadSubs);
   document.getElementById('subs-filter').addEventListener('change', loadSubs);
+
+  
+  document.getElementById('chat-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const input = document.getElementById('chat-input');
+    const msg = input.value.trim();
+    if (!msg) return;
+    const history = document.getElementById('chat-history');
+    history.innerHTML += '<div class="text-blue-700"><b>Ви:</b> ' + esc(msg) + '</div>';
+    input.value = ''; input.disabled = true;
+    history.innerHTML += '<div id="chat-pending" class="text-gray-500 italic">…</div>';
+    history.scrollTop = history.scrollHeight;
+    try {
+      const r = await fetch(API + '/admin/chat', {
+        method: 'POST',
+        headers: Object.assign({'Content-Type':'application/json'}, authHeader()),
+        body: JSON.stringify({message: msg})
+      });
+      document.getElementById('chat-pending').remove();
+      if (!r.ok) {
+        const t = await r.text();
+        history.innerHTML += '<div class="text-red-600"><b>Помилка:</b> HTTP ' + r.status + ' — ' + esc(t.slice(0,200)) + '</div>';
+      } else {
+        const d = await r.json();
+        const formatted = esc(d.reply).replace(/\n/g, '<br>');
+        history.innerHTML += '<div class="text-gray-900 border-l-2 border-blue-400 pl-3"><b>AI:</b><br>' + formatted + '</div>';
+      }
+    } catch (err) {
+      const p = document.getElementById('chat-pending'); if (p) p.remove();
+      history.innerHTML += '<div class="text-red-600">Network error: ' + esc(err.message) + '</div>';
+    } finally {
+      input.disabled = false; input.focus();
+      history.scrollTop = history.scrollHeight;
+    }
+  });
+  document.getElementById('chat-clear').addEventListener('click', () => {
+    document.getElementById('chat-history').innerHTML = '';
+  });
 
   if (getToken()) showAuthed();
 })();
