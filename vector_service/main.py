@@ -734,27 +734,37 @@ async def oidc_callback(code: str, state: str, response: Response):
     code_verifier = row["code_verifier"]
     return_to = row["return_to"] or "/cabinet.html"
 
-    async with httpx.AsyncClient(timeout=15) as cli:
-        tok_r = await cli.post(
-            disco["token_endpoint"],
-            data={
-                "grant_type":    "authorization_code",
-                "code":          code,
-                "redirect_uri":  settings.oidc_redirect_uri,
-                "client_id":     settings.oidc_client_id,
-                "client_secret": settings.oidc_client_secret,
-                "code_verifier": code_verifier,
-            },
-            headers={"Content-Type": "application/x-www-form-urlencoded"},
-        )
-        if tok_r.status_code != 200:
-            raise HTTPException(status_code=502, detail=f"token exchange failed: {tok_r.text[:200]}")
-        tokens = tok_r.json()
-        access_token = tokens.get("access_token")
-        ui_r = await cli.get(disco["userinfo_endpoint"], headers={"Authorization": f"Bearer {access_token}"})
-        if ui_r.status_code != 200:
-            raise HTTPException(status_code=502, detail="userinfo failed")
-        ui = ui_r.json()
+    import traceback as _tb, logging as _lg
+    _log = _lg.getLogger("uvicorn.error")
+    try:
+        async with httpx.AsyncClient(timeout=20) as cli:
+            tok_r = await cli.post(
+                disco["token_endpoint"],
+                data={
+                    "grant_type":    "authorization_code",
+                    "code":          code,
+                    "redirect_uri":  settings.oidc_redirect_uri,
+                    "client_id":     settings.oidc_client_id,
+                    "client_secret": settings.oidc_client_secret,
+                    "code_verifier": code_verifier,
+                },
+                headers={"Content-Type": "application/x-www-form-urlencoded"},
+            )
+            _log.warning("OIDC token POST status=%s body=%s", tok_r.status_code, tok_r.text[:500])
+            if tok_r.status_code != 200:
+                raise HTTPException(status_code=502, detail=f"token exchange failed [{tok_r.status_code}]: {tok_r.text[:500]}")
+            tokens = tok_r.json()
+            access_token = tokens.get("access_token")
+            ui_r = await cli.get(disco["userinfo_endpoint"], headers={"Authorization": f"Bearer {access_token}"})
+            _log.warning("OIDC userinfo status=%s body=%s", ui_r.status_code, ui_r.text[:500])
+            if ui_r.status_code != 200:
+                raise HTTPException(status_code=502, detail=f"userinfo failed [{ui_r.status_code}]: {ui_r.text[:500]}")
+            ui = ui_r.json()
+    except HTTPException:
+        raise
+    except Exception as e:
+        _log.exception("OIDC callback crashed")
+        raise HTTPException(status_code=502, detail=f"oidc callback exception {type(e).__name__}: {str(e)[:300]}")
 
     sub   = ui.get("sub")
     email = (ui.get("email") or "").lower()
@@ -958,3 +968,59 @@ async def subs_del(s_id: int, vg_session: Optional[str] = Cookie(default=None)):
     async with pool().acquire() as con:
         await con.execute("DELETE FROM cabinet_subscriptions WHERE id=$1 AND user_id=$2", s_id, user["id"])
     return {"ok": True}
+
+# ---------------------------------------------------------------------------
+# Subscription worker — runs from cron, finds new results for each
+# active subscription and updates last_seen_id.
+# ---------------------------------------------------------------------------
+
+
+@app.post("/cabinet/subscriptions/scan")
+async def subs_scan(authorization: Optional[str] = Header(default=None)):
+    """Cron-only endpoint (Bearer ADMIN_TOKEN). For every subscription,
+    runs a vector search and records new top hits compared to the last
+    seen id. Returns a summary list — the cron pipes it to whatever
+    notification channel is configured (email/Telegram/etc, future)."""
+    _require_admin(authorization)
+    summary: list[dict] = []
+    async with pool().acquire() as con:
+        subs = await con.fetch(
+            """SELECT s.id, s.user_id, s.query, s.last_seen_id, u.email, u.display_name
+                 FROM cabinet_subscriptions s JOIN cabinet_users u ON u.id = s.user_id"""
+        )
+    for s in subs:
+        qvec = await embed_query(s["query"])
+        async with pool().acquire() as con:
+            top = await con.fetchrow(
+                """SELECT id, url, title, 1 - (embedding <=> $1) AS score
+                     FROM pages
+                    WHERE embedding IS NOT NULL
+                    ORDER BY embedding <=> $1
+                    LIMIT 1""",
+                qvec,
+            )
+        if not top:
+            continue
+        new_top = top["id"]
+        is_new = (s["last_seen_id"] != new_top)
+        if is_new:
+            async with pool().acquire() as con:
+                await con.execute(
+                    "UPDATE cabinet_subscriptions SET last_seen_id=$1, last_check=now() WHERE id=$2",
+                    new_top, s["id"],
+                )
+            summary.append({
+                "subscription_id": s["id"],
+                "user_email": s["email"],
+                "query": s["query"],
+                "new_top_url": top["url"],
+                "new_top_title": top["title"],
+                "score": float(top["score"]),
+            })
+        else:
+            async with pool().acquire() as con:
+                await con.execute(
+                    "UPDATE cabinet_subscriptions SET last_check=now() WHERE id=$1",
+                    s["id"],
+                )
+    return {"checked": len(subs), "new_results": len(summary), "items": summary}

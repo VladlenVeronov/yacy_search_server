@@ -3,58 +3,159 @@
 <head>
   <meta charset="utf-8">
   <title>VIR GOO — Cabinet</title>
-  #%env/templates/yacy-public-meta.template%#
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
+  <meta name="referrer" content="no-referrer-when-downgrade" />
+  <meta name="description" content="YaCy — open, decentralized search" />
+
+  <link rel="stylesheet" type="text/css" href="env/css/tailwind.min.css" />
+  <link rel="stylesheet" type="text/css" href="env/css/yacy-public.css" />
 </head>
 <body class="min-h-screen bg-gray-50 text-gray-900">
 
-#%env/templates/yacy-public-header.template%#
+<!-- YACY public header: logo (left) + menu trigger + Login (right) -->
+<header class="w-full border-b border-gray-200 bg-white">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-14">
+    <a href="index.html" class="flex items-baseline gap-1 text-gray-900 hover:text-blue-600 transition">
+      <span class="text-lg font-light tracking-tight">VIR</span>
+      <span class="text-lg font-semibold tracking-tight text-blue-600">GOO</span>
+    </a>
+
+    <div class="flex items-center gap-2">
+      <a href="ConfigBasic.html" class="hidden sm:inline-flex items-center px-3 py-1.5 text-sm font-medium text-gray-700 hover:text-blue-600 transition">
+        Login
+      </a>
+      <button type="button" id="yacy-menu-toggle"
+              aria-label="Open services menu" aria-expanded="false" aria-controls="yacy-drawer"
+              class="inline-flex items-center justify-center w-10 h-10 rounded-md text-gray-700 hover:bg-gray-100 transition">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+          <path d="M3 6.75A.75.75 0 0 1 3.75 6h16.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 6.75ZM3 12a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 12Zm0 5.25a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 0 1.5H3.75a.75.75 0 0 1-.75-.75Z" />
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Right-side services drawer (bottomsheet on mobile, drawer on desktop) -->
+<div id="yacy-drawer-backdrop" class="yacy-drawer-backdrop fixed inset-0 bg-black/40 z-40"></div>
+<aside id="yacy-drawer"
+       class="yacy-drawer fixed top-0 right-0 h-full w-80 max-w-[90vw] bg-white shadow-xl z-50 overflow-y-auto"
+       aria-hidden="true">
+  <div class="flex items-center justify-between px-4 h-14 border-b border-gray-200">
+    <h2 class="text-base font-semibold text-gray-900">Services</h2>
+    <button type="button" id="yacy-drawer-close" aria-label="Close menu"
+            class="w-9 h-9 rounded-md text-gray-700 hover:bg-gray-100 transition inline-flex items-center justify-center">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
+        <path fill-rule="evenodd" d="M5.47 5.47a.75.75 0 0 1 1.06 0L12 10.94l5.47-5.47a.75.75 0 1 1 1.06 1.06L13.06 12l5.47 5.47a.75.75 0 1 1-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 0 1-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/>
+      </svg>
+    </button>
+  </div>
+
+  <div id="yacy-services-grid" class="p-4 grid grid-cols-3 gap-3"></div>
+
+  <p id="yacy-services-empty" class="px-4 pb-4 text-xs text-gray-500 hidden">
+    No services configured. Додати some in the
+    <a href="адміністрування-services.html" class="text-blue-600 hover:underline">адміністрування panel</a>.
+  </p>
+</aside>
+
+<script>
+  (function () {
+    var toggle = document.getElementById('yacy-menu-toggle');
+    var close = document.getElementById('yacy-drawer-close');
+    var drawer = document.getElementById('yacy-drawer');
+    var backdrop = document.getElementById('yacy-drawer-backdrop');
+
+    function setOpen(open) {
+      drawer.classList.toggle('open', open);
+      backdrop.classList.toggle('open', open);
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      drawer.setAttribute('aria-hidden', open ? 'false' : 'true');
+    }
+    toggle.addEventListener('click', function () { setOpen(!drawer.classList.contains('open')); loadServices(); });
+    close.addEventListener('click', function () { setOpen(false); });
+    backdrop.addEventListener('click', function () { setOpen(false); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setOpen(false); });
+
+    var loaded = false;
+    function loadServices() {
+      if (loaded) return;
+      loaded = true;
+      var grid = document.getElementById('yacy-services-grid');
+      var empty = document.getElementById('yacy-services-empty');
+      fetch('/api/vector/services').then(function (r) {
+        if (!r.ok) throw new Error('http ' + r.status);
+        return r.json();
+      }).then(function (items) {
+        if (!Array.isArray(items) || items.length === 0) {
+          empty.classList.remove('hidden');
+          return;
+        }
+        var esc = function (s) { return String(s).replace(/[<>&"]/g, function (c) { return ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'})[c]; }); };
+        grid.innerHTML = items.map(function (s) {
+          var icon = s.icon_url
+            ? '<img src="' + esc(s.icon_url) + '" alt="" class="w-8 h-8 object-contain" loading="lazy" />'
+            : '<span class="text-gray-400 text-lg">' + esc((s.name || '?').slice(0, 1).toUpperCase()) + '</span>';
+          return '<a href="' + esc(s.url) + '" target="_blank" rel="noopener" class="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-gray-100 transition text-center">' +
+                 '<span class="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center">' + icon + '</span>' +
+                 '<span class="text-xs text-gray-700 line-clamp-1">' + esc(s.name) + '</span>' +
+                 '</a>';
+        }).join('');
+      }).catch(function () {
+        loaded = false; // всіow retry
+        empty.classList.remove('hidden');
+      });
+    }
+  })();
+</script>
 
 <main class="max-w-3xl mx-auto px-4 py-10">
-  <h1 class="text-2xl font-semibold mb-2">Your cabinet</h1>
-  <p class="text-sm text-gray-600 mb-6">Saved searches, bookmarks and subscriptions for your VIR GOO account.</p>
+  <h1 class="text-2xl font-semibold mb-2">Ваш кабінет</h1>
+  <p class="text-sm text-gray-600 mb-6">Збережені пошуки, закладки та підписки для вашого облікового запису VIR GOO.</p>
 
   <section id="anon" class="bg-white border border-gray-200 rounded-lg p-6 hidden">
-    <p class="text-sm mb-4">Sign in with your VIR identity to save searches and bookmarks.</p>
-    <a href="/api/vector/oidc/login" class="inline-flex px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded">Sign in</a>
+    <p class="text-sm mb-4">Увійдіть зі своїм обліковим записом VIR щоб зберігати пошуки та закладки.</p>
+    <a href="/api/vector/oidc/login" class="inline-flex px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded">Увійти</a>
   </section>
 
   <section id="authed" class="hidden space-y-6">
     <div class="bg-white border border-gray-200 rounded-lg p-5 flex items-center justify-between">
       <div>
-        <div class="text-sm text-gray-500">Signed in as</div>
+        <div class="text-sm text-gray-500">Авторизовано як</div>
         <div class="text-base font-medium" id="me-name"></div>
         <div class="text-xs text-gray-500" id="me-email"></div>
       </div>
-      <button id="logout" class="text-sm text-red-600 hover:underline">Sign out</button>
+      <button id="logout" class="text-sm text-red-600 hover:underline">Вийти</button>
     </div>
 
     <div class="bg-white border border-gray-200 rounded-lg p-5">
-      <h2 class="text-lg font-semibold mb-3">Saved queries</h2>
+      <h2 class="text-lg font-semibold mb-3">Збережені пошуки</h2>
       <form id="add-query" class="flex gap-2 mb-3">
-        <input id="q-query" placeholder="search term…" class="flex-1 px-3 py-2 border border-gray-300 rounded text-sm" maxlength="500">
-        <input id="q-label" placeholder="label (optional)" class="w-40 px-3 py-2 border border-gray-300 rounded text-sm" maxlength="100">
-        <button class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded">Add</button>
+        <input id="q-query" placeholder="пошуковий термін…" class="flex-1 px-3 py-2 border border-gray-300 rounded text-sm" maxlength="500">
+        <input id="q-label" placeholder="ярлик (опційно)" class="w-40 px-3 py-2 border border-gray-300 rounded text-sm" maxlength="100">
+        <button class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded">Додати</button>
       </form>
       <div id="queries-list" class="divide-y divide-gray-200"></div>
     </div>
 
     <div class="bg-white border border-gray-200 rounded-lg p-5">
-      <h2 class="text-lg font-semibold mb-3">Bookmarks</h2>
+      <h2 class="text-lg font-semibold mb-3">Закладки</h2>
       <form id="add-bm" class="flex gap-2 mb-3">
         <input id="b-url" type="url" placeholder="https://…" class="flex-1 px-3 py-2 border border-gray-300 rounded text-sm" maxlength="2000">
-        <input id="b-title" placeholder="title (optional)" class="w-40 px-3 py-2 border border-gray-300 rounded text-sm" maxlength="500">
-        <button class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded">Add</button>
+        <input id="b-title" placeholder="заголовок (опційно)" class="w-40 px-3 py-2 border border-gray-300 rounded text-sm" maxlength="500">
+        <button class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded">Додати</button>
       </form>
       <div id="bm-list" class="divide-y divide-gray-200"></div>
     </div>
 
     <div class="bg-white border border-gray-200 rounded-lg p-5">
-      <h2 class="text-lg font-semibold mb-3">Subscriptions
-        <span class="ml-2 text-xs font-normal text-gray-500">(notify on new results — TODO worker)</span>
+      <h2 class="text-lg font-semibold mb-3">Підписки
+        <span class="ml-2 text-xs font-normal text-gray-500">(сповіщення про нові результати — у розробці)</span>
       </h2>
       <form id="add-sub" class="flex gap-2 mb-3">
-        <input id="s-query" placeholder="query to subscribe…" class="flex-1 px-3 py-2 border border-gray-300 rounded text-sm" maxlength="500">
-        <button class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded">Subscribe</button>
+        <input id="s-query" placeholder="запит для підписки…" class="flex-1 px-3 py-2 border border-gray-300 rounded text-sm" maxlength="500">
+        <button class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded">Підписатися</button>
       </form>
       <div id="sub-list" class="divide-y divide-gray-200"></div>
     </div>
@@ -75,7 +176,7 @@
     const list = document.getElementById("queries-list");
     const items = await (await fetch(API + "/cabinet/queries", { credentials: "include" })).json();
     list.innerHTML = items.length === 0
-      ? "<p class=\"text-sm text-gray-500 py-3\">Nothing saved yet.</p>"
+      ? "<p class=\"text-sm text-gray-500 py-3\">Поки нічого не збережено.</p>"
       : items.map(q => `
           <div class="py-2 flex items-center gap-3">
             <a href="/yacysearch.html?query=${encodeURIComponent(q.query)}" class="flex-1 text-sm hover:underline truncate">
@@ -90,11 +191,11 @@
     }));
   }
 
-  async function loadBookmarks() {
+  async function loadЗакладки() {
     const list = document.getElementById("bm-list");
     const items = await (await fetch(API + "/cabinet/bookmarks", { credentials: "include" })).json();
     list.innerHTML = items.length === 0
-      ? "<p class=\"text-sm text-gray-500 py-3\">No bookmarks yet.</p>"
+      ? "<p class=\"text-sm text-gray-500 py-3\">Закладок ще немає.</p>"
       : items.map(b => `
           <div class="py-2 flex items-center gap-3">
             <a href="${esc(b.url)}" target="_blank" rel="noopener" class="flex-1 text-sm text-blue-600 hover:underline truncate">${esc(b.title || b.url)}</a>
@@ -103,7 +204,7 @@
           </div>`).join("");
     list.querySelectorAll(".b-del").forEach(b => b.addEventListener("click", async () => {
       await fetch(API + "/cabinet/bookmarks/" + b.dataset.id, { method: "DELETE", credentials: "include" });
-      loadBookmarks();
+      loadЗакладки();
     }));
   }
 
@@ -111,7 +212,7 @@
     const list = document.getElementById("sub-list");
     const items = await (await fetch(API + "/cabinet/subscriptions", { credentials: "include" })).json();
     list.innerHTML = items.length === 0
-      ? "<p class=\"text-sm text-gray-500 py-3\">No subscriptions yet.</p>"
+      ? "<p class=\"text-sm text-gray-500 py-3\">Підписок ще немає.</p>"
       : items.map(s => `
           <div class="py-2 flex items-center gap-3">
             <span class="flex-1 text-sm truncate">${esc(s.query)}</span>
@@ -145,7 +246,7 @@
       headers: {"Content-Type": "application/json"}, body: JSON.stringify({url, title}) });
     document.getElementById("b-url").value = "";
     document.getElementById("b-title").value = "";
-    loadBookmarks();
+    loadЗакладки();
   });
 
   document.getElementById("add-sub").addEventListener("submit", async (e) => {
@@ -169,7 +270,7 @@
       document.getElementById("authed").classList.remove("hidden");
       document.getElementById("me-name").textContent = me.display_name || me.email;
       document.getElementById("me-email").textContent = me.email;
-      loadQueries(); loadBookmarks(); loadSubs();
+      loadQueries(); loadЗакладки(); loadSubs();
     } else {
       document.getElementById("anon").classList.remove("hidden");
     }
