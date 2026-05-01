@@ -43,6 +43,23 @@
     <h2 class="text-lg font-semibold mb-3">Current services</h2>
     <div id="svc-list" class="divide-y divide-gray-200"></div>
   </section>
+
+  <section id="unsat-block" class="bg-white border border-gray-200 rounded-lg p-5 mt-6 hidden">
+    <div class="flex items-center justify-between mb-3">
+      <h2 class="text-lg font-semibold">Unsatisfied queries
+        <span class="ml-2 text-xs font-normal text-gray-500">(zero clicks in last <span id="unsat-hours">168</span>h)</span>
+      </h2>
+      <div class="flex items-center gap-2">
+        <select id="unsat-window" class="text-sm border border-gray-300 rounded px-2 py-1">
+          <option value="24">24h</option>
+          <option value="168" selected>7d</option>
+          <option value="720">30d</option>
+        </select>
+        <button id="unsat-reload" class="text-xs text-blue-600 hover:underline">Reload</button>
+      </div>
+    </div>
+    <div id="unsat-list" class="divide-y divide-gray-200"></div>
+  </section>
 </main>
 
 <script>
@@ -135,11 +152,40 @@
     loadList();
   }
 
+  async function loadUnsat() {
+    const hours = document.getElementById('unsat-window').value;
+    document.getElementById('unsat-hours').textContent = hours;
+    const list = document.getElementById('unsat-list');
+    list.innerHTML = '<p class="text-sm text-gray-500 py-3">Loading…</p>';
+    try {
+      const r = await fetch(API + '/unsatisfied?hours=' + hours + '&limit=50');
+      if (!r.ok) throw new Error('http ' + r.status);
+      const items = await r.json();
+      if (!items.length) {
+        list.innerHTML = '<p class="text-sm text-gray-500 py-3">No unsatisfied queries — every search in this window had at least one click.</p>';
+        return;
+      }
+      list.innerHTML = items.map(q => `
+        <div class="py-3 flex items-center gap-3">
+          <div class="flex-1 min-w-0">
+            <div class="text-sm font-medium truncate">${esc(q.query)}</div>
+            <div class="text-xs text-gray-500">${q.searches} searches · ${q.total_results || 0} total results · 0 clicks</div>
+          </div>
+          <a href="/yacysearch.html?query=${encodeURIComponent(q.query)}" target="_blank" class="text-xs text-blue-600 hover:underline">Reproduce</a>
+          <a href="/CrawlStartExpert.html?crawlingURL=https%3A%2F%2Fduckduckgo.com%2F%3Fq%3D${encodeURIComponent(q.query)}" target="_blank" class="text-xs text-purple-600 hover:underline" title="Open YaCy crawler with a DuckDuckGo search-results URL pre-filled">Seed crawl</a>
+        </div>`).join('');
+    } catch (e) {
+      list.innerHTML = '<p class="text-sm text-red-600 py-3">Failed: ' + esc(e.message) + '</p>';
+    }
+  }
+
   function showAuthed() {
     formBlock.classList.remove('hidden');
     listBlock.classList.remove('hidden');
+    document.getElementById('unsat-block').classList.remove('hidden');
     document.getElementById('auth-block').classList.add('hidden');
     loadList();
+    loadUnsat();
   }
 
   tokenSave.addEventListener('click', () => {
@@ -150,6 +196,8 @@
   });
   document.getElementById('f-save').addEventListener('click', saveItem);
   document.getElementById('f-clear').addEventListener('click', clearForm);
+  document.getElementById('unsat-reload').addEventListener('click', loadUnsat);
+  document.getElementById('unsat-window').addEventListener('change', loadUnsat);
 
   if (getToken()) showAuthed();
 })();
