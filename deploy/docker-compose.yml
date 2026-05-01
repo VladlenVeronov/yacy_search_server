@@ -1,0 +1,100 @@
+name: yacy
+networks:
+  yacy-net:
+  traefik-public:
+    external: true
+
+volumes:
+  yacy-pgdata:
+  yacy-models:
+
+services:
+  yacy:
+    build:
+      context: ./yacy-fork
+      dockerfile: docker/Dockerfile
+    image: yacy-fork:local
+    container_name: yacy
+    restart: unless-stopped
+    environment:
+      JAVA_OPTS: "-Xmx4096m -Djava.awt.headless=true"
+      VECTOR_RANK_ENABLED: "true"
+      VECTOR_RANK_URL: "http://yacy-vector-service:8001"
+      VECTOR_RANK_TIMEOUT_MS: "1500"
+    volumes:
+      - ./yacy-data:/opt/yacy_search_server/DATA
+    networks: [yacy-net, traefik-public]
+    depends_on:
+      - yacy-vector-service
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=traefik-public
+      - traefik.http.routers.yacy.entrypoints=https
+      - traefik.http.routers.yacy.rule=Host(`${YACY_HOST}`)
+      - traefik.http.routers.yacy.tls=true
+      - traefik.http.routers.yacy.tls.certresolver=letsencrypt
+      - traefik.http.routers.yacy.middlewares=yacy-gzip
+      - traefik.http.middlewares.yacy-gzip.compress=true
+      - traefik.http.routers.yacy-http.entrypoints=http
+      - traefik.http.routers.yacy-http.rule=Host(`${YACY_HOST}`)
+      - traefik.http.routers.yacy-http.middlewares=yacy-redirect
+      - traefik.http.middlewares.yacy-redirect.redirectscheme.scheme=https
+      - traefik.http.middlewares.yacy-redirect.redirectscheme.permanent=true
+      - traefik.http.services.yacy.loadbalancer.server.port=8090
+
+  yacy-pgvector:
+    image: pgvector/pgvector:pg16
+    container_name: yacy-pgvector
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - yacy-pgdata:/var/lib/postgresql/data
+      - ./yacy-fork/vector_service/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    networks: [yacy-net]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  yacy-vector-service:
+    build:
+      context: ./yacy-fork/vector_service
+      dockerfile: Dockerfile
+    image: yacy-vector-service:local
+    container_name: yacy-vector-service
+    restart: unless-stopped
+    environment:
+      PG_DSN: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@yacy-pgvector:5432/${POSTGRES_DB}"
+      EMBEDDING_MODEL: "intfloat/multilingual-e5-base"
+      EMBEDDING_DIM: "768"
+      MAX_SUMMARY_CHARS: "6000"
+      SERVER_HOST: "0.0.0.0"
+      SERVER_PORT: "8001"
+      ADMIN_TOKEN: ${ADMIN_TOKEN}
+    volumes:
+      - yacy-models:/models
+    networks: [yacy-net, traefik-public]
+    depends_on:
+      yacy-pgvector:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8001/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=traefik-public
+      - traefik.http.routers.yacy-vector.entrypoints=https
+      - traefik.http.routers.yacy-vector.rule=Host(`${YACY_HOST}`) && PathPrefix(`/api/vector`)
+      - traefik.http.routers.yacy-vector.tls=true
+      - traefik.http.routers.yacy-vector.tls.certresolver=letsencrypt
+      - traefik.http.routers.yacy-vector.priority=200
+      - traefik.http.routers.yacy-vector.middlewares=yacy-vector-strip
+      - traefik.http.middlewares.yacy-vector-strip.stripprefix.prefixes=/api/vector
+      - traefik.http.services.yacy-vector.loadbalancer.server.port=8001

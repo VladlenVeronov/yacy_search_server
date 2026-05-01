@@ -41,5 +41,32 @@ docs/yacy-project/scripts/__pycache__/
 docs/yacy-project/.yacy_env
 docs/yacy-project/.sync_pages.state
 *.png
+!addon/*.png
+!htroot/env/grafics/*.png
 Знімок*
 *.MOV
+*.aab
+
+# === SECRETS — NEVER commit. Always create from *.env.example. ===
+# Production deployment env (contains POSTGRES_PASSWORD, ADMIN_TOKEN, etc).
+deploy/.env
+deploy/.env.local
+deploy/secrets/
+
+# Local override env files anywhere in the repo (the root .env is a
+# whitelisted build-vars file — see explicit re-include below).
+.env.local
+.env.production
+.env.*.local
+
+# vector_service .env (real values for local Postgres). Example committed.
+vector_service/.env
+
+# Re-include known safe env files
+!.env
+!vector_service/.env.example
+!deploy/.env.example
+
+# Deployment logs / state
+deploy/*.log
+deploy/.last-sha
