@@ -352,6 +352,7 @@ class SubmissionItem(BaseModel):
     contact_email: Optional[str] = None
     description: Optional[str] = None
     status: str
+    priority: str = "normal"
     reject_reason: Optional[str] = None
     submitted_at: datetime
     processed_at: Optional[datetime] = None
@@ -401,11 +402,11 @@ async def submissions_list(status: Optional[str] = None, limit: int = 200,
     async with pool().acquire() as con:
         rows = await con.fetch(
             f"""
-            SELECT id, url, host, contact_email, description, status,
+            SELECT id, url, host, contact_email, description, status, priority,
                    reject_reason, submitted_at, processed_at
               FROM webmaster_submissions
               {where}
-             ORDER BY submitted_at DESC
+             ORDER BY CASE priority WHEN 'high' THEN 0 WHEN 'normal' THEN 1 ELSE 2 END, submitted_at DESC
              LIMIT ${n}
             """, *args,
         )
@@ -430,6 +431,22 @@ async def submissions_decide(sub_id: int,
              WHERE id = $1
             RETURNING id, status
             """, sub_id, decision, reason,
+        )
+    if row is None:
+        raise HTTPException(status_code=404, detail="not found")
+    return {"ok": True, **dict(row)}
+
+
+@app.post("/admin/submissions/{sub_id}/priority")
+async def submissions_priority(sub_id: int, priority: str,
+                                authorization: Optional[str] = Header(default=None)):
+    _require_admin(authorization)
+    if priority not in ("high", "normal", "low"):
+        raise HTTPException(status_code=400, detail="priority must be high|normal|low")
+    async with pool().acquire() as con:
+        row = await con.fetchrow(
+            "UPDATE webmaster_submissions SET priority=$2 WHERE id=$1 RETURNING id, priority",
+            sub_id, priority,
         )
     if row is None:
         raise HTTPException(status_code=404, detail="not found")
@@ -526,6 +543,96 @@ async def services_delete(svc_id: int, authorization: Optional[str] = Header(def
     return {"deleted": int(result.split()[-1]) if result else 0}
 
 
+# ---------------------------------------------------------------------------
+# AI gap analyzer: unsatisfied queries -> LLM -> seed URLs
+# ---------------------------------------------------------------------------
+
+
+_LLM_PROMPT = (
+    "You are helping curate seed URLs for a privacy-respecting, decentralized "
+    "search index. Given a user search query that returned zero clicks, "
+    "propose 3 to 5 high-quality, openly accessible URLs that would directly "
+    "satisfy that query. Hard constraints:\n"
+    "- HTTPS only.\n"
+    "- No Wikipedia, no Wikimedia, no major social networks (Reddit, X/Twitter, "
+    "Facebook, Instagram, TikTok, YouTube, Pinterest, LinkedIn, Quora).\n"
+    "- No mainstream e-commerce (Amazon, Aliexpress, eBay, Temu).\n"
+    "- No state-affiliated outlets (RT, TASS, RIA, Sputnik, etc).\n"
+    "- No porn, casino, or surveillance-heavy news.\n"
+    "- Prefer primary sources, official docs, established open-source projects, "
+    "EFF/FSF/IETF/RFC-style references, well-curated personal blogs.\n"
+    "Return JSON: {\"urls\": [\"https://...\", ...]} and nothing else."
+)
+
+
+async def _llm_propose_urls(query: str) -> list[str]:
+    import json as _json
+    import httpx
+    if not settings.llm_api_url or not settings.llm_api_key:
+        return []
+    payload = {
+        "model": settings.llm_model,
+        "messages": [
+            {"role": "system", "content": _LLM_PROMPT},
+            {"role": "user", "content": query},
+        ],
+        "temperature": 0.2,
+        "max_tokens": 400,
+        "response_format": {"type": "json_object"},
+    }
+    try:
+        async with httpx.AsyncClient(timeout=settings.llm_timeout_s) as cli:
+            r = await cli.post(
+                settings.llm_api_url.rstrip("/") + "/chat/completions",
+                headers={"Authorization": f"Bearer {settings.llm_api_key}"},
+                json=payload,
+            )
+            r.raise_for_status()
+            data = r.json()
+            content = data["choices"][0]["message"]["content"]
+            obj = _json.loads(content)
+            urls = obj.get("urls", [])
+            return [u for u in urls if isinstance(u, str) and u.startswith("https://")]
+    except Exception:
+        return []
+
+
+@app.get("/unsatisfied/seed")
+async def unsatisfied_seed(limit_queries: int = 10, hours: int = 168,
+                            authorization: Optional[str] = Header(default=None)):
+    _require_admin(authorization)
+    if not settings.llm_api_url:
+        raise HTTPException(status_code=503, detail="LLM not configured")
+    async with pool().acquire() as con:
+        rows = await con.fetch(
+            """
+            SELECT lower(query) AS query, COUNT(*) AS searches
+              FROM query_logs
+             WHERE ts > now() - ($1 || ' hours')::interval
+             GROUP BY lower(query)
+            HAVING SUM(clicked_count) = 0
+             ORDER BY searches DESC
+             LIMIT $2
+            """,
+            str(hours), limit_queries,
+        )
+    plan: list[dict] = []
+    for r in rows:
+        urls = await _llm_propose_urls(r["query"])
+        accepted: list[str] = []
+        for u in urls:
+            _, reason = _classify_url(u)
+            if reason is None:
+                accepted.append(u)
+        plan.append({
+            "query": r["query"],
+            "searches": r["searches"],
+            "proposed": urls,
+            "accepted": accepted,
+        })
+    return plan
+
+
 @app.get("/unsatisfied")
 async def unsatisfied(hours: int = 168, limit: int = 100):
     """Top recent queries with zero clicks. Crawler picks from this list to
@@ -546,3 +653,308 @@ async def unsatisfied(hours: int = 168, limit: int = 100):
             str(hours), limit,
         )
     return [dict(r) for r in rows]
+
+
+# ---------------------------------------------------------------------------
+# OIDC + User Cabinet (Phase 3)
+# ---------------------------------------------------------------------------
+import secrets as _secrets
+import hashlib as _hashlib
+import base64 as _base64
+import time as _time
+from datetime import timedelta as _td
+from fastapi import Request, Response, Cookie
+from fastapi.responses import RedirectResponse
+
+
+_OIDC_DISCOVERY_CACHE: dict = {}
+
+
+async def _oidc_discovery() -> dict:
+    """Fetch and cache OpenID Connect discovery metadata."""
+    import httpx
+    if not settings.oidc_issuer:
+        raise HTTPException(status_code=503, detail="OIDC not configured")
+    if "data" not in _OIDC_DISCOVERY_CACHE or _OIDC_DISCOVERY_CACHE.get("ts", 0) < _time.time() - 3600:
+        url = settings.oidc_issuer.rstrip("/") + "/.well-known/openid-configuration"
+        async with httpx.AsyncClient(timeout=10) as cli:
+            r = await cli.get(url)
+            r.raise_for_status()
+            _OIDC_DISCOVERY_CACHE["data"] = r.json()
+            _OIDC_DISCOVERY_CACHE["ts"] = _time.time()
+    return _OIDC_DISCOVERY_CACHE["data"]
+
+
+def _b64url(data: bytes) -> str:
+    return _base64.urlsafe_b64encode(data).rstrip(b"=").decode()
+
+
+@app.get("/oidc/login")
+async def oidc_login(return_to: str = "/cabinet.html"):
+    if not settings.oidc_issuer:
+        raise HTTPException(status_code=503, detail="OIDC not configured")
+    disco = await _oidc_discovery()
+    state = _secrets.token_urlsafe(24)
+    nonce = _secrets.token_urlsafe(24)
+    # PKCE S256 — Authentik supports it; harmless for confidential clients.
+    code_verifier = _secrets.token_urlsafe(48)
+    code_challenge = _b64url(_hashlib.sha256(code_verifier.encode()).digest())
+    async with pool().acquire() as con:
+        await con.execute(
+            "INSERT INTO cabinet_oidc_state (state, nonce, code_verifier, return_to) VALUES ($1,$2,$3,$4)",
+            state, nonce, code_verifier, return_to,
+        )
+    from urllib.parse import urlencode
+    qs = urlencode({
+        "response_type": "code",
+        "client_id":    settings.oidc_client_id,
+        "redirect_uri": settings.oidc_redirect_uri,
+        "scope":        "openid email profile",
+        "state":        state,
+        "nonce":        nonce,
+        "code_challenge":        code_challenge,
+        "code_challenge_method": "S256",
+    })
+    return RedirectResponse(url=disco["authorization_endpoint"] + "?" + qs, status_code=302)
+
+
+@app.get("/oidc/callback")
+async def oidc_callback(code: str, state: str, response: Response):
+    if not settings.oidc_issuer:
+        raise HTTPException(status_code=503, detail="OIDC not configured")
+    import httpx
+    disco = await _oidc_discovery()
+    async with pool().acquire() as con:
+        row = await con.fetchrow(
+            "DELETE FROM cabinet_oidc_state WHERE state=$1 RETURNING nonce, code_verifier, return_to",
+            state,
+        )
+    if row is None:
+        raise HTTPException(status_code=400, detail="invalid or expired state")
+    code_verifier = row["code_verifier"]
+    return_to = row["return_to"] or "/cabinet.html"
+
+    async with httpx.AsyncClient(timeout=15) as cli:
+        tok_r = await cli.post(
+            disco["token_endpoint"],
+            data={
+                "grant_type":    "authorization_code",
+                "code":          code,
+                "redirect_uri":  settings.oidc_redirect_uri,
+                "client_id":     settings.oidc_client_id,
+                "client_secret": settings.oidc_client_secret,
+                "code_verifier": code_verifier,
+            },
+            headers={"Content-Type": "application/x-www-form-urlencoded"},
+        )
+        if tok_r.status_code != 200:
+            raise HTTPException(status_code=502, detail=f"token exchange failed: {tok_r.text[:200]}")
+        tokens = tok_r.json()
+        access_token = tokens.get("access_token")
+        ui_r = await cli.get(disco["userinfo_endpoint"], headers={"Authorization": f"Bearer {access_token}"})
+        if ui_r.status_code != 200:
+            raise HTTPException(status_code=502, detail="userinfo failed")
+        ui = ui_r.json()
+
+    sub   = ui.get("sub")
+    email = (ui.get("email") or "").lower()
+    name  = ui.get("name") or ui.get("preferred_username") or email
+    if not sub or not email:
+        raise HTTPException(status_code=502, detail="userinfo missing sub/email")
+
+    sid = _secrets.token_urlsafe(32)
+    expires = datetime.now(timezone.utc) + _td(days=settings.cabinet_session_days)
+    async with pool().acquire() as con:
+        urow = await con.fetchrow(
+            """
+            INSERT INTO cabinet_users (sub, email, display_name, last_login_at)
+            VALUES ($1,$2,$3, now())
+            ON CONFLICT (sub) DO UPDATE SET
+                email = EXCLUDED.email,
+                display_name = EXCLUDED.display_name,
+                last_login_at = now()
+            RETURNING id
+            """,
+            sub, email, name,
+        )
+        await con.execute(
+            "INSERT INTO cabinet_sessions (id, user_id, expires_at) VALUES ($1,$2,$3)",
+            sid, urow["id"], expires,
+        )
+
+    resp = RedirectResponse(url=return_to, status_code=302)
+    resp.set_cookie(
+        key=settings.cabinet_cookie_name, value=sid,
+        max_age=settings.cabinet_session_days * 86400,
+        httponly=True, secure=True, samesite="lax",
+    )
+    return resp
+
+
+async def _current_user(session_cookie: Optional[str]) -> Optional[dict]:
+    if not session_cookie:
+        return None
+    async with pool().acquire() as con:
+        row = await con.fetchrow(
+            """
+            SELECT u.id, u.email, u.display_name
+              FROM cabinet_sessions s JOIN cabinet_users u ON u.id = s.user_id
+             WHERE s.id = $1 AND s.expires_at > now()
+            """,
+            session_cookie,
+        )
+    return dict(row) if row else None
+
+
+def _require_user(user: Optional[dict]) -> dict:
+    if not user:
+        raise HTTPException(status_code=401, detail="not authenticated")
+    return user
+
+
+@app.get("/cabinet/me")
+async def cabinet_me(vg_session: Optional[str] = Cookie(default=None)):
+    user = await _current_user(vg_session)
+    if not user:
+        return {"authenticated": False}
+    return {"authenticated": True, **user}
+
+
+@app.post("/cabinet/logout")
+async def cabinet_logout(response: Response, vg_session: Optional[str] = Cookie(default=None)):
+    if vg_session:
+        async with pool().acquire() as con:
+            await con.execute("DELETE FROM cabinet_sessions WHERE id=$1", vg_session)
+    response.delete_cookie(settings.cabinet_cookie_name)
+    return {"ok": True}
+
+
+# Bookmarks --------------------------------------------------------------
+
+class BookmarkIn(BaseModel):
+    url: str = Field(..., min_length=1, max_length=2000)
+    title: Optional[str] = Field(default=None, max_length=500)
+    note: Optional[str] = Field(default=None, max_length=2000)
+
+
+@app.get("/cabinet/bookmarks")
+async def bookmarks_list(vg_session: Optional[str] = Cookie(default=None)):
+    user = _require_user(await _current_user(vg_session))
+    async with pool().acquire() as con:
+        rows = await con.fetch(
+            "SELECT id, url, title, note, created_at FROM cabinet_bookmarks WHERE user_id=$1 ORDER BY created_at DESC",
+            user["id"],
+        )
+    return [dict(r) for r in rows]
+
+
+@app.post("/cabinet/bookmarks")
+async def bookmarks_add(req: BookmarkIn, vg_session: Optional[str] = Cookie(default=None)):
+    user = _require_user(await _current_user(vg_session))
+    async with pool().acquire() as con:
+        row = await con.fetchrow(
+            """
+            INSERT INTO cabinet_bookmarks (user_id, url, title, note)
+            VALUES ($1,$2,$3,$4)
+            ON CONFLICT (user_id, url) DO UPDATE SET title=EXCLUDED.title, note=EXCLUDED.note
+            RETURNING id, url, title, note, created_at
+            """,
+            user["id"], req.url, req.title, req.note,
+        )
+    return dict(row)
+
+
+@app.delete("/cabinet/bookmarks/{bm_id}")
+async def bookmarks_del(bm_id: int, vg_session: Optional[str] = Cookie(default=None)):
+    user = _require_user(await _current_user(vg_session))
+    async with pool().acquire() as con:
+        await con.execute("DELETE FROM cabinet_bookmarks WHERE id=$1 AND user_id=$2", bm_id, user["id"])
+    return {"ok": True}
+
+
+# Saved queries ----------------------------------------------------------
+
+class SavedQueryIn(BaseModel):
+    query: str = Field(..., min_length=1, max_length=500)
+    label: Optional[str] = Field(default=None, max_length=100)
+
+
+@app.get("/cabinet/queries")
+async def queries_list(vg_session: Optional[str] = Cookie(default=None)):
+    user = _require_user(await _current_user(vg_session))
+    async with pool().acquire() as con:
+        rows = await con.fetch(
+            "SELECT id, query, label, created_at FROM cabinet_saved_queries WHERE user_id=$1 ORDER BY created_at DESC",
+            user["id"],
+        )
+    return [dict(r) for r in rows]
+
+
+@app.post("/cabinet/queries")
+async def queries_add(req: SavedQueryIn, vg_session: Optional[str] = Cookie(default=None)):
+    user = _require_user(await _current_user(vg_session))
+    async with pool().acquire() as con:
+        row = await con.fetchrow(
+            """
+            INSERT INTO cabinet_saved_queries (user_id, query, label)
+            VALUES ($1,$2,$3)
+            ON CONFLICT (user_id, query) DO UPDATE SET label=EXCLUDED.label
+            RETURNING id, query, label, created_at
+            """,
+            user["id"], req.query, req.label,
+        )
+    return dict(row)
+
+
+@app.delete("/cabinet/queries/{q_id}")
+async def queries_del(q_id: int, vg_session: Optional[str] = Cookie(default=None)):
+    user = _require_user(await _current_user(vg_session))
+    async with pool().acquire() as con:
+        await con.execute("DELETE FROM cabinet_saved_queries WHERE id=$1 AND user_id=$2", q_id, user["id"])
+    return {"ok": True}
+
+
+# Subscriptions (subscribe to query — get notified about new results) ----
+
+class SubscriptionIn(BaseModel):
+    query: str = Field(..., min_length=1, max_length=500)
+
+
+@app.get("/cabinet/subscriptions")
+async def subs_list(vg_session: Optional[str] = Cookie(default=None)):
+    user = _require_user(await _current_user(vg_session))
+    async with pool().acquire() as con:
+        rows = await con.fetch(
+            "SELECT id, query, last_seen_id, last_check, created_at FROM cabinet_subscriptions WHERE user_id=$1 ORDER BY created_at DESC",
+            user["id"],
+        )
+    return [dict(r) for r in rows]
+
+
+@app.post("/cabinet/subscriptions")
+async def subs_add(req: SubscriptionIn, vg_session: Optional[str] = Cookie(default=None)):
+    user = _require_user(await _current_user(vg_session))
+    async with pool().acquire() as con:
+        row = await con.fetchrow(
+            """
+            INSERT INTO cabinet_subscriptions (user_id, query)
+            VALUES ($1,$2)
+            ON CONFLICT (user_id, query) DO NOTHING
+            RETURNING id, query, last_seen_id, last_check, created_at
+            """,
+            user["id"], req.query,
+        )
+        if row is None:
+            row = await con.fetchrow(
+                "SELECT id, query, last_seen_id, last_check, created_at FROM cabinet_subscriptions WHERE user_id=$1 AND query=$2",
+                user["id"], req.query,
+            )
+    return dict(row)
+
+
+@app.delete("/cabinet/subscriptions/{s_id}")
+async def subs_del(s_id: int, vg_session: Optional[str] = Cookie(default=None)):
+    user = _require_user(await _current_user(vg_session))
+    async with pool().acquire() as con:
+        await con.execute("DELETE FROM cabinet_subscriptions WHERE id=$1 AND user_id=$2", s_id, user["id"])
+    return {"ok": True}

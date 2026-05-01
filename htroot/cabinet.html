@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>VIR GOO — Cabinet</title>
+  #%env/templates/yacy-public-meta.template%#
+</head>
+<body class="min-h-screen bg-gray-50 text-gray-900">
+
+#%env/templates/yacy-public-header.template%#
+
+<main class="max-w-3xl mx-auto px-4 py-10">
+  <h1 class="text-2xl font-semibold mb-2">Your cabinet</h1>
+  <p class="text-sm text-gray-600 mb-6">Saved searches, bookmarks and subscriptions for your VIR GOO account.</p>
+
+  <section id="anon" class="bg-white border border-gray-200 rounded-lg p-6 hidden">
+    <p class="text-sm mb-4">Sign in with your VIR identity to save searches and bookmarks.</p>
+    <a href="/api/vector/oidc/login" class="inline-flex px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded">Sign in</a>
+  </section>
+
+  <section id="authed" class="hidden space-y-6">
+    <div class="bg-white border border-gray-200 rounded-lg p-5 flex items-center justify-between">
+      <div>
+        <div class="text-sm text-gray-500">Signed in as</div>
+        <div class="text-base font-medium" id="me-name"></div>
+        <div class="text-xs text-gray-500" id="me-email"></div>
+      </div>
+      <button id="logout" class="text-sm text-red-600 hover:underline">Sign out</button>
+    </div>
+
+    <div class="bg-white border border-gray-200 rounded-lg p-5">
+      <h2 class="text-lg font-semibold mb-3">Saved queries</h2>
+      <form id="add-query" class="flex gap-2 mb-3">
+        <input id="q-query" placeholder="search term…" class="flex-1 px-3 py-2 border border-gray-300 rounded text-sm" maxlength="500">
+        <input id="q-label" placeholder="label (optional)" class="w-40 px-3 py-2 border border-gray-300 rounded text-sm" maxlength="100">
+        <button class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded">Add</button>
+      </form>
+      <div id="queries-list" class="divide-y divide-gray-200"></div>
+    </div>
+
+    <div class="bg-white border border-gray-200 rounded-lg p-5">
+      <h2 class="text-lg font-semibold mb-3">Bookmarks</h2>
+      <form id="add-bm" class="flex gap-2 mb-3">
+        <input id="b-url" type="url" placeholder="https://…" class="flex-1 px-3 py-2 border border-gray-300 rounded text-sm" maxlength="2000">
+        <input id="b-title" placeholder="title (optional)" class="w-40 px-3 py-2 border border-gray-300 rounded text-sm" maxlength="500">
+        <button class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded">Add</button>
+      </form>
+      <div id="bm-list" class="divide-y divide-gray-200"></div>
+    </div>
+
+    <div class="bg-white border border-gray-200 rounded-lg p-5">
+      <h2 class="text-lg font-semibold mb-3">Subscriptions
+        <span class="ml-2 text-xs font-normal text-gray-500">(notify on new results — TODO worker)</span>
+      </h2>
+      <form id="add-sub" class="flex gap-2 mb-3">
+        <input id="s-query" placeholder="query to subscribe…" class="flex-1 px-3 py-2 border border-gray-300 rounded text-sm" maxlength="500">
+        <button class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded">Subscribe</button>
+      </form>
+      <div id="sub-list" class="divide-y divide-gray-200"></div>
+    </div>
+  </section>
+</main>
+
+<script>
+(function () {
+  const API = "/api/vector";
+  const esc = (s) => String(s == null ? "" : s).replace(/[<>&"]/g, c => ({"<":"&lt;",">":"&gt;","&":"&amp;","\"":"&quot;"}[c]));
+
+  async function getMe() {
+    const r = await fetch(API + "/cabinet/me", { credentials: "include" });
+    return r.json();
+  }
+
+  async function loadQueries() {
+    const list = document.getElementById("queries-list");
+    const items = await (await fetch(API + "/cabinet/queries", { credentials: "include" })).json();
+    list.innerHTML = items.length === 0
+      ? "<p class=\"text-sm text-gray-500 py-3\">Nothing saved yet.</p>"
+      : items.map(q => `
+          <div class="py-2 flex items-center gap-3">
+            <a href="/yacysearch.html?query=${encodeURIComponent(q.query)}" class="flex-1 text-sm hover:underline truncate">
+              ${esc(q.label || q.query)}
+            </a>
+            <span class="text-xs text-gray-500 truncate max-w-xs">${esc(q.query)}</span>
+            <button data-id="${q.id}" class="text-xs text-red-600 hover:underline q-del">×</button>
+          </div>`).join("");
+    list.querySelectorAll(".q-del").forEach(b => b.addEventListener("click", async () => {
+      await fetch(API + "/cabinet/queries/" + b.dataset.id, { method: "DELETE", credentials: "include" });
+      loadQueries();
+    }));
+  }
+
+  async function loadBookmarks() {
+    const list = document.getElementById("bm-list");
+    const items = await (await fetch(API + "/cabinet/bookmarks", { credentials: "include" })).json();
+    list.innerHTML = items.length === 0
+      ? "<p class=\"text-sm text-gray-500 py-3\">No bookmarks yet.</p>"
+      : items.map(b => `
+          <div class="py-2 flex items-center gap-3">
+            <a href="${esc(b.url)}" target="_blank" rel="noopener" class="flex-1 text-sm text-blue-600 hover:underline truncate">${esc(b.title || b.url)}</a>
+            <span class="text-xs text-gray-400 truncate max-w-xs">${esc(b.url)}</span>
+            <button data-id="${b.id}" class="text-xs text-red-600 hover:underline b-del">×</button>
+          </div>`).join("");
+    list.querySelectorAll(".b-del").forEach(b => b.addEventListener("click", async () => {
+      await fetch(API + "/cabinet/bookmarks/" + b.dataset.id, { method: "DELETE", credentials: "include" });
+      loadBookmarks();
+    }));
+  }
+
+  async function loadSubs() {
+    const list = document.getElementById("sub-list");
+    const items = await (await fetch(API + "/cabinet/subscriptions", { credentials: "include" })).json();
+    list.innerHTML = items.length === 0
+      ? "<p class=\"text-sm text-gray-500 py-3\">No subscriptions yet.</p>"
+      : items.map(s => `
+          <div class="py-2 flex items-center gap-3">
+            <span class="flex-1 text-sm truncate">${esc(s.query)}</span>
+            <span class="text-xs text-gray-400">since ${new Date(s.created_at).toLocaleDateString()}</span>
+            <button data-id="${s.id}" class="text-xs text-red-600 hover:underline s-del">×</button>
+          </div>`).join("");
+    list.querySelectorAll(".s-del").forEach(b => b.addEventListener("click", async () => {
+      await fetch(API + "/cabinet/subscriptions/" + b.dataset.id, { method: "DELETE", credentials: "include" });
+      loadSubs();
+    }));
+  }
+
+  document.getElementById("add-query").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const q = document.getElementById("q-query").value.trim();
+    const lbl = document.getElementById("q-label").value.trim() || null;
+    if (!q) return;
+    await fetch(API + "/cabinet/queries", { method: "POST", credentials: "include",
+      headers: {"Content-Type": "application/json"}, body: JSON.stringify({query:q, label:lbl}) });
+    document.getElementById("q-query").value = "";
+    document.getElementById("q-label").value = "";
+    loadQueries();
+  });
+
+  document.getElementById("add-bm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const url = document.getElementById("b-url").value.trim();
+    const title = document.getElementById("b-title").value.trim() || null;
+    if (!url) return;
+    await fetch(API + "/cabinet/bookmarks", { method: "POST", credentials: "include",
+      headers: {"Content-Type": "application/json"}, body: JSON.stringify({url, title}) });
+    document.getElementById("b-url").value = "";
+    document.getElementById("b-title").value = "";
+    loadBookmarks();
+  });
+
+  document.getElementById("add-sub").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const q = document.getElementById("s-query").value.trim();
+    if (!q) return;
+    await fetch(API + "/cabinet/subscriptions", { method: "POST", credentials: "include",
+      headers: {"Content-Type": "application/json"}, body: JSON.stringify({query:q}) });
+    document.getElementById("s-query").value = "";
+    loadSubs();
+  });
+
+  document.getElementById("logout").addEventListener("click", async () => {
+    await fetch(API + "/cabinet/logout", { method: "POST", credentials: "include" });
+    location.reload();
+  });
+
+  (async () => {
+    const me = await getMe();
+    if (me.authenticated) {
+      document.getElementById("authed").classList.remove("hidden");
+      document.getElementById("me-name").textContent = me.display_name || me.email;
+      document.getElementById("me-email").textContent = me.email;
+      loadQueries(); loadBookmarks(); loadSubs();
+    } else {
+      document.getElementById("anon").classList.remove("hidden");
+    }
+  })();
+})();
+</script>
+
+</body>
+</html>

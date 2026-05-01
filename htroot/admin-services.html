@@ -221,6 +221,7 @@
             <div class="flex-1 min-w-0">
               <div class="flex items-center gap-2">
                 <span class="text-xs px-2 py-0.5 rounded ${statusBadge}">${esc(s.status)}</span>
+                <span class="text-xs px-2 py-0.5 rounded ${s.priority === 'high' ? 'bg-red-100 text-red-700' : s.priority === 'low' ? 'bg-gray-100 text-gray-500' : 'bg-purple-100 text-purple-700'}">${esc(s.priority || 'normal')}</span>
                 <a href="${esc(s.url)}" target="_blank" rel="noopener" class="text-sm font-medium text-blue-600 hover:underline truncate">${esc(s.url)}</a>
               </div>
               <div class="text-xs text-gray-500 mt-0.5">${fmt(s.submitted_at)} · ${esc(s.host)}${s.contact_email ? ' · ' + esc(s.contact_email) : ''}</div>
@@ -231,6 +232,11 @@
               ${s.status === 'pending' ? `
                 <a href="/CrawlStartExpert.html?crawlingURL=${encodeURIComponent(s.url)}" target="_blank"
                    class="text-xs px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded text-center">Crawl</a>
+                <select data-prio="${s.id}" class="text-xs px-1 py-1 border border-gray-300 rounded">
+                  <option value="high"   ${s.priority === 'high'   ? 'selected' : ''}>high</option>
+                  <option value="normal" ${(s.priority || 'normal') === 'normal' ? 'selected' : ''}>normal</option>
+                  <option value="low"    ${s.priority === 'low'    ? 'selected' : ''}>low</option>
+                </select>
                 <button data-decide="${s.id}" data-action="approved"
                         class="text-xs px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded">Approve</button>
                 <button data-decide="${s.id}" data-action="rejected"
@@ -241,6 +247,11 @@
           </div>`;
       }).join('');
       list.querySelectorAll('[data-decide]').forEach(b => b.addEventListener('click', () => decideSub(b.dataset.decide, b.dataset.action)));
+      list.querySelectorAll('[data-prio]').forEach(s => s.addEventListener('change', async () => {
+        const r = await fetch(API + '/admin/submissions/' + s.dataset.prio + '/priority?priority=' + s.value, { method: 'POST', headers: authHeader() });
+        if (!r.ok) alert('Priority change failed: HTTP ' + r.status);
+        loadSubs();
+      }));
     } catch (e) {
       list.innerHTML = '<p class="text-sm text-red-600 py-3">Failed: ' + esc(e.message) + '</p>';
     }
