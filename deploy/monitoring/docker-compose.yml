@@ -62,13 +62,7 @@ services:
     volumes:
       - grafana-data:/var/lib/grafana
       - ./grafana/provisioning:/etc/grafana/provisioning:ro
-    networks: [monitoring, traefik-public]
+    networks: [monitoring]
+    ports:
+      - "127.0.0.1:3000:3000"
     depends_on: [prometheus]
-    labels:
-      - traefik.enable=true
-      - traefik.docker.network=traefik-public
-      - traefik.http.routers.grafana.entrypoints=https
-      - traefik.http.routers.grafana.rule=Host(`grafana.vir.group`)
-      - traefik.http.routers.grafana.tls=true
-      - traefik.http.routers.grafana.tls.certresolver=letsencrypt
-      - traefik.http.services.grafana.loadbalancer.server.port=3000
