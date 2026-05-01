@@ -60,3 +60,18 @@ CREATE TABLE IF NOT EXISTS query_clicks (
 );
 CREATE INDEX IF NOT EXISTS query_clicks_query_idx ON query_clicks (lower(query));
 CREATE INDEX IF NOT EXISTS query_clicks_ts_idx    ON query_clicks (ts DESC);
+
+-- Services menu: rendered in the public drawer (right-side bottomsheet).
+-- Managed via /admin-services.html behind the Authorization: Bearer header
+-- (ADMIN_TOKEN env). Icon is a URL (favicon, CDN-free hosted asset, etc.).
+CREATE TABLE IF NOT EXISTS services_menu (
+    id          bigserial PRIMARY KEY,
+    name        text NOT NULL,
+    url         text NOT NULL,
+    icon_url    text,
+    sort_order  int  NOT NULL DEFAULT 0,
+    active      boolean NOT NULL DEFAULT true,
+    created_at  timestamptz NOT NULL DEFAULT now(),
+    updated_at  timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS services_menu_sort_idx ON services_menu (sort_order, id);

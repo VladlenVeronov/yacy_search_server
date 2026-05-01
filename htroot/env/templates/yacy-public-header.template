@@ -36,23 +36,12 @@
     </button>
   </div>
 
-  <div class="p-4 grid grid-cols-3 gap-3">
-    <a href="javascript:void(0)" class="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-gray-100 transition text-center">
-      <span class="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center text-gray-400">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
-          <path d="M11.25 4.533A9.707 9.707 0 0 0 6 3a9.735 9.735 0 0 0-3.25.555.75.75 0 0 0-.5.707v14.25a.75.75 0 0 0 1 .707A8.237 8.237 0 0 1 6 18.75c1.995 0 3.823.707 5.25 1.886V4.533ZM12.75 20.636A8.214 8.214 0 0 1 18 18.75c.966 0 1.89.166 2.75.47a.75.75 0 0 0 1-.708V4.262a.75.75 0 0 0-.5-.707A9.735 9.735 0 0 0 18 3a9.707 9.707 0 0 0-5.25 1.533v16.103Z" />
-        </svg>
-      </span>
-      <span class="text-xs text-gray-700">Placeholder</span>
-    </a>
-    <a href="javascript:void(0)" class="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-gray-100 transition text-center"><span class="w-12 h-12 rounded-lg bg-gray-100"></span><span class="text-xs text-gray-700">—</span></a>
-    <a href="javascript:void(0)" class="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-gray-100 transition text-center"><span class="w-12 h-12 rounded-lg bg-gray-100"></span><span class="text-xs text-gray-700">—</span></a>
-    <a href="javascript:void(0)" class="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-gray-100 transition text-center"><span class="w-12 h-12 rounded-lg bg-gray-100"></span><span class="text-xs text-gray-700">—</span></a>
-    <a href="javascript:void(0)" class="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-gray-100 transition text-center"><span class="w-12 h-12 rounded-lg bg-gray-100"></span><span class="text-xs text-gray-700">—</span></a>
-    <a href="javascript:void(0)" class="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-gray-100 transition text-center"><span class="w-12 h-12 rounded-lg bg-gray-100"></span><span class="text-xs text-gray-700">—</span></a>
-  </div>
+  <div id="yacy-services-grid" class="p-4 grid grid-cols-3 gap-3"></div>
 
-  <p class="px-4 pb-4 text-xs text-gray-500">Resources can be added through the admin panel (coming soon).</p>
+  <p id="yacy-services-empty" class="px-4 pb-4 text-xs text-gray-500 hidden">
+    No services configured. Add some in the
+    <a href="admin-services.html" class="text-blue-600 hover:underline">admin panel</a>.
+  </p>
 </aside>
 
 <script>
@@ -68,9 +57,39 @@
       toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
       drawer.setAttribute('aria-hidden', open ? 'false' : 'true');
     }
-    toggle.addEventListener('click', function () { setOpen(!drawer.classList.contains('open')); });
+    toggle.addEventListener('click', function () { setOpen(!drawer.classList.contains('open')); loadServices(); });
     close.addEventListener('click', function () { setOpen(false); });
     backdrop.addEventListener('click', function () { setOpen(false); });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setOpen(false); });
+
+    var loaded = false;
+    function loadServices() {
+      if (loaded) return;
+      loaded = true;
+      var grid = document.getElementById('yacy-services-grid');
+      var empty = document.getElementById('yacy-services-empty');
+      fetch('/api/vector/services').then(function (r) {
+        if (!r.ok) throw new Error('http ' + r.status);
+        return r.json();
+      }).then(function (items) {
+        if (!Array.isArray(items) || items.length === 0) {
+          empty.classList.remove('hidden');
+          return;
+        }
+        var esc = function (s) { return String(s).replace(/[<>&"]/g, function (c) { return ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'})[c]; }); };
+        grid.innerHTML = items.map(function (s) {
+          var icon = s.icon_url
+            ? '<img src="' + esc(s.icon_url) + '" alt="" class="w-8 h-8 object-contain" loading="lazy" />'
+            : '<span class="text-gray-400 text-lg">' + esc((s.name || '?').slice(0, 1).toUpperCase()) + '</span>';
+          return '<a href="' + esc(s.url) + '" target="_blank" rel="noopener" class="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-gray-100 transition text-center">' +
+                 '<span class="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center">' + icon + '</span>' +
+                 '<span class="text-xs text-gray-700 line-clamp-1">' + esc(s.name) + '</span>' +
+                 '</a>';
+        }).join('');
+      }).catch(function () {
+        loaded = false; // allow retry
+        empty.classList.remove('hidden');
+      });
+    }
   })();
 </script>

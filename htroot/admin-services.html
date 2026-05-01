@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>VIR GOO — Services Admin</title>
+  #%env/templates/yacy-public-meta.template%#
+</head>
+<body class="min-h-screen bg-gray-50 text-gray-900">
+
+#%env/templates/yacy-public-header.template%#
+
+<main class="max-w-3xl mx-auto px-4 py-10">
+  <h1 class="text-2xl font-semibold mb-6">Services menu — admin</h1>
+
+  <div id="auth-block" class="bg-white border border-gray-200 rounded-lg p-5 mb-6">
+    <p class="text-sm text-gray-700 mb-3">Paste the admin token to manage the public services drawer.</p>
+    <div class="flex gap-2">
+      <input id="token-input" type="password" autocomplete="off"
+             class="flex-1 px-3 py-2 text-sm border border-gray-300 rounded" placeholder="Bearer token" />
+      <button id="token-save" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded">Use</button>
+    </div>
+    <p id="auth-msg" class="mt-2 text-xs text-red-600 hidden"></p>
+  </div>
+
+  <section id="form-block" class="bg-white border border-gray-200 rounded-lg p-5 mb-6 hidden">
+    <h2 class="text-lg font-semibold mb-3">Add / edit service</h2>
+    <input type="hidden" id="f-id" />
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <label class="text-sm">Name<input id="f-name" class="mt-1 w-full px-3 py-2 border border-gray-300 rounded text-sm" maxlength="80" /></label>
+      <label class="text-sm">URL<input id="f-url" class="mt-1 w-full px-3 py-2 border border-gray-300 rounded text-sm" maxlength="500" /></label>
+      <label class="text-sm sm:col-span-2">Icon URL (optional)<input id="f-icon" class="mt-1 w-full px-3 py-2 border border-gray-300 rounded text-sm" maxlength="500" /></label>
+      <label class="text-sm">Sort order<input id="f-sort" type="number" value="0" class="mt-1 w-32 px-3 py-2 border border-gray-300 rounded text-sm" /></label>
+      <label class="text-sm flex items-end gap-2"><input id="f-active" type="checkbox" checked /> active</label>
+    </div>
+    <div class="mt-4 flex gap-2">
+      <button id="f-save" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded">Save</button>
+      <button id="f-clear" type="button" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm rounded">Clear</button>
+    </div>
+    <p id="form-msg" class="mt-2 text-xs hidden"></p>
+  </section>
+
+  <section id="list-block" class="bg-white border border-gray-200 rounded-lg p-5 hidden">
+    <h2 class="text-lg font-semibold mb-3">Current services</h2>
+    <div id="svc-list" class="divide-y divide-gray-200"></div>
+  </section>
+</main>
+
+<script>
+(function () {
+  const TOKEN_KEY = 'yacy_admin_token';
+  const API = '/api/vector';
+  const tokenInput = document.getElementById('token-input');
+  const tokenSave = document.getElementById('token-save');
+  const authMsg = document.getElementById('auth-msg');
+  const formBlock = document.getElementById('form-block');
+  const listBlock = document.getElementById('list-block');
+  const svcList = document.getElementById('svc-list');
+  const formMsg = document.getElementById('form-msg');
+  const f = {
+    id: document.getElementById('f-id'),
+    name: document.getElementById('f-name'),
+    url: document.getElementById('f-url'),
+    icon: document.getElementById('f-icon'),
+    sort: document.getElementById('f-sort'),
+    active: document.getElementById('f-active'),
+  };
+
+  function getToken() { return sessionStorage.getItem(TOKEN_KEY) || ''; }
+  function setToken(v) { v ? sessionStorage.setItem(TOKEN_KEY, v) : sessionStorage.removeItem(TOKEN_KEY); }
+  function authHeader() { return { 'Authorization': 'Bearer ' + getToken() }; }
+  function esc(s) { return String(s == null ? '' : s).replace(/[<>&"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c])); }
+
+  async function loadList() {
+    svcList.innerHTML = '<p class="text-sm text-gray-500 py-3">Loading…</p>';
+    try {
+      const r = await fetch(API + '/services?include_inactive=true');
+      if (!r.ok) throw new Error('http ' + r.status);
+      const items = await r.json();
+      if (!items.length) {
+        svcList.innerHTML = '<p class="text-sm text-gray-500 py-3">No services yet.</p>';
+        return;
+      }
+      svcList.innerHTML = items.map(s => `
+        <div class="py-3 flex items-center gap-3">
+          <span class="w-8 h-8 rounded bg-gray-100 flex items-center justify-center text-xs text-gray-500 shrink-0">${s.icon_url ? '<img src="' + esc(s.icon_url) + '" class="w-6 h-6 object-contain" alt="">' : esc((s.name || '?').slice(0,1).toUpperCase())}</span>
+          <div class="flex-1 min-w-0">
+            <div class="text-sm font-medium ${s.active ? 'text-gray-900' : 'text-gray-400 line-through'}">${esc(s.name)}</div>
+            <div class="text-xs text-gray-500 truncate">${esc(s.url)} · sort ${s.sort_order}</div>
+          </div>
+          <button data-edit="${s.id}" class="text-xs text-blue-600 hover:underline">Edit</button>
+          <button data-del="${s.id}" class="text-xs text-red-600 hover:underline">Delete</button>
+        </div>`).join('');
+      svcList.querySelectorAll('[data-edit]').forEach(b => b.addEventListener('click', () => editItem(items.find(x => x.id == b.dataset.edit))));
+      svcList.querySelectorAll('[data-del]').forEach(b => b.addEventListener('click', () => delItem(parseInt(b.dataset.del, 10))));
+    } catch (e) {
+      svcList.innerHTML = '<p class="text-sm text-red-600 py-3">Failed to load: ' + esc(e.message) + '</p>';
+    }
+  }
+
+  function editItem(s) {
+    if (!s) return;
+    f.id.value = s.id; f.name.value = s.name; f.url.value = s.url;
+    f.icon.value = s.icon_url || ''; f.sort.value = s.sort_order; f.active.checked = !!s.active;
+    formBlock.scrollIntoView({behavior: 'smooth'});
+  }
+  function clearForm() {
+    f.id.value = ''; f.name.value = ''; f.url.value = ''; f.icon.value = ''; f.sort.value = 0; f.active.checked = true;
+    formMsg.classList.add('hidden');
+  }
+  async function saveItem() {
+    const body = {
+      name: f.name.value.trim(),
+      url: f.url.value.trim(),
+      icon_url: f.icon.value.trim() || null,
+      sort_order: parseInt(f.sort.value, 10) || 0,
+      active: f.active.checked,
+    };
+    if (!body.name || !body.url) { formMsg.textContent = 'name and url required'; formMsg.className = 'mt-2 text-xs text-red-600'; return; }
+    const id = f.id.value;
+    const opts = {
+      method: id ? 'PUT' : 'POST',
+      headers: Object.assign({'Content-Type': 'application/json'}, authHeader()),
+      body: JSON.stringify(body),
+    };
+    const url = API + '/admin/services' + (id ? '/' + id : '');
+    const r = await fetch(url, opts);
+    if (!r.ok) { formMsg.textContent = 'Save failed: HTTP ' + r.status; formMsg.className = 'mt-2 text-xs text-red-600'; return; }
+    formMsg.textContent = 'Saved.'; formMsg.className = 'mt-2 text-xs text-green-600';
+    clearForm(); loadList();
+  }
+  async function delItem(id) {
+    if (!confirm('Delete service #' + id + '?')) return;
+    const r = await fetch(API + '/admin/services/' + id, { method: 'DELETE', headers: authHeader() });
+    if (!r.ok) { alert('Delete failed: HTTP ' + r.status); return; }
+    loadList();
+  }
+
+  function showAuthed() {
+    formBlock.classList.remove('hidden');
+    listBlock.classList.remove('hidden');
+    document.getElementById('auth-block').classList.add('hidden');
+    loadList();
+  }
+
+  tokenSave.addEventListener('click', () => {
+    const v = tokenInput.value.trim();
+    if (!v) { authMsg.textContent = 'Enter a token'; authMsg.classList.remove('hidden'); return; }
+    setToken(v);
+    showAuthed();
+  });
+  document.getElementById('f-save').addEventListener('click', saveItem);
+  document.getElementById('f-clear').addEventListener('click', clearForm);
+
+  if (getToken()) showAuthed();
+})();
+</script>
+
+</body>
+</html>

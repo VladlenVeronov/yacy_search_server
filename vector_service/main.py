@@ -7,7 +7,7 @@ from datetime import datetime, timezone
 from typing import Optional
 from urllib.parse import urlparse
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, Header, HTTPException
 from pydantic import BaseModel, Field
 
 from config import settings
@@ -290,6 +290,96 @@ async def track_click(req: TrackClickRequest):
                 q,
             )
     return {"ok": True}
+
+
+# ---------------------------------------------------------------------------
+# Services menu (Phase 3 admin)
+# ---------------------------------------------------------------------------
+
+
+def _require_admin(authorization: Optional[str]) -> None:
+    if not settings.admin_token:
+        raise HTTPException(status_code=503, detail="admin token not configured")
+    if not authorization or not authorization.lower().startswith("bearer "):
+        raise HTTPException(status_code=401, detail="missing bearer token")
+    if authorization.split(None, 1)[1].strip() != settings.admin_token:
+        raise HTTPException(status_code=403, detail="invalid token")
+
+
+class ServiceItem(BaseModel):
+    id: int
+    name: str
+    url: str
+    icon_url: Optional[str] = None
+    sort_order: int = 0
+    active: bool = True
+
+
+class ServiceCreate(BaseModel):
+    name: str = Field(..., min_length=1, max_length=80)
+    url: str = Field(..., min_length=1, max_length=500)
+    icon_url: Optional[str] = Field(default=None, max_length=500)
+    sort_order: int = 0
+    active: bool = True
+
+
+class ServiceUpdate(BaseModel):
+    name: Optional[str] = Field(default=None, min_length=1, max_length=80)
+    url: Optional[str] = Field(default=None, min_length=1, max_length=500)
+    icon_url: Optional[str] = Field(default=None, max_length=500)
+    sort_order: Optional[int] = None
+    active: Optional[bool] = None
+
+
+@app.get("/services", response_model=list[ServiceItem])
+async def services_list(include_inactive: bool = False):
+    where = "" if include_inactive else "WHERE active = true"
+    async with pool().acquire() as con:
+        rows = await con.fetch(
+            f"SELECT id,name,url,icon_url,sort_order,active FROM services_menu {where} ORDER BY sort_order ASC, id ASC"
+        )
+    return [ServiceItem(**dict(r)) for r in rows]
+
+
+@app.post("/admin/services", response_model=ServiceItem)
+async def services_create(req: ServiceCreate, authorization: Optional[str] = Header(default=None)):
+    _require_admin(authorization)
+    async with pool().acquire() as con:
+        row = await con.fetchrow(
+            """
+            INSERT INTO services_menu (name, url, icon_url, sort_order, active)
+            VALUES ($1, $2, $3, $4, $5)
+            RETURNING id, name, url, icon_url, sort_order, active
+            """,
+            req.name, req.url, req.icon_url, req.sort_order, req.active,
+        )
+    return ServiceItem(**dict(row))
+
+
+@app.put("/admin/services/{svc_id}", response_model=ServiceItem)
+async def services_update(svc_id: int, req: ServiceUpdate, authorization: Optional[str] = Header(default=None)):
+    _require_admin(authorization)
+    fields = req.model_dump(exclude_unset=True)
+    if not fields:
+        raise HTTPException(status_code=400, detail="no fields to update")
+    sets = ", ".join(f"{k} = ${i+2}" for i, k in enumerate(fields))
+    sets += ", updated_at = now()"
+    async with pool().acquire() as con:
+        row = await con.fetchrow(
+            f"UPDATE services_menu SET {sets} WHERE id = $1 RETURNING id,name,url,icon_url,sort_order,active",
+            svc_id, *fields.values(),
+        )
+    if row is None:
+        raise HTTPException(status_code=404, detail="not found")
+    return ServiceItem(**dict(row))
+
+
+@app.delete("/admin/services/{svc_id}")
+async def services_delete(svc_id: int, authorization: Optional[str] = Header(default=None)):
+    _require_admin(authorization)
+    async with pool().acquire() as con:
+        result = await con.execute("DELETE FROM services_menu WHERE id = $1", svc_id)
+    return {"deleted": int(result.split()[-1]) if result else 0}
 
 
 @app.get("/unsatisfied")

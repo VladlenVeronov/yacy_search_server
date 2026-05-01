@@ -15,6 +15,9 @@ class Settings(BaseSettings):
     max_summary_chars: int = 6000
     server_host: str = "127.0.0.1"
     server_port: int = 8001
+    # Bearer token for write endpoints (services CRUD). Empty disables auth —
+    # only safe in local dev.
+    admin_token: str = ""
 
     # Hybrid ranking weights (must sum to 1.0). See PLAN.md Phase 2.
     weight_semantic: float = 0.60
