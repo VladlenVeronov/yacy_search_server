@@ -40,3 +40,6 @@ docs/yacy-project/scripts/*.log
 docs/yacy-project/scripts/__pycache__/
 docs/yacy-project/.yacy_env
 docs/yacy-project/.sync_pages.state
+*.png
+Знімок*
+*.MOV
