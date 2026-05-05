@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Реєстрація — VIR GOO</title>
+    <link rel="stylesheet" type="text/css" href="env/css/tailwind.min.css" />
+    <link rel="stylesheet" type="text/css" href="env/css/yacy-public.css" />
+</head>
+<body class="min-h-screen bg-white text-gray-900 flex flex-col">
+
+#%env/templates/yacy-public-header.template%#
+
+<main class="flex-1 px-4 py-12 sm:py-16">
+  <div class="max-w-md mx-auto">
+
+    <h1 class="text-3xl font-light tracking-tight mb-2">Створити акаунт</h1>
+    <p class="text-sm text-gray-500 mb-8">
+      Безкоштовно. Звичайний акаунт дає закладки та персональний пошук.
+      Позначте «вебмайстер» — і зможете подавати домени на сканування.
+    </p>
+
+    #(submitted)#::
+      #(submitted_ok)#
+        <div class="mb-4 rounded-md bg-red-50 border border-red-200 p-3 text-sm text-red-800">
+          #[submitted_message]#
+        </div>
+      ::
+        <!-- ok branch unused: handler redirects on success -->
+      #(/submitted_ok)#
+    #(/submitted)#
+
+    <form method="post" action="Register.html" class="space-y-4">
+      <div>
+        <label for="username" class="block text-sm font-medium text-gray-700 mb-1">
+          Логін <span class="text-red-500">*</span>
+        </label>
+        <input id="username" name="username" type="text" required
+               value="#[username]#"
+               minlength="3" maxlength="32" pattern="[a-zA-Z0-9._\-]+"
+               class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" />
+        <p class="text-xs text-gray-500 mt-1">3-32 символи: латиниця, цифри, крапка, дефіс, підкреслення</p>
+      </div>
+
+      <div>
+        <label for="password" class="block text-sm font-medium text-gray-700 mb-1">
+          Пароль <span class="text-red-500">*</span>
+        </label>
+        <input id="password" name="password" type="password" required minlength="6"
+               class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" />
+      </div>
+
+      <div>
+        <label for="password2" class="block text-sm font-medium text-gray-700 mb-1">
+          Повторіть пароль <span class="text-red-500">*</span>
+        </label>
+        <input id="password2" name="password2" type="password" required minlength="6"
+               class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" />
+      </div>
+
+      <div>
+        <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
+          Email <span class="text-gray-400">(необов'язково)</span>
+        </label>
+        <input id="email" name="email" type="email"
+               value="#[email]#"
+               class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" />
+        <p class="text-xs text-gray-500 mt-1">Потрібен лише для повідомлень про статус заявок (як вебмайстер)</p>
+      </div>
+
+      <label class="flex items-start gap-3 p-3 rounded-md border border-gray-200 hover:bg-gray-50 cursor-pointer">
+        <input type="checkbox" name="iam_webmaster" #[iam_webmaster_checked]#
+               class="mt-1 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" />
+        <span class="text-sm text-gray-700">
+          <strong>Я вебмайстер</strong> — хочу подавати свої сайти на сканування
+          та бачити статистику індексу.
+        </span>
+      </label>
+
+      <button type="submit"
+              class="w-full inline-flex justify-center items-center px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition">
+        Створити акаунт
+      </button>
+
+      <p class="text-center text-sm text-gray-500">
+        Уже маєте акаунт?
+        <a href="User.html" class="text-blue-600 hover:underline">Увійти</a>
+      </p>
+    </form>
+
+  </div>
+</main>
+
+<footer class="border-t border-gray-200 py-4">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-wrap justify-between items-center gap-3 text-xs text-gray-500">
+    <span>VIR GOO — відкритий децентралізований пошук · powered by YaCy</span>
+    <div class="flex items-center gap-4">
+      <a href="ConfigBasic.html" class="hover:text-blue-600 transition">Адмін</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

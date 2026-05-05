@@ -6,9 +6,12 @@
       <span class="text-lg font-semibold tracking-tight text-blue-600">GOO</span>
     </a>
 
-    <div class="flex items-center gap-2">
-      <a href="ConfigBasic.html" class="hidden sm:inline-flex items-center px-3 py-1.5 text-sm font-medium text-gray-700 hover:text-blue-600 transition">
-        Login
+    <div class="flex items-center gap-1 sm:gap-2">
+      <a href="Register.html" class="hidden sm:inline-flex items-center px-3 py-1.5 text-sm font-medium text-gray-700 hover:text-blue-600 transition">
+        Реєстрація
+      </a>
+      <a href="User.html" class="hidden sm:inline-flex items-center px-3 py-1.5 text-sm font-medium text-gray-700 hover:text-blue-600 transition">
+        Увійти
       </a>
       <button type="button" id="yacy-menu-toggle"
               aria-label="Open services menu" aria-expanded="false" aria-controls="yacy-drawer"
