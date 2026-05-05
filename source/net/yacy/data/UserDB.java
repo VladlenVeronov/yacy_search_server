@@ -324,7 +324,8 @@ public final class UserDB {
         BLOG_RIGHT("blogRight", "Blog"),
         WIKIADMIN_RIGHT("wikiAdminRight", "Wiki Admin"),
         BOOKMARK_RIGHT("bookmarkRight", "Bookmark"),
-        EXTENDED_SEARCH_RIGHT("extendedSearchRight", "Extended Search");
+        EXTENDED_SEARCH_RIGHT("extendedSearchRight", "Extended Search"),
+        WEBMASTER_RIGHT("webmasterRight", "Webmaster");
 
         private String name;
         private String friendlyName;

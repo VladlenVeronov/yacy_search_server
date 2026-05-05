@@ -61,26 +61,9 @@ CREATE TABLE IF NOT EXISTS query_clicks (
 CREATE INDEX IF NOT EXISTS query_clicks_query_idx ON query_clicks (lower(query));
 CREATE INDEX IF NOT EXISTS query_clicks_ts_idx    ON query_clicks (ts DESC);
 
--- Webmaster submissions: public form lets anyone submit a site for indexing.
--- Auto-validated against the blacklist on insert; admin approves/rejects.
-CREATE TABLE IF NOT EXISTS webmaster_submissions (
-    id              bigserial PRIMARY KEY,
-    url             text NOT NULL,
-    host            text NOT NULL,
-    contact_email   text,
-    description     text,
-    status          text NOT NULL DEFAULT 'pending',  -- pending|approved|rejected|crawled
-    reject_reason   text,
-    submitted_at    timestamptz NOT NULL DEFAULT now(),
-    processed_at    timestamptz,
-    submitter_ip    inet
-);
-CREATE INDEX IF NOT EXISTS webmaster_status_idx ON webmaster_submissions (status, submitted_at DESC);
-CREATE INDEX IF NOT EXISTS webmaster_host_idx   ON webmaster_submissions (host);
-
 -- Services menu: rendered in the public drawer (right-side bottomsheet).
--- Managed via /admin-services.html behind the Authorization: Bearer header
--- (ADMIN_TOKEN env). Icon is a URL (favicon, CDN-free hosted asset, etc.).
+-- Managed via vector_service /admin/services* behind a Bearer ADMIN_TOKEN.
+-- Icon is a URL (favicon, CDN-free hosted asset, etc.).
 CREATE TABLE IF NOT EXISTS services_menu (
     id          bigserial PRIMARY KEY,
     name        text NOT NULL,
@@ -102,3 +85,8 @@ DROP TABLE IF EXISTS cabinet_saved_queries;
 DROP TABLE IF EXISTS cabinet_bookmarks;
 DROP TABLE IF EXISTS cabinet_sessions;
 DROP TABLE IF EXISTS cabinet_users;
+
+-- Webmaster submissions: moved to YaCy native WorkTables (`crawl_requests`)
+-- in Phase 3 so authenticated YaCy users (digest auth + WEBMASTER_RIGHT)
+-- own them. Drop the pgvector copy on existing deployments.
+DROP TABLE IF EXISTS webmaster_submissions;

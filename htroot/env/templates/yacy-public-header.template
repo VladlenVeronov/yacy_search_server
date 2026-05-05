@@ -39,8 +39,7 @@
   <div id="yacy-services-grid" class="p-4 grid grid-cols-3 gap-3"></div>
 
   <p id="yacy-services-empty" class="px-4 pb-4 text-xs text-gray-500 hidden">
-    No services configured. Add some in the
-    <a href="admin-services.html" class="text-blue-600 hover:underline">admin panel</a>.
+    No services configured.
   </p>
 </aside>
 
