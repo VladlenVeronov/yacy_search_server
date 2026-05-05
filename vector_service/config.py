@@ -19,19 +19,14 @@ class Settings(BaseSettings):
     # only safe in local dev.
     admin_token: str = ""
 
-    # Optional LLM (OpenAI-compatible chat/completions API). Empty url = disabled.
+    # Optional LLM (OpenAI-compatible chat/completions API) used by the
+    # gap-analyzer to turn unsatisfied queries into seed URLs. Empty url
+    # disables the feature — the /unsatisfied/seed endpoint then returns
+    # 503 and the cron is a no-op.
     llm_api_url: str = ""           # e.g. https://api.deepseek.com/v1
     llm_api_key: str = ""
     llm_model: str = "deepseek-chat"
     llm_timeout_s: int = 30
-
-    # OIDC (Authentik). Empty issuer disables /oidc/* endpoints.
-    oidc_issuer: str = ""
-    oidc_client_id: str = ""
-    oidc_client_secret: str = ""
-    oidc_redirect_uri: str = ""
-    cabinet_cookie_name: str = "vg_session"
-    cabinet_session_days: int = 30
 
     # Hybrid ranking weights (must sum to 1.0). See PLAN.md Phase 2.
     weight_semantic: float = 0.60

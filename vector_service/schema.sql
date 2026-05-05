@@ -93,65 +93,12 @@ CREATE TABLE IF NOT EXISTS services_menu (
 );
 CREATE INDEX IF NOT EXISTS services_menu_sort_idx ON services_menu (sort_order, id);
 
--- USER CABINET tables (Phase 3)
-CREATE TABLE IF NOT EXISTS cabinet_users (
-    id              bigserial PRIMARY KEY,
-    sub             text UNIQUE NOT NULL,    -- OIDC subject from Authentik
-    email           text NOT NULL,
-    display_name    text,
-    created_at      timestamptz NOT NULL DEFAULT now(),
-    last_login_at   timestamptz NOT NULL DEFAULT now()
-);
-CREATE INDEX IF NOT EXISTS cabinet_users_email_idx ON cabinet_users (lower(email));
-
-CREATE TABLE IF NOT EXISTS cabinet_sessions (
-    id              text PRIMARY KEY,         -- random 32-byte hex
-    user_id         bigint NOT NULL REFERENCES cabinet_users(id) ON DELETE CASCADE,
-    created_at      timestamptz NOT NULL DEFAULT now(),
-    expires_at      timestamptz NOT NULL
-);
-CREATE INDEX IF NOT EXISTS cabinet_sessions_user_idx ON cabinet_sessions (user_id);
-CREATE INDEX IF NOT EXISTS cabinet_sessions_exp_idx  ON cabinet_sessions (expires_at);
-
-CREATE TABLE IF NOT EXISTS cabinet_bookmarks (
-    id              bigserial PRIMARY KEY,
-    user_id         bigint NOT NULL REFERENCES cabinet_users(id) ON DELETE CASCADE,
-    url             text NOT NULL,
-    title           text,
-    note            text,
-    created_at      timestamptz NOT NULL DEFAULT now(),
-    UNIQUE(user_id, url)
-);
-CREATE INDEX IF NOT EXISTS cabinet_bookmarks_user_idx ON cabinet_bookmarks (user_id, created_at DESC);
-
-CREATE TABLE IF NOT EXISTS cabinet_saved_queries (
-    id              bigserial PRIMARY KEY,
-    user_id         bigint NOT NULL REFERENCES cabinet_users(id) ON DELETE CASCADE,
-    query           text NOT NULL,
-    label           text,
-    created_at      timestamptz NOT NULL DEFAULT now(),
-    UNIQUE(user_id, query)
-);
-CREATE INDEX IF NOT EXISTS cabinet_saved_queries_user_idx ON cabinet_saved_queries (user_id, created_at DESC);
-
-CREATE TABLE IF NOT EXISTS cabinet_subscriptions (
-    id              bigserial PRIMARY KEY,
-    user_id         bigint NOT NULL REFERENCES cabinet_users(id) ON DELETE CASCADE,
-    query           text NOT NULL,
-    last_seen_id    text,
-    last_check      timestamptz,
-    created_at      timestamptz NOT NULL DEFAULT now(),
-    UNIQUE(user_id, query)
-);
-CREATE INDEX IF NOT EXISTS cabinet_subs_user_idx ON cabinet_subscriptions (user_id);
-
--- OIDC short-lived state (CSRF protection during auth code flow)
-CREATE TABLE IF NOT EXISTS cabinet_oidc_state (
-    state           text PRIMARY KEY,
-    nonce           text NOT NULL,
-    code_verifier   text,
-    return_to       text,
-    created_at      timestamptz NOT NULL DEFAULT now()
-);
-
-ALTER TABLE webmaster_submissions ADD COLUMN IF NOT EXISTS priority text NOT NULL DEFAULT 'normal';
+-- Cabinet/OIDC tables removed in Phase 1 (custom user cabinet replaced by
+-- native YaCy UserDB). Drop legacy tables on existing deployments — these
+-- statements are no-ops on fresh installs.
+DROP TABLE IF EXISTS cabinet_oidc_state;
+DROP TABLE IF EXISTS cabinet_subscriptions;
+DROP TABLE IF EXISTS cabinet_saved_queries;
+DROP TABLE IF EXISTS cabinet_bookmarks;
+DROP TABLE IF EXISTS cabinet_sessions;
+DROP TABLE IF EXISTS cabinet_users;
