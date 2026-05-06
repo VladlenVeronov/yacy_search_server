@@ -67,19 +67,16 @@
             Ви увійшли як <strong>#[username]#</strong>.
           </p>
 
-          #(submitted)#::
-            #(submitted_ok)#
-              <div class="mb-4 rounded-md bg-red-50 border border-red-200 p-3 text-sm text-red-800">
-                <strong>Помилка.</strong> #[message]#
-              </div>
-            ::
-              <div class="mb-4 rounded-md bg-green-50 border border-green-200 p-3 text-sm text-green-800">
-                <strong>Запит отримано.</strong> ID: <code>#[message]#</code>.
-                Бот перевіряє домен; статус і рішення з'являться у вашій
-                <a href="WebmasterStats.html" class="underline">статистиці</a>.
-              </div>
-            #(/submitted_ok)#
-          #(/submitted)#
+          #(state)#::
+            <div class="mb-4 rounded-md bg-red-50 border border-red-200 p-3 text-sm text-red-800">
+              <strong>Помилка.</strong> #[message]#
+            </div>
+          ::
+            <div class="mb-4 rounded-md bg-green-50 border border-green-200 p-3 text-sm text-green-800">
+              <strong>Запит отримано.</strong> ID: <code>#[message]#</code>.
+              Бот перевіряє домен; адміністратор затвердить або відхилить.
+            </div>
+          #(/state)#
 
           <form method="post" action="CrawlRequest.html" class="space-y-4">
             <div>

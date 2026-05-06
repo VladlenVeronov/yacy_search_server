@@ -82,9 +82,8 @@ public class CrawlRequest {
 
             if (host == null || host.isEmpty()
                     || (!url.startsWith("http://") && !url.startsWith("https://"))) {
-                prop.put("loggedIn_canSubmit_submitted", 1);
-                prop.put("loggedIn_canSubmit_submitted_ok", 0);
-                prop.putHTML("loggedIn_canSubmit_submitted_ok_message",
+                prop.put("loggedIn_canSubmit_state", 1);
+                prop.putHTML("loggedIn_canSubmit_state_message",
                              "URL некоректний (потрібен http:// або https://, з валідним хостом)");
                 return prop;
             }
@@ -102,15 +101,12 @@ public class CrawlRequest {
 
             try {
                 final byte[] pk = sb.tables.insert(TABLE, row);
-                prop.put("loggedIn_canSubmit_submitted",       1);
-                prop.put("loggedIn_canSubmit_submitted_ok",    1);
-                prop.putHTML("loggedIn_canSubmit_submitted_ok_message",
-                             new String(pk));
+                prop.put("loggedIn_canSubmit_state", 2);
+                prop.putHTML("loggedIn_canSubmit_state_message", new String(pk));
             } catch (final IOException | SpaceExceededException e) {
                 ConcurrentLog.warn("CrawlRequest", "insert failed: " + e.getMessage());
-                prop.put("loggedIn_canSubmit_submitted",       1);
-                prop.put("loggedIn_canSubmit_submitted_ok",    0);
-                prop.putHTML("loggedIn_canSubmit_submitted_ok_message",
+                prop.put("loggedIn_canSubmit_state", 1);
+                prop.putHTML("loggedIn_canSubmit_state_message",
                              "помилка запису: " + e.getMessage());
             }
         }
