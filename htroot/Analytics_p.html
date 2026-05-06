@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Аналітика — VIR GOO Admin</title>
+    <link rel="stylesheet" type="text/css" href="env/css/tailwind.min.css" />
+    <link rel="stylesheet" type="text/css" href="env/css/yacy-public.css" />
+</head>
+<body class="min-h-screen bg-white text-gray-900 flex flex-col">
+
+#%env/templates/yacy-public-header.template%#
+
+<main class="flex-1 px-4 py-8">
+  <div class="max-w-6xl mx-auto">
+    <div class="flex items-baseline justify-between mb-4">
+      <h1 class="text-2xl font-light tracking-tight">Аналітика пошуку</h1>
+      <a href="CrawlRequests_p.html" class="text-sm text-blue-600 hover:underline">→ Заявки на скан</a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      <div class="rounded-lg border border-gray-200 p-4">
+        <div class="text-xs uppercase text-gray-500">Vector service</div>
+        <div id="vec-health" class="text-lg font-mono mt-1">—</div>
+      </div>
+      <div class="rounded-lg border border-gray-200 p-4">
+        <div class="text-xs uppercase text-gray-500">Незадоволені запити (7 днів)</div>
+        <div id="unsat-count" class="text-2xl font-light mt-1">—</div>
+      </div>
+      <div class="rounded-lg border border-gray-200 p-4">
+        <div class="text-xs uppercase text-gray-500">Bot validator</div>
+        <div class="text-sm mt-1">
+          <a href="CrawlRequests_p.html" class="text-blue-600 hover:underline">Запустити перевірку →</a>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="text-lg font-medium mb-2">Топ запитів без кліків</h2>
+    <p class="text-xs text-gray-500 mb-3">
+      Це запити, на які користувачі не клікнули жодного результату — прямі кандидати
+      для краулу. Заборонені теми (порно/казино) фільтруються при поданні.
+    </p>
+
+    <div class="overflow-x-auto rounded-lg border border-gray-200">
+      <table class="min-w-full divide-y divide-gray-200 text-sm">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-3 py-2 text-left font-medium text-gray-700">Запит</th>
+            <th class="px-3 py-2 text-right font-medium text-gray-700">Пошуків</th>
+          </tr>
+        </thead>
+        <tbody id="unsat-tbody" class="divide-y divide-gray-100 bg-white">
+          <tr><td colspan="2" class="px-3 py-3 text-center text-gray-500">завантаження…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
+<footer class="border-t border-gray-200 py-4">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-wrap justify-between items-center gap-3 text-xs text-gray-500">
+    <span>VIR GOO admin · powered by YaCy</span>
+    <a href="ConfigBasic.html" class="hover:text-blue-600 transition">Адмін-панель</a>
+  </div>
+</footer>
+
+<script>
+(function () {
+  function esc(s){ return String(s).replace(/[<>&"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c])); }
+
+  fetch('/api/vector/health').then(r=>r.json()).then(d=>{
+    document.getElementById('vec-health').textContent =
+      (d && d.ok ? '✓ ' : '✗ ') + (d && d.model || 'down');
+  }).catch(()=> document.getElementById('vec-health').textContent = '✗ unreachable');
+
+  fetch('/api/vector/unsatisfied?hours=168&limit=100').then(r=>r.json()).then(rows=>{
+    document.getElementById('unsat-count').textContent = Array.isArray(rows) ? rows.length : 0;
+    var tb = document.getElementById('unsat-tbody');
+    if (!Array.isArray(rows) || rows.length === 0) {
+      tb.innerHTML = '<tr><td colspan="2" class="px-3 py-3 text-center text-gray-500">Немає невдалих запитів</td></tr>';
+      return;
+    }
+    tb.innerHTML = rows.map(r =>
+      '<tr><td class="px-3 py-2 font-mono">' + esc(r.query || '') + '</td>' +
+      '<td class="px-3 py-2 text-right">' + (r.searches || 0) + '</td></tr>'
+    ).join('');
+  }).catch(()=>{
+    document.getElementById('unsat-tbody').innerHTML =
+      '<tr><td colspan="2" class="px-3 py-3 text-center text-red-600">vector_service недоступний</td></tr>';
+  });
+})();
+</script>
+</body>
+</html>

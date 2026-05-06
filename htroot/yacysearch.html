@@ -409,6 +409,41 @@ window.setTimeout(latestinfo, 500); // we need that to get a correct pagination 
 })();
 </script>
 
+<script>
+// Phase 6: persist the current query box value across facet/resource/ranking
+// switches. The trailer-rendered forms use hidden `former` inputs that carry
+// the *server-side* original query — when the user edits the search box and
+// clicks a facet link, those forms submit the stale value. Sync them on submit.
+(function () {
+    document.addEventListener('submit', function (e) {
+        var box = document.getElementById('search');
+        if (!box) return;
+        var v = box.value;
+        var f = e.target;
+        if (!f || !f.querySelectorAll) return;
+        f.querySelectorAll('input[name="query"], input[name="former"]').forEach(function (i) {
+            i.value = v;
+        });
+    }, { capture: true });
+
+    // Faceted nav uses <a href="...&query=OLD"> links; rewrite the query param
+    // on click to the current input value before navigation.
+    document.addEventListener('click', function (e) {
+        var box = document.getElementById('search');
+        if (!box) return;
+        var a = e.target.closest('a[href*="query="]');
+        if (!a) return;
+        try {
+            var u = new URL(a.href, location.href);
+            if (u.searchParams.has('query')) {
+                u.searchParams.set('query', box.value);
+                a.href = u.toString();
+            }
+        } catch (err) { /* noop */ }
+    }, { capture: true });
+})();
+</script>
+
 #%env/templates/footer.template%#
 </body>
 </html>
