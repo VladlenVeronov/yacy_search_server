@@ -30,14 +30,13 @@
       #(/submitted_ok)#
     #(/submitted)#
 
-    <form method="post" action="Register.html" class="space-y-4">
+    <form id="register-form" method="post" action="Register.html" class="space-y-4" autocomplete="off" novalidate>
       <div>
         <label for="username" class="block text-sm font-medium text-gray-700 mb-1">
           Логін <span class="text-red-500">*</span>
         </label>
         <input id="username" name="username" type="text" required
-               value="#[username]#"
-               minlength="3" maxlength="32" pattern="[a-zA-Z0-9._\-]+"
+               value="#[username]#" autocomplete="username"
                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" />
         <p class="text-xs text-gray-500 mt-1">3-32 символи: латиниця, цифри, крапка, дефіс, підкреслення</p>
       </div>
@@ -46,7 +45,8 @@
         <label for="password" class="block text-sm font-medium text-gray-700 mb-1">
           Пароль <span class="text-red-500">*</span>
         </label>
-        <input id="password" name="password" type="password" required minlength="6"
+        <input id="password" name="password" type="password" required
+               autocomplete="new-password"
                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" />
       </div>
 
@@ -54,7 +54,8 @@
         <label for="password2" class="block text-sm font-medium text-gray-700 mb-1">
           Повторіть пароль <span class="text-red-500">*</span>
         </label>
-        <input id="password2" name="password2" type="password" required minlength="6"
+        <input id="password2" name="password2" type="password" required
+               autocomplete="new-password"
                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" />
       </div>
 
@@ -63,7 +64,7 @@
           Email <span class="text-gray-400">(необов'язково)</span>
         </label>
         <input id="email" name="email" type="email"
-               value="#[email]#"
+               value="#[email]#" autocomplete="email"
                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" />
         <p class="text-xs text-gray-500 mt-1">Потрібен лише для повідомлень про статус заявок (як вебмайстер)</p>
       </div>
@@ -77,9 +78,9 @@
         </span>
       </label>
 
-      <button type="submit"
-              class="w-full inline-flex justify-center items-center px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition">
-        Створити акаунт
+      <button id="register-submit" type="submit"
+              class="w-full inline-flex justify-center items-center px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition disabled:opacity-50 disabled:cursor-not-allowed">
+        <span id="register-submit-label">Створити акаунт</span>
       </button>
 
       <p class="text-center text-sm text-gray-500">
@@ -87,6 +88,43 @@
         <a href="User.html" class="text-blue-600 hover:underline">Увійти</a>
       </p>
     </form>
+
+    <script>
+      // Block double-submit and skip browser save-password prompt by using
+      // fetch() — server returns 302 → we follow Location ourselves so the
+      // browser never sees a navigation away from the password form.
+      (function () {
+        var form = document.getElementById('register-form');
+        var btn  = document.getElementById('register-submit');
+        var lbl  = document.getElementById('register-submit-label');
+        if (!form || !btn) return;
+        form.addEventListener('submit', function (e) {
+          e.preventDefault();
+          if (btn.disabled) return;
+          btn.disabled = true;
+          lbl.textContent = 'Створюємо…';
+          var fd = new FormData(form);
+          fetch('Register.html', { method: 'POST', body: fd, redirect: 'manual', credentials: 'same-origin' })
+            .then(function (res) {
+              // opaqueredirect on 302 — we don't get headers, but a 302 means success.
+              // Empty response with type 'opaqueredirect' is success.
+              if (res.type === 'opaqueredirect' || res.status === 0) {
+                window.location.href = '/CrawlRequest.html';
+                return;
+              }
+              // Same-origin POST without redirect: server re-rendered with an error.
+              return res.text().then(function (html) {
+                document.open(); document.write(html); document.close();
+              });
+            })
+            .catch(function (err) {
+              btn.disabled = false;
+              lbl.textContent = 'Створити акаунт';
+              alert('Помилка мережі: ' + err);
+            });
+        });
+      })();
+    </script>
 
   </div>
 </main>

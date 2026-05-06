@@ -1,73 +1,153 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <title>YaCy '#[clientname]#': User Page</title>
-    #%env/templates/metas.template%#
-  </head>
-<body>
-    #%env/templates/header.template%#
-    <h2>User Page</h2>
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Вхід — VIR GOO</title>
+    <link rel="stylesheet" type="text/css" href="env/css/tailwind.min.css" />
+    <link rel="stylesheet" type="text/css" href="env/css/yacy-public.css" />
+</head>
+<body class="min-h-screen bg-white text-gray-900 flex flex-col">
+
+#%env/templates/yacy-public-header.template%#
+
+<main class="flex-1 px-4 py-12 sm:py-16">
+  <div class="max-w-md mx-auto">
+
     #(logged-in)#
-    <p>
-      You are not logged in.<br />
-      <form action="User.html" method="post" accept-charset="UTF-8">
+      <!-- not logged in -->
+      <h1 class="text-3xl font-light tracking-tight mb-6">Вхід</h1>
+
+      <form method="post" action="User.html" class="space-y-4" autocomplete="on">
         <input type="hidden" name="returnto" value="#[returnto]#" />
-        Username: <input type="text" name="username" value="#[username]#" /><br />
-        Password: <input type="password" name="password" /><br />
-        <input type="submit" class="btn btn-primary" value="login" />
+
+        <div>
+          <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Логін</label>
+          <input id="username" name="username" type="text" required autocomplete="username"
+                 value="#[username]#"
+                 class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" />
+        </div>
+
+        <div>
+          <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Пароль</label>
+          <input id="password" name="password" type="password" required autocomplete="current-password"
+                 class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" />
+        </div>
+
+        <button type="submit"
+                class="w-full inline-flex justify-center items-center px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition">
+          Увійти
+        </button>
+
+        <p class="text-center text-sm text-gray-500">
+          Ще не маєте акаунту?
+          <a href="Register.html" class="text-blue-600 hover:underline">Зареєструватись</a>
+        </p>
       </form>
-    </p>
     ::
-    <p>
-      You are currently logged in as #[username]#.<br />
-      (Identified by #(identified-by)#IP::Username/Password::Cookie#(/identified-by)#)<br />
-      <form action="User.html" accept-charset="UTF-8">
-        <input type="submit" name="logout" class="btn btn-danger" value="logout">
-      </form>
-      #(limit)#::
-      #{percent}#<img src="env/grafics/red-block.png" alt="red bar" />#{/percent}##{percent2}#<img src="env/grafics/green-block.png" alt="green bar" />#{/percent2}#
-      <br />
-      You have used <strong>#[timeused]#</strong> minutes of your onlinetime limit of <strong>#[timelimit]#</strong> minutes per day.<br />
-      #(/limit)#
-    </p>
-    <form action="User.html" method="post" accept-charset="UTF-8">
-      <table border="1">
-        <tr>
-          <td><label for="oldpass">old Password</label></td>
-          <td><input type="password" name="oldpass" id="oldpass" /></td>
-        </tr>
-        <tr>
-          <td><label for="newpass">new Password</label></td>
-          <td><input type="password" name="newpass" id="newpass" /></td>
-        </tr>
-        <tr>
-          <td><label for="newpass2">new Password(repetition)</label></td>
-          <td><input type="password" name="newpass2" id="newpass2" /></td>
-        </tr>
-        <tr>
-          <td colspan="2"><input type="submit" name="changepass" class="btn btn-primary" value="Change" /></td>
-        </tr>
-      </table>
-    </form>
+      <!-- user logged in via UserDB -->
+      <h1 class="text-3xl font-light tracking-tight mb-6">Ви увійшли</h1>
+
+      <div class="rounded-lg border border-gray-200 p-6 mb-4">
+        <p class="text-sm text-gray-700 mb-1">
+          Логін: <strong>#[username]#</strong>
+        </p>
+        <p class="text-xs text-gray-500 mb-4">
+          Ідентифіковано через #(identified-by)#IP::логін/пароль::cookie#(/identified-by)#
+        </p>
+
+        #(limit)#::
+        <p class="text-xs text-gray-500 mb-3">
+          Час: #[timeused]# / #[timelimit]# хв
+        </p>
+        #(/limit)#
+
+        <div class="flex flex-wrap gap-2 mb-4">
+          <a href="CrawlRequest.html"
+             class="inline-flex items-center px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md transition">
+            Подати сайт
+          </a>
+          <a href="WebmasterStats.html"
+             class="inline-flex items-center px-3 py-1.5 border border-gray-300 hover:bg-gray-100 text-gray-700 text-sm font-medium rounded-md transition">
+            Моя статистика
+          </a>
+        </div>
+
+        <form action="User.html" method="post" class="inline">
+          <button type="submit" name="logout" value="1"
+                  class="text-sm text-red-600 hover:underline">
+            Вийти
+          </button>
+        </form>
+      </div>
+
+      <details class="rounded-lg border border-gray-200 p-4">
+        <summary class="cursor-pointer text-sm font-medium text-gray-700">Змінити пароль</summary>
+        <form method="post" action="User.html" class="space-y-3 mt-3">
+          <input type="password" name="oldpass" placeholder="Поточний пароль" required
+                 class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm" />
+          <input type="password" name="newpass" placeholder="Новий пароль" required minlength="6"
+                 class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm" />
+          <input type="password" name="newpass2" placeholder="Повторіть новий пароль" required minlength="6"
+                 class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm" />
+          <button type="submit" name="changepass" value="1"
+                  class="px-4 py-1.5 bg-gray-700 hover:bg-gray-800 text-white text-sm rounded-md">
+            Зберегти
+          </button>
+        </form>
+      </details>
     ::
-    You are currently logged in as admin.<br />
-    <form action="User.html" accept-charset="UTF-8">
-      <input type="submit" name="logout" class="btn btn-danger" value="logout">
-    </form>
-    <br />
-    <p>(after logout you will be prompted for your password again. simply click "cancel")</p>
+      <!-- static admin (config password, not UserDB) -->
+      <h1 class="text-3xl font-light tracking-tight mb-6">Адміністратор</h1>
+      <div class="rounded-lg border border-gray-200 p-6">
+        <p class="text-sm text-gray-700 mb-4">
+          Ви увійшли як <strong>admin</strong>.
+        </p>
+        <div class="flex flex-wrap gap-2 mb-4">
+          <a href="ConfigBasic.html"
+             class="inline-flex items-center px-3 py-1.5 bg-gray-700 hover:bg-gray-800 text-white text-sm font-medium rounded-md transition">
+            Адмін-панель
+          </a>
+          <a href="CrawlRequests_p.html"
+             class="inline-flex items-center px-3 py-1.5 border border-gray-300 hover:bg-gray-100 text-gray-700 text-sm font-medium rounded-md transition">
+            Заявки на скан
+          </a>
+        </div>
+        <form action="User.html" method="post">
+          <button type="submit" name="logout" value="1"
+                  class="text-sm text-red-600 hover:underline">
+            Вийти
+          </button>
+        </form>
+        <p class="text-xs text-gray-500 mt-3">
+          Після виходу браузер запросить пароль ще раз — натисніть «Скасувати».
+        </p>
+      </div>
     #(/logged-in)#
-    <b>
-      #(status)#
-      ::
+
+    #(status)#::
       #(password)#
-      Password was changed.::
-      Old Password is wrong.::
-      New Password and its repetition do not match.::
-      New Password is empty.
+        <p class="mt-4 text-sm text-green-700">Пароль змінено.</p>
+      ::
+        <p class="mt-4 text-sm text-red-700">Старий пароль невірний.</p>
+      ::
+        <p class="mt-4 text-sm text-red-700">Паролі не збігаються.</p>
+      ::
+        <p class="mt-4 text-sm text-red-700">Пароль не може бути порожнім.</p>
       #(/password)#
-      #(/status)#
-    </b>
-    #%env/templates/footer.template%#
-  </body>
+    #(/status)#
+
+  </div>
+</main>
+
+<footer class="border-t border-gray-200 py-4">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-wrap justify-between items-center gap-3 text-xs text-gray-500">
+    <span>VIR GOO — відкритий децентралізований пошук · powered by YaCy</span>
+    <div class="flex items-center gap-4">
+      <a href="ConfigBasic.html" class="hover:text-blue-600 transition">Адмін</a>
+    </div>
+  </div>
+</footer>
+
+</body>
 </html>
