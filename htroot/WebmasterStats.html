@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Моя статистика — VIR GOO</title>
+    <link rel="stylesheet" type="text/css" href="env/css/tailwind.min.css" />
+    <link rel="stylesheet" type="text/css" href="env/css/yacy-public.css" />
+</head>
+<body class="min-h-screen bg-white text-gray-900 flex flex-col">
+
+#%env/templates/yacy-public-header.template%#
+
+<main class="flex-1 px-4 py-12 sm:py-16">
+  <div class="max-w-5xl mx-auto">
+
+    #(loggedIn)#
+      <div class="rounded-lg border border-amber-200 bg-amber-50 p-6">
+        <h1 class="text-lg font-semibold text-amber-900 mb-2">Потрібен вхід</h1>
+        <p class="text-sm text-amber-800 mb-4">
+          Статистика доступна лише для залогінених вебмайстрів.
+        </p>
+        <a href="User.html?returnto=/WebmasterStats.html"
+           class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 transition">Увійти</a>
+      </div>
+    ::
+      <h1 class="text-3xl font-light tracking-tight mb-2">Моя статистика</h1>
+      <p class="text-sm text-gray-500 mb-6">Користувач: <strong>#[username]#</strong></p>
+
+      #(hosts)#
+        <div class="rounded-lg border border-gray-200 p-8 text-center text-gray-500">
+          Ви ще не подавали жодного домену.
+          <a href="CrawlRequest.html" class="text-blue-600 hover:underline ml-1">Подати сайт →</a>
+        </div>
+      ::
+        <div class="overflow-x-auto rounded-lg border border-gray-200">
+          <table class="min-w-full divide-y divide-gray-200 text-sm">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-3 py-2 text-left font-medium text-gray-700">Домен</th>
+                <th class="px-3 py-2 text-left font-medium text-gray-700">Статус</th>
+                <th class="px-3 py-2 text-left font-medium text-gray-700">Бот</th>
+                <th class="px-3 py-2 text-right font-medium text-gray-700">В індексі</th>
+                <th class="px-3 py-2 text-right font-medium text-gray-700">4xx</th>
+                <th class="px-3 py-2 text-right font-medium text-gray-700">5xx</th>
+                <th class="px-3 py-2 text-left font-medium text-gray-700">Останній скан</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100 bg-white">
+              #{hosts}#
+              <tr>
+                <td class="px-3 py-2 font-medium text-gray-900"><a href="#[url]#" target="_blank" rel="noopener" class="hover:text-blue-600 hover:underline">#[host]#</a></td>
+                <td class="px-3 py-2"><span class="inline-block px-2 py-0.5 rounded text-xs bg-gray-100 text-gray-700">#[status]#</span></td>
+                <td class="px-3 py-2 text-xs text-gray-600">#[bot_decision]#</td>
+                <td class="px-3 py-2 text-right font-mono">#[count_total]#</td>
+                <td class="px-3 py-2 text-right font-mono text-amber-700">#[count_4xx]#</td>
+                <td class="px-3 py-2 text-right font-mono text-red-700">#[count_5xx]#</td>
+                <td class="px-3 py-2 text-xs text-gray-600">#[last_crawl]#</td>
+              </tr>
+              #{/hosts}#
+            </tbody>
+          </table>
+        </div>
+        <p class="text-xs text-gray-500 mt-4">
+          Дані оновлюються разом із краулом. Якщо щойно подали — статистика з'явиться після того,
+          як адмін затвердить заявку та запустить сканування.
+        </p>
+      #(/hosts)#
+    #(/loggedIn)#
+
+  </div>
+</main>
+
+<footer class="border-t border-gray-200 py-4">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-wrap justify-between items-center gap-3 text-xs text-gray-500">
+    <span>VIR GOO — відкритий децентралізований пошук · powered by YaCy</span>
+    <div class="flex items-center gap-4">
+      <a href="ConfigBasic.html" class="hover:text-blue-600 transition">Адмін</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
