@@ -44,14 +44,21 @@
     ::
       <!-- authenticated; check rights -->
       #(canSubmit)#
-        <!-- logged in but no webmaster right -->
-        <div class="rounded-lg border border-red-200 bg-red-50 p-6">
-          <h2 class="text-lg font-semibold text-red-900 mb-2">Немає прав вебмайстра</h2>
-          <p class="text-sm text-red-800">
-            Ваш акаунт <strong>#[username]#</strong> увійшов, але не має права
-            <code class="text-xs bg-red-100 px-1 rounded">webmasterRight</code>.
-            Зверніться до адміністратора.
+        <!-- logged in but no webmaster right — one click to activate -->
+        <div class="rounded-lg border border-blue-200 bg-blue-50 p-6">
+          <h2 class="text-lg font-semibold text-blue-900 mb-2">Активувати роль вебмайстра</h2>
+          <p class="text-sm text-blue-800 mb-4">
+            Ви увійшли як <strong>#[username]#</strong>. Натисніть кнопку нижче,
+            щоб увімкнути роль вебмайстра — після цього зможете подавати домени
+            на сканування. Кожна заявка перевіряється ботом (blacklist + категорії).
           </p>
+          <form method="post" action="CrawlRequest.html">
+            <input type="hidden" name="become_webmaster" value="1" />
+            <button type="submit"
+                    class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md transition">
+              Стати вебмайстром
+            </button>
+          </form>
         </div>
       ::
         <!-- has webmaster right (or admin) -->

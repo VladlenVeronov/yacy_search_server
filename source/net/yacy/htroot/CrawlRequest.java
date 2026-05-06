@@ -35,9 +35,28 @@ public class CrawlRequest {
         final serverObjects prop = new serverObjects();
         final Switchboard sb = (Switchboard) env;
 
-        final UserDB.Entry user = (sb.userDB == null) ? null : sb.userDB.proxyAuth(header);
+        // Match the auth chain User.java uses: HTTP digest → cookie → IP.
+        UserDB.Entry user = (sb.userDB == null) ? null : sb.userDB.proxyAuth(header);
+        if (user == null && sb.userDB != null) user = sb.userDB.cookieAuth(header.getCookies());
+        if (user == null && sb.userDB != null) {
+            final String ip = header.getRemoteAddr();
+            if (ip != null) user = sb.userDB.ipAuth(ip);
+        }
+
         final boolean loggedIn = user != null;
-        final boolean isAdmin = sb.verifyAuthentication(header);
+        final boolean isAdmin  = sb.verifyAuthentication(header);
+
+        // One-click webmaster activation: any logged-in user can flip
+        // their own WEBMASTER_RIGHT here. Abuse control lives downstream
+        // in the bot validator, not in a manual approval gate.
+        if (post != null && "1".equals(post.get("become_webmaster", "")) && loggedIn) {
+            try {
+                user.setProperty(AccessRight.WEBMASTER_RIGHT.toString(), "true");
+            } catch (final Exception e) {
+                ConcurrentLog.warn("CrawlRequest", "grant webmaster failed: " + e.getMessage());
+            }
+        }
+
         final boolean canSubmit = isAdmin
             || (loggedIn && (user.hasRight(AccessRight.WEBMASTER_RIGHT)
                             || user.hasRight(AccessRight.ADMIN_RIGHT)));
