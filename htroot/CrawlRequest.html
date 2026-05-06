@@ -72,9 +72,14 @@
               <strong>Помилка.</strong> #[message]#
             </div>
           ::
-            <div class="mb-4 rounded-md bg-green-50 border border-green-200 p-3 text-sm text-green-800">
-              <strong>Запит отримано.</strong> ID: <code>#[message]#</code>.
-              Бот перевіряє домен; адміністратор затвердить або відхилить.
+            <div class="mb-4 rounded-md bg-green-50 border border-green-200 p-4 text-sm text-green-900">
+              <p class="font-semibold mb-2">Ваш сайт <code>#[host]#</code> проходить перевірку.</p>
+              <p class="mb-1">У пошуковому індексі зараз: <strong>#[indexed]#</strong> сторінок.</p>
+              <p class="text-xs text-green-800">
+                ID заявки: <code>#[message]#</code>.
+                Подробиці та свіжа статистика —
+                <a href="WebmasterStats.html" class="underline font-medium">«Моя статистика»</a>.
+              </p>
             </div>
           #(/state)#
 

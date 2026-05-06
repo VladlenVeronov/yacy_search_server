@@ -11,6 +11,7 @@ import net.yacy.cora.util.SpaceExceededException;
 import net.yacy.data.UserDB;
 import net.yacy.data.UserDB.AccessRight;
 import net.yacy.search.Switchboard;
+import net.yacy.search.schema.CollectionSchema;
 import net.yacy.server.serverObjects;
 import net.yacy.server.serverSwitch;
 
@@ -101,8 +102,15 @@ public class CrawlRequest {
 
             try {
                 final byte[] pk = sb.tables.insert(TABLE, row);
+                long indexed = 0L;
+                try {
+                    indexed = sb.index.fulltext().getDefaultConnector().getCountByQuery(
+                            CollectionSchema.host_s.getSolrFieldName() + ":\"" + host + "\"");
+                } catch (final IOException ignored) { /* keep 0 */ }
                 prop.put("loggedIn_canSubmit_state", 2);
                 prop.putHTML("loggedIn_canSubmit_state_message", new String(pk));
+                prop.putHTML("loggedIn_canSubmit_state_host", host);
+                prop.put("loggedIn_canSubmit_state_indexed", indexed);
             } catch (final IOException | SpaceExceededException e) {
                 ConcurrentLog.warn("CrawlRequest", "insert failed: " + e.getMessage());
                 prop.put("loggedIn_canSubmit_state", 1);
