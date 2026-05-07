@@ -1,34 +1,43 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <title>YaCy '#[clientname]#': Location Search</title>
-  #%env/templates/metas.template%#
+  <title>Location Search — VIR GOO</title>
+  #%env/templates/yacy-public-meta.template%#
 </head>
-<body id="yacysearch_location">
-    #(topmenu)#
-    #%env/templates/embeddedSearchHeader.template%#
-    ::
-    #%env/templates/simpleSearchHeader.template%#
-    #(/topmenu)#
+<body id="yacysearch_location" class="min-h-screen bg-white text-gray-900 flex flex-col">
 
-<div class="row">
-<div class="col-sm-8 col-sm-offset-4 col-md-9 col-md-offset-3 main">
-    <h2>Location Search</h2>
-    <p>
-        The interactive map view is temporarily unavailable while we migrate to a self-hosted tile server.
-        You can still query geo-tagged results as XML/RSS:
-    </p>
-    <p>
-        <a href="yacysearch_location.rss?dom=metatag|alltext&amp;query=#(initsearch)#::#[query]##(/initsearch)#">
-            yacysearch_location.rss
-        </a>
-    </p>
-    <p>
-        To see a list of all APIs, please visit the
-        <a href="https://wiki.yacy.net/index.php/Dev:API" target="_blank" rel="noreferrer">API wiki page</a>.
-    </p>
-</div>
-</div>
+#%env/templates/yacy-public-header.template%#
+
+<main class="flex-1 max-w-3xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10">
+  <h1 class="text-2xl font-light tracking-tight text-gray-900 mb-4">Location search</h1>
+
+  <p class="text-sm text-gray-700 mb-3">
+    The interactive map view is temporarily unavailable while we migrate to a
+    self-hosted tile server. You can still query geo-tagged results as RSS /
+    OpenSearch:
+  </p>
+
+  <p class="mb-3">
+    <a href="yacysearch_location.rss?dom=metatag|alltext&amp;query=#(initsearch)#::#[query]##(/initsearch)#"
+       class="inline-flex items-center gap-2 px-3 py-2 rounded-md bg-blue-600 text-white text-sm hover:bg-blue-700 transition">
+      yacysearch_location.rss
+    </a>
+  </p>
+
+  <p class="text-xs text-gray-500">
+    To see a list of all APIs, please visit the
+    <a href="https://wiki.yacy.net/index.php/Dev:API" target="_blank" rel="noreferrer noopener" class="text-blue-600 hover:underline">API wiki page</a>.
+  </p>
+</main>
+
+<footer class="border-t border-gray-200 py-4">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-wrap justify-between items-center gap-3 text-xs text-gray-500">
+    <span>VIR GOO — відкритий децентралізований пошук · powered by YaCy</span>
+    <div class="flex items-center gap-4">
+      <a href="ConfigBasic.html" class="hover:text-blue-600 transition">Адмін</a>
+    </div>
+  </div>
+</footer>
 
 </body>
 </html>
