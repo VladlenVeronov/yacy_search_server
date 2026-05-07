@@ -1,21 +1,21 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>#[former]# - YaCy '#[clientname]#': Search Page</title>
-  #%env/templates/metas.template%#
+  <title>#[former]# — VIR GOO</title>
+  #%env/templates/yacy-public-meta.template%#
   <link rel="alternate" type="application/rss+xml" title="Search for #[former]#" href="yacysearch.rss?query=#[formerEncoded]#" />
-  <link rel="search" type="application/opensearchdescription+xml" title="YaCy '#[clientname]#'" href="#[thisaddress]#/opensearchdescription.xml" />
+  <link rel="search" type="application/opensearchdescription+xml" title="VIR GOO" href="#[thisaddress]#/opensearchdescription.xml" />
   <link rel="stylesheet" type="text/css" media="screen" href="env/highslide.css" />
-  <link rel="stylesheet" type="text/css" media="screen" href="env/css/yacy-public.css" />
+
   <script type="text/javascript" src="js/ajax.js"></script>
   <script type="text/javascript" src="js/xml.js"></script>
   <script type="text/javascript" src="js/yacysearch.js"></script>
   #(resultTable)#::::
-  	#(embed)#::<script type="text/javascript" src="js/yacysearchAudio.js"></script>#(/embed)#
+    #(embed)#::<script type="text/javascript" src="js/yacysearchAudio.js"></script>#(/embed)#
   #(/resultTable)#
   <script type="text/javascript" src="js/highslide/highslide.js"></script>
   <script type="text/javascript">hs.outlineType = 'rounded-white';</script>
-  <script type="text/javascript" src="env/bootstrap/js/typeahead.jquery.min.js"></script>
+
   #(jsResort)#::
   <script type="text/javascript">
     var requestedResults = #[results]#;
@@ -25,425 +25,402 @@
   <script type="text/javascript" src="js/yacysort.js"></script>
   <link rel="stylesheet" type="text/css" media="screen" href="env/yacysort.css" />
   #(/jsResort)#
-  <script type="text/javascript">
-    $(document).ready(function() {
-    	
-    #(resultTable)#::::
-    	#(embed)#::
-    	showJSAudioControls();
-		#(/embed)#
-    #(/resultTable)#
-    	
-      #(jsResort)#::
-        $.get(
-          "yacysearchitem.html",
-          {
-            eventID: theEventID,
-            item: itemCount
-          },
-          processItem
-        );
-      #(/jsResort)#
 
-		var suggestTimeoutId = null;
-
-		/* Configure the search input field to get suggestions on key strokes */
-		$('#search').typeahead({hint:false,highlight:true,minLength:1}, {
-			name: 'states',
-			displayKey: 'value',
-			source: function(query, render) {
-				if(suggestTimeoutId != null) {
-					/* Remove delayed call not yet done */
-					clearTimeout(suggestTimeoutId);
-				}
-				/* Limit the rate of calls to the suggest API by adding a delay before effective call */
-				suggestTimeoutId = setTimeout(function() {
-					$.getJSON("suggest.json?q=" + query, function(data) {
-	    	    		var parsed = [];
-    	    	    	for (var i = 0; i < data[1].length; i++) {
-	    	    	    	var row = data[1][i];
-    	    	        	if (row) {
-	    	    	        	parsed[parsed.length] = {
-    	    	            		data: [row],
-    	    	                	value: row,
-    	    	                	result: row
-								};  
-							};
-						};
-						render(parsed); 
-					});
-				}, 300);
-			}
-		});
-    });
-  </script>
-  <style type="text/css">.twitter-typeahead {margin: 0px;padding: 0px;top:2px;}</style> <!-- fix for input window -->
-  <style type="text/css">
-    @media (max-width: 767px) {
-      form.search.small {
-        width: calc(100vw - 20px);
-        left: 10px;
-        right: 10px;
-        box-sizing: border-box;
-      }
-      .input-group {
-        max-width: 100% !important;
-      }
-      #api {
-        display: none;
-      }
-      .col-sm-8.main {
-        padding-top: 55px;
-      }
-      #progressbar > span {
-        font-size: 11px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        width: 100% !important;
-      }
-      .sidebar {
-        margin-top: 10px;
-      }
-    }
+  <style>
+    /* progress-bar fade-out compat (yacysearch.js looks for these classes) */
+    .progress { position: relative; height: 6px; background: #e5e7eb; border-radius: 3px; overflow: hidden; }
+    .progress-bar { position: absolute; left: 0; top: 0; bottom: 0; background: #2563eb; transition: width .25s; }
+    .progress-bar-success { background: #10b981; }
+    #progressbar > span { font-size: 12px; color: #374151; position: absolute; left: 8px; top: 8px; }
   </style>
 </head>
-<body id="yacysearch" #(focus)#::onLoad="document.searchform.query.focus();"#(/focus)#>
+<body id="yacysearch" class="min-h-screen bg-white text-gray-900 flex flex-col" #(focus)#::onLoad="document.searchform.query.focus();"#(/focus)#>
 
-    #(topmenu)#
-    #%env/templates/embeddedSearchHeader.template%#
-    ::
-    #%env/templates/simpleSearchHeader.template%#
-    <script type="text/javascript">
-      document.getElementById("header_websearch").className += " active";
-    </script>
-    #(/topmenu)#
+#%env/templates/yacy-public-header.template%#
 
-<div id="api" style="top:81px;">
-<script type="text/javascript">
-//<![CDATA[
-	var showRSSIcon = #(num-results)#false::true::true::true::false::false#(/num-results)#;
-	if(showRSSIcon) {
-		document.write("\<a href=\"yacysearch.rss?" + window.location.search.substring(1) + "\" id=\"apilink\" target=\"_blank\"\><img src=\"env/grafics/rss.png\" width=\"16\" height=\"16\" alt=\"RSS\" /></a>");
-	}
-//]]>
-</script>
-<span>This search result can also be retrieved as RSS/<a href="http://www.opensearch.org" target="_blank">opensearch</a> output.
-Click the RSS icon to see this search result as RSS message stream.
-Use the RSS search result format to add static searches to your RSS reader, if you use one.</span>
-</div>
-
-
-<!-- body -->
-</div> <!-- close the starter-template, to open a row -->
-
-  <div class="row">
-    <div class="col-xs-12 col-sm-8 col-sm-offset-4 col-md-9 col-md-offset-3 main">
-#(topmenu)#
-<form class="search small" name="searchform" method="get" accept-charset="UTF-8" style="position:fixed;top:8px;z-index:1052;">
-::
-<form class="search small col-xs-9 col-sm-5 col-lg-5" name="searchform" method="get" accept-charset="UTF-8" style="position:fixed;top:8px;z-index:1052;">
-#(/topmenu)#
-
-  <div class="input-group" style="max-width:445px;">
-    <input name="query" id="search" type="text" class="form-control searchinput typeahead" size="40" maxlength="500"
-    	placeholder="#[promoteSearchPageGreeting]#" value="#[former]#" #(focus)#::autofocus="autofocus"#(/focus)# onFocus="this.select()" onclick="document.getElementById('Enter').innerHTML = 'search'"/>
-    <div class="input-group-btn">
-       <button id="Enter" name="Enter" class="btn btn-default" type="submit">search</button>
-       #(resortEnabled)#::
-       <a id="resortCached" class="btn btn-default" style="visibility: hidden;" role="button" href="#[url]#" 
-       		title="Refresh sorting. Depending on their rank, some results fetched in background may then appear on this page.">
-        	<span  class="glyphicon glyphicon-sort"></span>
-       </a>
-       #(/resortEnabled)#
-    </div>
-  </div>
-    #(authSearch)#::
-  	<input type="hidden" name="auth" id="auth" value=""/>
-  	#(/authSearch)#
-    <input type="hidden" name="contentdom" id="contentdom" value="#[contentdom]#" />
-    <input type="hidden" name="strictContentDom" id="strictContentDom" value="#[strictContentDom]#" />
-    <input type="hidden" name="former" value="#[former]#" />
-    <input type="hidden" name="maximumRecords" value="#[count]#" />
-    <input type="hidden" name="startRecord" id="startRecord" value="0" />
-    <input type="hidden" name="verify" value="#[search.verify]#" />
-    <input type="hidden" name="resource" id="resource" value="#[resource]#" />
-    <input type="hidden" name="nav" value="#[search.navigation]#" />
-    <input type="hidden" name="prefermaskfilter" value="#[prefermaskfilter]#" />
-    <input type="hidden" name="depth" value="#[depth]#" />
-    <input type="hidden" name="constraint" value="#[constraint]#" />
-    <input type="hidden" name="meanCount" value="#[meanCount]#" />
-    <input id="timezoneOffset" type="hidden" name="timezoneOffset" value=""><script>document.getElementById("timezoneOffset").value = new Date().getTimezoneOffset();</script>
-</form>
-
-<!-- type the number of results and navigation bar -->
-#(num-results)#
-	::
-	<p>No Results.</p>
-	::
-	<p>No Results. (length of search words must be at least 1 character)</p>
-	::
-	<div id="results"></div>
-    <div class="progress" style="margin-top:10px;margin-bottom:0px;">
-      <div class="progress-bar progress-bar-info" id="progressbar" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width:0%;">
-        <span style="position:absolute;display:block;text-align:left;width:85%;max-width:100%;color:black;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">&nbsp;&nbsp;&nbsp;<strong id="offset">#[offset]#</strong>-<strong id="itemscount">#[itemscount]#</strong> of <strong id="totalcount">#[totalcount]#</strong>
-        #(globalresults)#::; (<strong id="localIndexCount">#[localIndexCount]#</strong> local, <strong id="remoteIndexCount">#[remoteIndexCount]#</strong> remote from <strong id="remotePeerCount">#[remotePeerCount]#</strong> YaCy peers).#(/globalresults)# 
-        	<span id="feedingStatus" style="visibility: hidden;" class="glyphicon glyphicon-transfer" title="YaCy server is fetching results from available data sources."></span>
+<!-- compact search bar sticky under main header -->
+<section class="sticky top-0 z-30 bg-white border-b border-gray-200">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+    <form id="searchform" class="search small" name="searchform" method="get" accept-charset="UTF-8">
+      <div class="relative max-w-2xl">
+        <span class="absolute inset-y-0 left-3 flex items-center pointer-events-none text-gray-400">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
+            <path fill-rule="evenodd" d="M10.5 3.75a6.75 6.75 0 1 0 0 13.5 6.75 6.75 0 0 0 0-13.5ZM2.25 10.5a8.25 8.25 0 1 1 14.59 5.28l4.69 4.69a.75.75 0 1 1-1.06 1.06l-4.69-4.69A8.25 8.25 0 0 1 2.25 10.5Z" clip-rule="evenodd" />
+          </svg>
         </span>
+        <input name="query" id="search" type="text" maxlength="500"
+               value="#[former]#"
+               #(focus)#::autofocus="autofocus"#(/focus)#
+               onfocus="this.select()"
+               placeholder="#[promoteSearchPageGreeting]#"
+               autocomplete="off"
+               role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="suggest-list" aria-haspopup="listbox"
+               class="yacy-search-input w-full pl-9 pr-24 py-2 text-base border border-gray-300 rounded-full transition" />
+        <button id="Enter" name="Enter" type="submit"
+                class="absolute right-1 top-1 bottom-1 px-4 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-full transition">
+          search
+        </button>
+        #(resortEnabled)#::
+        <a id="resortCached" class="hidden absolute right-24 top-1 bottom-1 px-3 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm rounded-full inline-flex items-center transition" role="button" href="#[url]#"
+           title="Refresh sorting. Depending on their rank, some results fetched in background may then appear on this page.">
+          ↻
+        </a>
+        #(/resortEnabled)#
+        <ul id="suggest-list" role="listbox"
+            class="hidden absolute z-10 left-0 right-0 mt-1 bg-white border border-gray-200 rounded-2xl shadow-lg py-2 max-h-80 overflow-y-auto"></ul>
       </div>
-    </div>
-	::
-	<p class="alert alert-danger" role="alert">Searching the web with this peer is disabled for unauthorized users. Please <a href="Status.html?login=">log in</a> as administrator to use the search function</p>
-	::
-	<p class="alert alert-danger col-sm-10" role="alert">
-		#(blockReason)#::You are not allowed to search the web with this peer.
-		::You have reached the maximum allowed number of accesses to this search page within ten minutes.
-		Please try again later or log in as administrator or as a user with extended search right.
-		::You have reached the maximum allowed number of accesses to this search page within one minute.
-		Please try again later or log in as administrator or as a user with extended search right.
-		::You have reached the maximum allowed number of accesses to this search page within three seconds.
-		Please try again later or log in as administrator or as a user with extended search right.
-	</p>
-#(/num-results)#
 
-#(urlmaskerror)#::
-<p><b>Illegal URL mask:</b> <i>#[urlmask]#</i> (not a valid regular expression), mask ignored.</p>
-#(/urlmaskerror)#
-
-#(prefermaskerror)#::
-<p><b>Illegal prefer mask:</b> <i>#[prefermask]#</i> (not a valid regular expression), mask ignored.</b></p>
-#(/prefermaskerror)#
-
-#(didYouMean)#::
-<p><b>Did you mean:</b> #{suggestions}# <a href="#[url]#">#[word]#</a> #[sep]##{/suggestions}#</p>
-#(/didYouMean)#
-
-#(searchagain)#
-::
-<script type="text/javascript">
-document.getElementById("Enter").innerHTML = "search again";
-</script>
-#(/searchagain)#
-
-<!-- show information about search key handling -->
-#(excluded)#
-	::
-	<p><strong>The following words are stop-words and had been excluded from the search: #[stopwords]#.</strong></p>
-#(/excluded)#
-
-
-<!-- show openstreetmap tiles if geoinfo was found -->
-#(geoinfo)#
-    ::
-  <div class="searchresults">
-  <h4 class="linktitle">
-  <img src="env/grafics/marker_red.png" class="favicon" style="width:16px; height:16px;" alt="" />
-  Location -- click on map to enlarge</h4>
-  <p class="url">
-  #{loc}#
-  <div style="margin: 20px; width: 100px; float: left;">
-  <a href="osm.png?lon=#[lon]#&amp;lat=#[lat]#&amp;zoom=14" class="thumblink"  style="float:left;" onclick="return hs.expand(this)">
-      <img src="osm.png?lon=#[lon]#&amp;lat=#[lat]#&amp;zoom=14" width="192" height="192" alt="map #[lon]#, #[lat]#" />
-  </a>
-  <div class="TableCellDark"><a href="https://www.openstreetmap.org/?lat=#[lat]#&amp;lon=#[lon]#&amp;zoom=14">#[name]#</a><br /><a href="https://www.openstreetmap.org/?lat=#[lat]#&amp;lon=#[lon]#&amp;zoom=14">lat=#[lat]#, lon=#[lon]#</a></div> <!-- preview -->
-  <div class="highslide-caption"><a href="https://www.openstreetmap.org/?lat=#[lat]#&amp;lon=#[lon]#&amp;zoom=14">#[name]#</a><br /><a href="https://www.openstreetmap.org/?lat=#[lat]#&amp;lon=#[lon]#&amp;zoom=14">lat=#[lat]#, lon=#[lon]#</a></div> <!-- zoomed -->
+      #(authSearch)#::<input type="hidden" name="auth" id="auth" value=""/>#(/authSearch)#
+      <input type="hidden" name="contentdom" id="contentdom" value="#[contentdom]#" />
+      <input type="hidden" name="strictContentDom" id="strictContentDom" value="#[strictContentDom]#" />
+      <input type="hidden" name="former" value="#[former]#" />
+      <input type="hidden" name="maximumRecords" value="#[count]#" />
+      <input type="hidden" name="startRecord" id="startRecord" value="0" />
+      <input type="hidden" name="verify" value="#[search.verify]#" />
+      <input type="hidden" name="resource" id="resource" value="#[resource]#" />
+      <input type="hidden" name="nav" value="#[search.navigation]#" />
+      <input type="hidden" name="prefermaskfilter" value="#[prefermaskfilter]#" />
+      <input type="hidden" name="depth" value="#[depth]#" />
+      <input type="hidden" name="constraint" value="#[constraint]#" />
+      <input type="hidden" name="meanCount" value="#[meanCount]#" />
+      <input id="timezoneOffset" type="hidden" name="timezoneOffset" value="" />
+      <script>document.getElementById("timezoneOffset").value = new Date().getTimezoneOffset();</script>
+    </form>
   </div>
-  #{/loc}#
-  </p>
-  <p class="urlinfo" style="clear:left;">Map (c) by <a href="https://www.openstreetmap.org">OpenStreetMap</a> and contributors, CC-BY-SA</p>
-  </div>
-#(/geoinfo)#
+</section>
 
-<!-- show date histogram if date navigation is active -->
-<div id="datehistogram"></div>
-
-<div id="imageErrorsInfo" class="info hidden">
-	Failed to render <strong id="imageErrorsCount">0</strong> thumbnail(s).
-	<button id="showErrorImagesBtn" class="btn btn-default btn-sm" onclick="showErrThumbnails()" title="Show anyway links to images that could not be rendered">Show</button>
-	<button id="hideErrorImagesBtn" class="btn btn-default btn-sm hidden" onclick="hideErrThumbnails()" title="Hide links to images that could not be rendered">Hide</button>
+<div id="api" class="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 mt-3 text-xs text-gray-500">
+  <script>
+    var showRSSIcon = #(num-results)#false::true::true::true::false::false#(/num-results)#;
+    if (showRSSIcon) {
+      document.write('<a href="yacysearch.rss?' + window.location.search.substring(1) + '" id="apilink" target="_blank" class="inline-flex items-center gap-1 text-gray-500 hover:text-blue-600 transition"><img src="env/grafics/rss.png" width="16" height="16" alt="RSS" />RSS</a>');
+    }
+  </script>
 </div>
 
-<!-- linklist begin -->
-#(resultTable)#::<table width="100%"><tr class="TableHeader"><td width="30%">Media</td><td width="70%">URL</td></tr>
-::<table width="100%">
-	<tr class="TableHeader">
-		<td width="30%">Media</td>
-		<td width="70%">URL</td>
-		#(embed)#::<td>Player
-			<div id="audioControls" class="btn-group btn-group-xs col-xs-offset-3 hidden" role="group" data-current-track="-1">
-				<button id="playAllBtn" type="button"
-					class="btn btn-default btn-xs" title="Play all"
-					data-playAll-title="Play all"
-					data-pause-title="Pause"
-					onclick="handlePlayAllBtnClick()">
-						<span id="playAllIcon" class="glyphicon glyphicon-play"></span>
-				</button>
-				<button id="stopAllBtn"
-					class="btn btn-default btn-xs" title="Stop all"
-					onclick="handleStopAllBtnClick()">
-						<span id="stopAllIcon" class="glyphicon glyphicon-stop"></span>
-				</button>
-			</div>
-		</td>#(/embed)#
-	</tr>
-#(/resultTable)#
-#(jsResort)#
-  #{results}#
-  <!--#include virtual="yacysearchitem.html?item=#[item]#&eventID=#[eventID]#" -->
-  #{/results}#
-::
-  <div id="resultscontainer">
+<main class="flex-1 max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-4 grid grid-cols-1 lg:grid-cols-12 gap-6">
+  <section id="resultscolumn" class="lg:col-span-8 min-w-0">
+
+    <!-- result count + progress bar -->
+    #(num-results)#
+      ::
+      <p class="text-sm text-gray-700 num-results">No results.</p>
+      ::
+      <p class="text-sm text-gray-700 num-results">No results. (length of search words must be at least 1 character)</p>
+      ::
+      <div id="results"></div>
+      <div class="progress mt-3 mb-2 num-results">
+        <div class="progress-bar progress-bar-info" id="progressbar" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width:0%;">
+          <span><strong id="offset">#[offset]#</strong>-<strong id="itemscount">#[itemscount]#</strong> of <strong id="totalcount">#[totalcount]#</strong>#(globalresults)#::; <strong id="localIndexCount">#[localIndexCount]#</strong> local, <strong id="remoteIndexCount">#[remoteIndexCount]#</strong> remote (<strong id="remotePeerCount">#[remotePeerCount]#</strong> peers)#(/globalresults)#
+            <span id="feedingStatus" class="hidden" title="YaCy server is fetching results from available data sources.">…</span>
+          </span>
+        </div>
+      </div>
+      ::
+      <div class="rounded-md bg-red-50 border border-red-200 text-red-700 px-4 py-3 text-sm">
+        Searching the web with this peer is disabled for unauthorized users. Please <a href="Status.html?login=" class="underline">log in</a> as administrator to use the search function.
+      </div>
+      ::
+      <div class="rounded-md bg-red-50 border border-red-200 text-red-700 px-4 py-3 text-sm">
+        #(blockReason)#::You are not allowed to search the web with this peer.
+        ::You have reached the maximum allowed number of accesses to this search page within ten minutes. Please try again later or log in as administrator or as a user with extended search right.
+        ::You have reached the maximum allowed number of accesses to this search page within one minute. Please try again later or log in as administrator or as a user with extended search right.
+        ::You have reached the maximum allowed number of accesses to this search page within three seconds. Please try again later or log in as administrator or as a user with extended search right.
+        #(/blockReason)#
+      </div>
+    #(/num-results)#
+
+    #(urlmaskerror)#::
+    <p class="mt-2 text-sm text-amber-700"><b>Illegal URL mask:</b> <i>#[urlmask]#</i> (not a valid regular expression), mask ignored.</p>
+    #(/urlmaskerror)#
+
+    #(prefermaskerror)#::
+    <p class="mt-2 text-sm text-amber-700"><b>Illegal prefer mask:</b> <i>#[prefermask]#</i> (not a valid regular expression), mask ignored.</p>
+    #(/prefermaskerror)#
+
+    #(didYouMean)#::
+    <p class="mt-2 text-sm text-gray-700"><b>Did you mean:</b> #{suggestions}# <a href="#[url]#" class="text-blue-600 hover:underline">#[word]#</a> #[sep]##{/suggestions}#</p>
+    #(/didYouMean)#
+
+    #(searchagain)#::
+    <script>document.getElementById("Enter").innerHTML = "search again";</script>
+    #(/searchagain)#
+
+    #(excluded)#::
+    <p class="mt-2 text-xs text-gray-500"><strong>The following words are stop-words and had been excluded from the search: #[stopwords]#.</strong></p>
+    #(/excluded)#
+
+    #(geoinfo)#::
+    <div class="mt-4 p-4 border border-gray-200 rounded-lg">
+      <h4 class="text-sm font-semibold text-gray-700 mb-2">
+        <img src="env/grafics/marker_red.png" class="inline w-4 h-4 align-middle" alt="" />
+        Location — click on map to enlarge
+      </h4>
+      <div class="flex flex-wrap gap-4">
+        #{loc}#
+        <div class="text-xs">
+          <a href="osm.png?lon=#[lon]#&amp;lat=#[lat]#&amp;zoom=14" class="thumblink block" onclick="return hs.expand(this)">
+            <img src="osm.png?lon=#[lon]#&amp;lat=#[lat]#&amp;zoom=14" width="160" height="160" alt="map #[lon]#, #[lat]#" class="rounded" />
+          </a>
+          <div class="mt-1 text-gray-600">
+            <a href="https://www.openstreetmap.org/?lat=#[lat]#&amp;lon=#[lon]#&amp;zoom=14" class="text-blue-600 hover:underline">#[name]#</a><br/>
+            lat=#[lat]#, lon=#[lon]#
+          </div>
+          <div class="highslide-caption text-xs">
+            <a href="https://www.openstreetmap.org/?lat=#[lat]#&amp;lon=#[lon]#&amp;zoom=14" class="text-blue-600 hover:underline">#[name]#</a><br/>
+            lat=#[lat]#, lon=#[lon]#
+          </div>
+        </div>
+        #{/loc}#
+      </div>
+      <p class="mt-2 text-xs text-gray-500">Map © <a href="https://www.openstreetmap.org" class="hover:underline">OpenStreetMap</a> contributors, CC-BY-SA</p>
+    </div>
+    #(/geoinfo)#
+
+    <div id="datehistogram" class="my-2"></div>
+
+    <div id="imageErrorsInfo" class="hidden mt-3 mb-2 rounded-md bg-amber-50 border border-amber-200 text-amber-800 px-3 py-2 text-xs">
+      Failed to render <strong id="imageErrorsCount">0</strong> thumbnail(s).
+      <button id="showErrorImagesBtn" class="ml-2 px-2 py-1 bg-white border border-amber-300 rounded text-amber-700 hover:bg-amber-100" onclick="showErrThumbnails()" title="Show anyway">Show</button>
+      <button id="hideErrorImagesBtn" class="hidden ml-2 px-2 py-1 bg-white border border-amber-300 rounded text-amber-700 hover:bg-amber-100" onclick="hideErrThumbnails()" title="Hide">Hide</button>
+    </div>
+
+    <!-- result list -->
+    #(resultTable)#::<table class="w-full mt-3 text-sm"><tr class="bg-gray-50 text-gray-600 text-left"><th class="p-2 w-1/3">Media</th><th class="p-2">URL</th></tr>
+    ::<table class="w-full mt-3 text-sm">
+      <tr class="bg-gray-50 text-gray-600 text-left">
+        <th class="p-2 w-1/3">Media</th>
+        <th class="p-2">URL</th>
+        #(embed)#::<th class="p-2">Player
+          <div id="audioControls" class="hidden inline-flex gap-1 ml-2" role="group" data-current-track="-1">
+            <button id="playAllBtn" type="button"
+                    class="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
+                    title="Play all"
+                    data-playAll-title="Play all" data-pause-title="Pause"
+                    onclick="handlePlayAllBtnClick()">
+              <span id="playAllIcon">▶</span>
+            </button>
+            <button id="stopAllBtn"
+                    class="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
+                    title="Stop all"
+                    onclick="handleStopAllBtnClick()">
+              <span id="stopAllIcon">■</span>
+            </button>
+          </div>
+        </th>#(/embed)#
+      </tr>
+    #(/resultTable)#
+    #(jsResort)#
+      #{results}#
+      <!--#include virtual="yacysearchitem.html?item=#[item]#&eventID=#[eventID]#" -->
+      #{/results}#
+      ::
+      <div id="resultscontainer" class="mt-2"></div>
+    #(/jsResort)#
+    #(resultTable)#::</table>::</table>#(/resultTable)#
+
+    <!--#include virtual="yacysearchpagination.html?eventID=#[eventID]#&maximumRecords=#[count]#&offset=#[offset]#&jsResort=#(jsResort)#false::true#(/jsResort)##(authSearch)#::&auth#(/authSearch)#" -->
+  </section>
+
+  <aside id="sidebar" class="lg:col-span-4 min-w-0">
+    #(jsResort)#
+    <!--#include virtual="yacysearchtrailer.html?eventID=#[eventID]#" -->
+    ::
+    #(/jsResort)#
+  </aside>
+</main>
+
+<footer class="border-t border-gray-200 py-4 mt-6">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-wrap justify-between items-center gap-3 text-xs text-gray-500">
+    <span>VIR GOO — відкритий децентралізований пошук · powered by YaCy</span>
+    <div class="flex items-center gap-4">
+      <a href="ConfigBasic.html" class="hover:text-blue-600 transition">Адмін</a>
+    </div>
   </div>
-#(/jsResort)#
-#(resultTable)#::</table>::</table>#(/resultTable)#
-<!-- linklist end -->
+</footer>
 
-<!--#include virtual="yacysearchpagination.html?eventID=#[eventID]#&maximumRecords=#[count]#&offset=#[offset]#&jsResort=#(jsResort)#false::true#(/jsResort)##(authSearch)#::&auth#(/authSearch)#" -->
-
-</div> <!-- close main -->
-
-<div class="col-xs-12 col-sm-4 col-md-3 sidebar" id="sidebar">
-<!-- navigation begin -->
-#(jsResort)#
-<!--#include virtual="yacysearchtrailer.html?eventID=#[eventID]#" -->
-::
-#(/jsResort)#
-<!-- navigation end -->
-
-</div> <!-- close sidebar -->
-</div> <!-- close row -->
-
-<!-- update the search results statistics after the search is finished -->
+<!-- per-result reload of stats while feeders are running -->
 <script type="text/javascript">
 function latestinfo() {
-  if (window.XMLHttpRequest) { // Mozilla/Safari
+  if (window.XMLHttpRequest) {
     self.xmlHttpReq = new XMLHttpRequest();
-  } else if (window.ActiveXObject) { // IE
+  } else if (window.ActiveXObject) {
     self.xmlHttpReq = new ActiveXObject("Microsoft.XMLHTTP");
   }
   self.xmlHttpReq.open('GET', "yacysearchlatestinfo.json?eventID=#[eventID]#", true);
   self.xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
   self.xmlHttpReq.onreadystatechange = function() {
     if (self.xmlHttpReq.readyState == 4) {
-    	var rsp = null;
-    	if(self.xmlHttpReq.responseText) {
-      		if(window.JSON && window.JSON.parse) {
-	    		/* Prefer use of JSON parser when available instead of discouraged eval() function */
-   				rsp = window.JSON.parse(self.xmlHttpReq.responseText);
-      		} else {
-	      		rsp = eval("(" + self.xmlHttpReq.responseText + ")");
-      		}
-    	}
-      
-    	if(rsp && rsp.offset != null) {
-			#(jsResort)#
-			  statistics(rsp.offset, rsp.itemscount, rsp.itemsperpage, rsp.totalcount, rsp.localIndexCount, rsp.remoteIndexCount, rsp.remotePeerCount, rsp.navurlBase, #[localQuery]#, rsp.feedRunning, false, true);
-			::
-			  statistics($("#resultscontainer .searchresults.earlierpage").length + 1, $("#resultscontainer .searchresults.earlierpage").length + $("#resultscontainer .searchresults.currentpage").length, rsp.itemsperpage, rsp.totalcount, rsp.localIndexCount, rsp.remoteIndexCount, rsp.remotePeerCount, rsp.navurlBase, #[localQuery]#, rsp.feedRunning, true, false);
-			#(/jsResort)#
-			if(rsp.feedRunning) {
-				/* Refresh statistics while server feeders are still running */
-				window.setTimeout(latestinfo, 1000);
-			}
-    	}
+      var rsp = null;
+      if (self.xmlHttpReq.responseText) {
+        if (window.JSON && window.JSON.parse) {
+          rsp = window.JSON.parse(self.xmlHttpReq.responseText);
+        } else {
+          rsp = eval("(" + self.xmlHttpReq.responseText + ")");
+        }
+      }
+      if (rsp && rsp.offset != null) {
+        #(jsResort)#
+          statistics(rsp.offset, rsp.itemscount, rsp.itemsperpage, rsp.totalcount, rsp.localIndexCount, rsp.remoteIndexCount, rsp.remotePeerCount, rsp.navurlBase, #[localQuery]#, rsp.feedRunning, false, true);
+        ::
+          var $cont = (typeof $ === 'function') ? $('#resultscontainer .searchresults.earlierpage') : null;
+          var off = $cont ? $cont.length + 1 : 1;
+          var cur = $cont ? $cont.length + $('#resultscontainer .searchresults.currentpage').length : 0;
+          statistics(off, cur, rsp.itemsperpage, rsp.totalcount, rsp.localIndexCount, rsp.remoteIndexCount, rsp.remotePeerCount, rsp.navurlBase, #[localQuery]#, rsp.feedRunning, true, false);
+        #(/jsResort)#
+        if (rsp.feedRunning) {
+          window.setTimeout(latestinfo, 1000);
+        }
+      }
     }
   };
   self.xmlHttpReq.send(null);
 }
-window.setTimeout(latestinfo, 500); // we need that to get a correct pagination bar at the end of the page
+window.setTimeout(latestinfo, 500);
 </script>
 
+<!-- jsResort lazy-fill of result items via XHR -->
+#(jsResort)#::
 <script>
-// AI-Unsatisfied tracking: log every search and every result click to the
-// vector service. Fire-and-forget; failures are silent so they never block
-// the user. The vector service exposes /api/vector/* via traefik.
-(function () {
-    const params = new URLSearchParams(window.location.search);
-    const q = (params.get('query') || params.get('q') || '').trim();
-    if (!q) return;
+$(document).ready(function() {
+  $.get("yacysearchitem.html", { eventID: theEventID, item: itemCount }, processItem);
+});
+</script>
+#(/jsResort)#
 
-    function send(path, body) {
-        const data = JSON.stringify(body);
-        if (navigator.sendBeacon) {
-            try {
-                navigator.sendBeacon('/api/vector' + path, new Blob([data], { type: 'application/json' }));
-                return;
-            } catch (_) { /* fall through */ }
-        }
-        fetch('/api/vector' + path, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: data,
-            keepalive: true,
-        }).catch(() => {});
+<!-- AI-Unsatisfied tracking: log search and result clicks to /api/vector -->
+<script>
+(function () {
+  const params = new URLSearchParams(window.location.search);
+  const q = (params.get('query') || params.get('q') || '').trim();
+  if (!q) return;
+  function send(path, body) {
+    const data = JSON.stringify(body);
+    if (navigator.sendBeacon) {
+      try { navigator.sendBeacon('/api/vector' + path, new Blob([data], { type: 'application/json' })); return; } catch (_) {}
     }
-
-    // Log the search itself once the page settles. Result count is read from
-    // the trailer DOM (#offset / .num-results) — fall back to 0 if absent.
-    window.addEventListener('load', () => {
-        let count = 0;
-        const el = document.querySelector('.num-results');
-        if (el) {
-            const m = el.textContent.match(/\d+/g);
-            if (m && m.length) count = parseInt(m[m.length - 1], 10) || 0;
-        }
-        send('/track-search', { query: q, result_count: count });
-    });
-
-    // Delegate result-link clicks. Every result anchor lives inside
-    // article.yacy-result; we use the urlhash from the link id when present.
-    document.addEventListener('mousedown', (e) => {
-        const a = e.target.closest('article.yacy-result a[href]');
-        if (!a) return;
-        const article = a.closest('article.yacy-result');
-        const articles = Array.from(document.querySelectorAll('article.yacy-result'));
-        const pos = articles.indexOf(article);
-        const idAttr = (a.id || '').replace(/^url/, '') || null;
-        send('/track-click', {
-            query: q,
-            doc_id: idAttr,
-            url: a.href,
-            position: pos >= 0 ? pos : null,
-        });
-    }, { capture: true });
+    fetch('/api/vector' + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: data, keepalive: true }).catch(() => {});
+  }
+  window.addEventListener('load', () => {
+    let count = 0;
+    const el = document.querySelector('.num-results');
+    if (el) {
+      const m = el.textContent.match(/\d+/g);
+      if (m && m.length) count = parseInt(m[m.length - 1], 10) || 0;
+    }
+    send('/track-search', { query: q, result_count: count });
+  });
+  document.addEventListener('mousedown', (e) => {
+    const a = e.target.closest('article.yacy-result a[href]');
+    if (!a) return;
+    const article = a.closest('article.yacy-result');
+    const articles = Array.from(document.querySelectorAll('article.yacy-result'));
+    const pos = articles.indexOf(article);
+    const idAttr = (a.id || '').replace(/^url/, '') || null;
+    send('/track-click', { query: q, doc_id: idAttr, url: a.href, position: pos >= 0 ? pos : null });
+  }, { capture: true });
 })();
 </script>
 
+<!-- keep query box value in sync across facet/resource/ranking switches -->
 <script>
-// Phase 6: persist the current query box value across facet/resource/ranking
-// switches. The trailer-rendered forms use hidden `former` inputs that carry
-// the *server-side* original query — when the user edits the search box and
-// clicks a facet link, those forms submit the stale value. Sync them on submit.
 (function () {
-    document.addEventListener('submit', function (e) {
-        var box = document.getElementById('search');
-        if (!box) return;
-        var v = box.value;
-        var f = e.target;
-        if (!f || !f.querySelectorAll) return;
-        f.querySelectorAll('input[name="query"], input[name="former"]').forEach(function (i) {
-            i.value = v;
-        });
-    }, { capture: true });
-
-    // Faceted nav uses <a href="...&query=OLD"> links; rewrite the query param
-    // on click to the current input value before navigation.
-    document.addEventListener('click', function (e) {
-        var box = document.getElementById('search');
-        if (!box) return;
-        var a = e.target.closest('a[href*="query="]');
-        if (!a) return;
-        try {
-            var u = new URL(a.href, location.href);
-            if (u.searchParams.has('query')) {
-                u.searchParams.set('query', box.value);
-                a.href = u.toString();
-            }
-        } catch (err) { /* noop */ }
-    }, { capture: true });
+  document.addEventListener('submit', function (e) {
+    var box = document.getElementById('search');
+    if (!box) return;
+    var v = box.value;
+    var f = e.target;
+    if (!f || !f.querySelectorAll) return;
+    f.querySelectorAll('input[name="query"], input[name="former"]').forEach(function (i) { i.value = v; });
+  }, { capture: true });
+  document.addEventListener('click', function (e) {
+    var box = document.getElementById('search');
+    if (!box) return;
+    var a = e.target.closest('a[href*="query="]');
+    if (!a) return;
+    try {
+      var u = new URL(a.href, location.href);
+      if (u.searchParams.has('query')) {
+        u.searchParams.set('query', box.value);
+        a.href = u.toString();
+      }
+    } catch (err) {}
+  }, { capture: true });
 })();
 </script>
 
-#%env/templates/footer.template%#
+<!-- native autocomplete (replaces jQuery typeahead) -->
+<script>
+(function () {
+  const input = document.getElementById('search');
+  const list = document.getElementById('suggest-list');
+  if (!input || !list) return;
+
+  let items = [];
+  let active = -1;
+  let lastQ = '';
+  let timer = 0;
+  let abort = null;
+
+  function close() {
+    list.classList.add('hidden');
+    list.innerHTML = '';
+    items = [];
+    active = -1;
+    input.setAttribute('aria-expanded', 'false');
+  }
+  function render() {
+    list.innerHTML = items.map((s, i) => {
+      const cls = 'px-4 py-2 cursor-pointer text-sm ' + (i === active ? 'bg-blue-50 text-blue-700' : 'hover:bg-gray-50');
+      return '<li role="option" data-i="' + i + '" class="' + cls + '">' + s.replace(/[<>&"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c])) + '</li>';
+    }).join('');
+    list.classList.toggle('hidden', items.length === 0);
+    input.setAttribute('aria-expanded', items.length ? 'true' : 'false');
+  }
+  function select(i) {
+    if (i < 0 || i >= items.length) return;
+    input.value = items[i];
+    close();
+    document.getElementById('searchform').submit();
+  }
+  async function fetchSuggest(q) {
+    if (abort) abort.abort();
+    abort = new AbortController();
+    try {
+      const r = await fetch('suggest.json?q=' + encodeURIComponent(q) + '&count=8', { signal: abort.signal });
+      if (!r.ok) return;
+      const data = await r.json();
+      if (q !== input.value.trim()) return;
+      items = Array.isArray(data) && Array.isArray(data[1]) ? data[1].slice(0, 8) : [];
+      active = -1;
+      render();
+    } catch (_) {}
+  }
+
+  input.addEventListener('input', () => {
+    const q = input.value.trim();
+    if (q === lastQ) return;
+    lastQ = q;
+    clearTimeout(timer);
+    if (q.length < 2) { close(); return; }
+    timer = setTimeout(() => fetchSuggest(q), 120);
+  });
+  input.addEventListener('keydown', (e) => {
+    if (list.classList.contains('hidden')) return;
+    if (e.key === 'ArrowDown') { e.preventDefault(); active = Math.min(active + 1, items.length - 1); render(); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); active = Math.max(active - 1, -1); render(); }
+    else if (e.key === 'Enter' && active >= 0) { e.preventDefault(); select(active); }
+    else if (e.key === 'Escape') { close(); }
+  });
+  list.addEventListener('mousedown', (e) => {
+    const li = e.target.closest('li[data-i]');
+    if (li) { e.preventDefault(); select(parseInt(li.dataset.i, 10)); }
+  });
+  document.addEventListener('click', (e) => {
+    if (!list.contains(e.target) && e.target !== input) close();
+  });
+})();
+</script>
+
 </body>
 </html>

@@ -1,22 +1,25 @@
 #(pagination)#
-	::
-	<span id="resNav" class="col-sm-12  col-md-12" style="display: inline;">
-		<ul id="paginationButtons" class="pagination#(hidePagination)#:: hidden#(/hidePagination)#">
-			<li id="prevpage" class="#(prevDisabled)#::disabled#(/prevDisabled)#">
-				<a title="Previous page" 
-					#(prevDisabled)#href="#[prevHref]#"::href="#"#(/prevDisabled)# 
-					#(prevDisabled)#accesskey="p"#(/prevDisabled)#>&laquo;</a>
-			</li>
-			#{pages}#
-			<li class="#(active)#::active#(/active)#">
-				<a #(active)#href="#[href]#"::href="#"#(/active)#">#[pageNum]#</a>
-			</li>
-			#{/pages}#
-			<li id="nextpage" class="#(nextDisabled)#::disabled#(/nextDisabled)#">
-				<a title="Next page" 
-					#(nextDisabled)#href="#[nextHref]#"::href="#"#(/nextDisabled)# 
-					#(prevDisabled)#accesskey="n"#(/prevDisabled)#>&raquo;</a>
-			</li>
-		</ul>
-	</span>
+  ::
+  <nav id="resNav" class="mt-6 mb-6">
+    <ul id="paginationButtons" class="flex flex-wrap items-center gap-1#(hidePagination)#:: hidden#(/hidePagination)#">
+      <li id="prevpage" class="#(prevDisabled)#opacity-40 pointer-events-none::#(/prevDisabled)#">
+        <a class="px-3 py-1.5 rounded-md text-sm border border-gray-200 hover:bg-gray-100 transition inline-flex items-center"
+           title="Previous page"
+           #(prevDisabled)#href="#[prevHref]#"::href="#"#(/prevDisabled)#
+           #(prevDisabled)#accesskey="p"#(/prevDisabled)#>&laquo;</a>
+      </li>
+      #{pages}#
+      <li>
+        <a class="px-3 py-1.5 rounded-md text-sm border #(active)#border-gray-200 hover:bg-gray-100::border-blue-600 bg-blue-600 text-white#(/active)# transition"
+           #(active)#href="#[href]#"::href="#"#(/active)#>#[pageNum]#</a>
+      </li>
+      #{/pages}#
+      <li id="nextpage" class="#(nextDisabled)#opacity-40 pointer-events-none::#(/nextDisabled)#">
+        <a class="px-3 py-1.5 rounded-md text-sm border border-gray-200 hover:bg-gray-100 transition inline-flex items-center"
+           title="Next page"
+           #(nextDisabled)#href="#[nextHref]#"::href="#"#(/nextDisabled)#
+           #(prevDisabled)#accesskey="n"#(/prevDisabled)#>&raquo;</a>
+      </li>
+    </ul>
+  </nav>
 #(/pagination)#
