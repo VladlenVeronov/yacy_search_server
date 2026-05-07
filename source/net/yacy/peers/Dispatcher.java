@@ -27,6 +27,7 @@ package net.yacy.peers;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -34,6 +35,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import net.yacy.cora.document.encoding.ASCII;
+import net.yacy.cora.document.id.DigestURL;
 import net.yacy.cora.order.Base64Order;
 import net.yacy.cora.storage.HandleSet;
 import net.yacy.cora.util.ConcurrentLog;
@@ -46,6 +48,7 @@ import net.yacy.kelondro.rwi.ReferenceContainer;
 import net.yacy.kelondro.workflow.WorkflowProcessor;
 import net.yacy.kelondro.workflow.WorkflowTask;
 import net.yacy.peers.Transmission.Chunk;
+import net.yacy.repository.Blacklist.BlacklistType;
 import net.yacy.search.Switchboard;
 import net.yacy.search.SwitchboardConstants;
 import net.yacy.search.index.Segment;
@@ -315,9 +318,20 @@ public class Dispatcher implements WorkflowTask<Transmission.Chunk> {
         	return false;
         }
 
+        // Phase 4 NETWORK: filter outgoing references against the DHT
+        // blacklist so we never share porn/casino/spam-host indexes with
+        // peers, even when allowDistributeIndex=true. Negative cache for
+        // each blacklist type lives in Switchboard.urlBlacklist.
+        final int beforeRefs = countReferences(selectedContainerCache);
+        final int dropped = filterDhtBlacklisted(selectedContainerCache);
+        if (dropped > 0) {
+            this.log.info("selectContainersEnqueueToBuffer: DHT blacklist dropped " + dropped + " of " + beforeRefs + " refs before transmit");
+        }
+
         // check all entries and split them to the partitions
         try {
             for (final ReferenceContainer<WordReference> container: selectedContainerCache) {
+                if (container == null || container.isEmpty()) continue;
                 // init the new partitions
                 final ReferenceContainer<WordReference>[] partitionBuffer = splitContainer(container);
                 enqueueContainersToBuffer(container.getTermHash(), partitionBuffer);
@@ -328,6 +342,77 @@ public class Dispatcher implements WorkflowTask<Transmission.Chunk> {
         }
     	this.log.info("selectContainersEnqueueToBuffer: splitContainerCache enqueued to the write buffer array which has now " + this.transmissionBuffer.size() + " entries.");
         return true;
+    }
+
+    /**
+     * Walk every WordReference in the given containers and drop those whose
+     * URL is on the DHT blacklist. Cheap path uses the urlhash hot-cache
+     * populated by Blacklist.isListed; cold path resolves the URL via
+     * Solr and runs the full host/path matcher. Returns count of refs
+     * removed (across all containers).
+     */
+    private int filterDhtBlacklisted(final List<ReferenceContainer<WordReference>> containers) {
+        if (containers == null || containers.isEmpty() || this.segment == null) return 0;
+        if (Switchboard.urlBlacklist == null) return 0;
+        int totalDropped = 0;
+        for (final ReferenceContainer<WordReference> container : containers) {
+            if (container == null || container.isEmpty()) continue;
+            HandleSet remove = null;
+            final Iterator<WordReference> it = container.entries();
+            while (it.hasNext()) {
+                final WordReference ref = it.next();
+                if (ref == null) continue;
+                final byte[] urlhash = ref.urlhash();
+                if (urlhash == null) continue;
+                if (Switchboard.urlBlacklist.hashInBlacklistedCache(BlacklistType.DHT, urlhash)) {
+                    remove = addRemove(remove, urlhash);
+                    continue;
+                }
+                String url = null;
+                try {
+                    url = this.segment.fulltext().getURL(ASCII.String(urlhash));
+                } catch (final IOException e) {
+                    // unresolvable url - leave alone
+                }
+                if (url == null || url.isEmpty()) continue;
+                try {
+                    final DigestURL durl = new DigestURL(url);
+                    if (Switchboard.urlBlacklist.isListed(BlacklistType.DHT, durl)) {
+                        remove = addRemove(remove, urlhash);
+                    }
+                } catch (final MalformedURLException e) {
+                    // skip - unparseable url
+                } catch (final IllegalArgumentException e) {
+                    // skip
+                }
+            }
+            if (remove != null && !remove.isEmpty()) {
+                totalDropped += container.removeEntries(remove);
+            }
+        }
+        return totalDropped;
+    }
+
+    private HandleSet addRemove(HandleSet remove, final byte[] urlhash) {
+        if (remove == null) {
+            remove = new RowHandleSet(Word.commonHashLength, Word.commonHashOrder, 0);
+        }
+        try {
+            remove.put(urlhash);
+        } catch (final SpaceExceededException e) {
+            ConcurrentLog.logException(e);
+        }
+        return remove;
+    }
+
+    private int countReferences(final List<ReferenceContainer<WordReference>> containers) {
+        int n = 0;
+        if (containers != null) {
+            for (final ReferenceContainer<WordReference> c : containers) {
+                if (c != null) n += c.size();
+            }
+        }
+        return n;
     }
 
     /**
