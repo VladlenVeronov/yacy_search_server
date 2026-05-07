@@ -81,6 +81,30 @@ in `.env`**. They're entered through the YaCy admin UI at
 `https://${YACY_HOST}/LLMSelection_p.html` and persisted into
 `yacy-data/SETTINGS/yacy.conf`. Treat the host's `yacy-data/` as secret.
 
+## Background jobs (cron)
+
+Two scheduled jobs on the host:
+
+| schedule        | script                  | purpose                                                       |
+|-----------------|-------------------------|---------------------------------------------------------------|
+| `5 * * * *`     | `cron-sync-pages.sh`    | Solr → pgvector incremental sync (cursor-mark, idempotent).   |
+| `0 3 * * *`     | `cron-unsat-seed.sh`    | LLM gap-analyzer: zero-click queries → seed crawl URLs. **No-op until `LLM_API_URL` + `LLM_API_KEY` are set in `.env`.** |
+| `*/5 * * * *`   | `auto-deploy.sh`        | git pull → diff-rebuild changed services → schema apply.      |
+
+Install (run as the user that owns the stack — e.g. `vir`):
+
+```bash
+( crontab -l 2>/dev/null
+  echo "5 * * * * STACK_DIR=$PWD $PWD/deploy/cron-sync-pages.sh"
+  echo "0 3 * * * STACK_DIR=$PWD $PWD/deploy/cron-unsat-seed.sh"
+  echo "*/5 * * * * STACK_DIR=$PWD $PWD/deploy/auto-deploy.sh"
+) | crontab -
+```
+
+`cron-unsat-seed.sh` also expects `YACY_ADMIN_USER` and `YACY_ADMIN_PASS`
+in `.env` — these are the YaCy digest-auth credentials it uses to
+post the LLM-proposed URLs into the YaCy crawl queue.
+
 ## Forking this for your own deployment
 
 Everything in `deploy/` is the public reference. Clone the fork, copy
