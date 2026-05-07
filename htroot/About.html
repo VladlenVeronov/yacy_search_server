@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Про VIR GOO — відкритий децентралізований пошук</title>
+  <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
+  <meta name="description" content="VIR GOO — open, decentralized search. Fork of YaCy without PageRank, with semantic search, AI-driven gap-fill, and outbound DHT blacklist filter." />
+  <meta name="referrer" content="origin-when-cross-origin" />
+  <link rel="stylesheet" type="text/css" href="env/css/tailwind.min.css" />
+  <link rel="stylesheet" type="text/css" href="env/css/yacy-public.css" />
+</head>
+<body class="min-h-screen bg-white text-gray-900 flex flex-col">
+
+#%env/templates/yacy-public-header.template%#
+
+<main class="flex-1 max-w-3xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
+
+  <header class="mb-12">
+    <h1 class="text-4xl sm:text-5xl font-light tracking-tight">
+      Про <span class="text-blue-600 font-semibold">VIR GOO</span>
+    </h1>
+    <p class="mt-3 text-base text-gray-600">
+      Відкритий, децентралізований пошук без рекламних трекерів і без
+      бізнес-причини ховати кращі результати.
+    </p>
+  </header>
+
+  <section class="prose prose-gray max-w-none mb-12">
+    <h2 class="text-xl font-medium text-gray-900 mb-3">Ідея</h2>
+    <p class="text-gray-700 leading-relaxed">
+      Сучасні комерційні пошуковики оптимізовано під показники, які
+      клієнт-користувач не бачить — кліки до реклами, час сесії,
+      перехід до сервісів цієї ж компанії. Тому в топі часто опиняється
+      не те, що корисно вам, а те, що корисно платформі. VIR GOO —
+      форк <a href="https://yacy.net" class="text-blue-600 hover:underline">YaCy</a>,
+      P2P-пошуковика з відкритим кодом. Ми прибрали PageRank-зміщення,
+      додали семантичне ранжування, і тримаємо систему такою простою,
+      щоб одна людина могла підняти власну ноду за 5 хвилин.
+    </p>
+  </section>
+
+  <section class="mb-12">
+    <h2 class="text-xl font-medium text-gray-900 mb-4">Чим відрізняємось</h2>
+    <div class="grid sm:grid-cols-2 gap-4">
+
+      <div class="rounded-lg border border-gray-200 p-4">
+        <h3 class="text-sm font-semibold text-gray-900 mb-1">Без PageRank</h3>
+        <p class="text-sm text-gray-600 leading-relaxed">
+          Коефіцієнти <code class="bg-gray-100 px-1 rounded">coeff_authority</code> та
+          <code class="bg-gray-100 px-1 rounded">coeff_citation</code> у
+          ранжуванні — нуль. Купівля беклінків більше не дає переваги.
+        </p>
+      </div>
+
+      <div class="rounded-lg border border-gray-200 p-4">
+        <h3 class="text-sm font-semibold text-gray-900 mb-1">Семантичний шар</h3>
+        <p class="text-sm text-gray-600 leading-relaxed">
+          768-вимірні embeddings (<code class="bg-gray-100 px-1 rounded">multilingual-e5</code>)
+          поверх Solr. Гібридне ранжування 60/25/15 — semantic /
+          freshness / quality. UA-запит знаходить EN-документи.
+        </p>
+      </div>
+
+      <div class="rounded-lg border border-gray-200 p-4">
+        <h3 class="text-sm font-semibold text-gray-900 mb-1">Свіжість як стандарт</h3>
+        <p class="text-sm text-gray-600 leading-relaxed">
+          Solr-функція <code class="bg-gray-100 px-1 rounded">recip(ms(NOW,load_date_dt),3.16e-11,1,1)</code>
+          (~1 рік half-life). Сьогоднішні новини більше не ховаються
+          під 10-річний архів.
+        </p>
+      </div>
+
+      <div class="rounded-lg border border-gray-200 p-4">
+        <h3 class="text-sm font-semibold text-gray-900 mb-1">Чорний список і у P2P</h3>
+        <p class="text-sm text-gray-600 leading-relaxed">
+          Список ~400 хостів (порно/казино/пропаганда/трекінг)
+          активний на CRAWLER, PROXY, SEARCH, DHT, NEWS одночасно.
+          Ми не індексуємо це і не ділимось цим з мережею.
+        </p>
+      </div>
+
+      <div class="rounded-lg border border-gray-200 p-4">
+        <h3 class="text-sm font-semibold text-gray-900 mb-1">Self-service для вебмайстрів</h3>
+        <p class="text-sm text-gray-600 leading-relaxed">
+          <a href="Register.html?webmaster=1" class="text-blue-600 hover:underline">Зареєструйтеся</a>
+          → <a href="CrawlRequest.html" class="text-blue-600 hover:underline">подайте URL</a> →
+          бот валідує → адмін запускає краулера. Без email і черги.
+        </p>
+      </div>
+
+      <div class="rounded-lg border border-gray-200 p-4">
+        <h3 class="text-sm font-semibold text-gray-900 mb-1">Без third-party</h3>
+        <p class="text-sm text-gray-600 leading-relaxed">
+          Tailwind, шрифти, іконки — все local. Жодних запитів
+          до Google Fonts / OSM tiles / Vimeo на боці клієнта.
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="mb-12">
+    <h2 class="text-xl font-medium text-gray-900 mb-3">Як це працює</h2>
+    <ol class="list-decimal list-inside space-y-2 text-sm text-gray-700 leading-relaxed">
+      <li>YaCy-краулер обходить ваші seed-домени, парсить, кладе в Solr.</li>
+      <li>Кожну годину Python-сервіс зчитує нові документи та обчислює 768d embeddings, кладе в Postgres+pgvector.</li>
+      <li>На запит користувача Solr робить BM25-вибірку, потім FastAPI <code class="bg-gray-100 px-1 rounded">/rank</code>-endpoint накладає семантику.</li>
+      <li>Для запитів з 0 кліків раз на добу LLM пропонує seed-URL → черга краулера → індекс лікує власні прогалини.</li>
+      <li>Outbound DHT-шари перевіряються блек-листом — навіть якщо ви ділитесь індексом з мережею, спам не виходить.</li>
+    </ol>
+  </section>
+
+  <section class="mb-12">
+    <h2 class="text-xl font-medium text-gray-900 mb-3">Підняти власну ноду</h2>
+    <p class="text-sm text-gray-700 mb-3 leading-relaxed">
+      Все, що потрібно — Linux + Docker. ~3 GB RAM, 20 GB диску.
+    </p>
+<pre class="bg-gray-900 text-gray-100 text-xs rounded-md p-4 overflow-x-auto"><code>git clone -b feature/remove-third-party-links \
+    https://github.com/VladlenVeronov/yacy_search_server.git yacy-fork
+cp yacy-fork/deploy/docker-compose.yml ./
+cp yacy-fork/deploy/.env.example ./.env
+nano .env    # YACY_HOST, POSTGRES_PASSWORD, ADMIN_TOKEN
+docker network create traefik-public
+docker compose up -d</code></pre>
+    <p class="mt-3 text-sm text-gray-600">
+      Повний гайд:
+      <a href="https://github.com/VladlenVeronov/yacy_search_server/blob/feature/remove-third-party-links/docs/yacy-project/HOWTO-NODE-OPERATOR.md"
+         class="text-blue-600 hover:underline" rel="noopener noreferrer" target="_blank">
+        HOWTO-NODE-OPERATOR.md
+      </a>
+    </p>
+  </section>
+
+  <section class="mb-12">
+    <h2 class="text-xl font-medium text-gray-900 mb-3">Ліцензія, репо</h2>
+    <p class="text-sm text-gray-700 leading-relaxed">
+      GPL-2.0 (та ж, що й upstream YaCy). Код на
+      <a href="https://github.com/VladlenVeronov/yacy_search_server" class="text-blue-600 hover:underline" rel="noopener noreferrer" target="_blank">github.com/VladlenVeronov/yacy_search_server</a>,
+      гілка <code class="bg-gray-100 px-1 rounded">feature/remove-third-party-links</code>.
+      Patches welcome.
+    </p>
+  </section>
+
+</main>
+
+<footer class="border-t border-gray-200 py-4">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-wrap justify-between items-center gap-3 text-xs text-gray-500">
+    <span>VIR GOO — відкритий децентралізований пошук · powered by YaCy</span>
+    <div class="flex items-center gap-4">
+      <a href="index.html" class="hover:text-blue-600 transition">Пошук</a>
+      <a href="Register.html?webmaster=1" class="hover:text-blue-600 transition">Webmasters</a>
+      <a href="ConfigBasic.html" class="hover:text-blue-600 transition">Адмін</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
