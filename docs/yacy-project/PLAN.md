@@ -59,52 +59,51 @@
 ## ФАЗА 2 — ЯКІСТЬ ПОШУКУ (Тижні 4-7)
 *Мета: результати які реально корисні*
 
-- [~] VECTORS: PostgreSQL + pgvector — локально на Mac ✅ (DB `yacy_pages`, HNSW cosine). Прод `168.231.108.21` — ще не розгорнуто
-- [x] VECTORS: Python мікросервіс (FastAPI) — `vector_service/` на порту 8001. Endpoints `/health`, `/index`, `/search`, `/doc/{id}`. Модель `intfloat/multilingual-e5-base` (768d, multilingual, локально). Idempotency через content_hash. Cross-lingual перевірено (UA query → EN doc)
-- [x] VECTORS: Sync-скрипт `docs/yacy-project/scripts/sync_pages.py` — cursor-mark пагінація по Solr `collection1`, state-file у `docs/yacy-project/.sync_pages.state` (gitignored), `load_date_dt` як watermark. Готове під cron nightly
-- [x] RANKING: Реалізувати hybrid scoring = 60% semantic similarity + 25% freshness + 15% domain quality — `/rank` endpoint у `vector_service/main.py`. Ваги в `config.py` (`weight_semantic` / `weight_freshness` / `weight_quality`), freshness через exp decay (half-life 365 днів). Кандидати без embedding не випадають — лишаються з semantic=0
-- [~] RANKING: Domain quality score — не кількість беклінків, а: HTTPS + швидкість + без реклами/трекерів — поточна версія в `_quality_score()` рахує лише HTTPS (1.0 vs 0.3). Швидкість + ads/трекери чекають crawl-time сигналів з боку YaCy
-- [ ] RANKING: Видалити або мінімізувати вплив PageRank/backlinks на ранжування
-- [~] SEARCH: Інтеграція векторного пошуку в YaCy — Python сервіс як додатковий ранкер. Зроблено: `VectorRankClient` (нова клас `source/net/yacy/search/ranking/VectorRankClient.java`), хук у `SearchEvent.addNodes()` робить один `/rank` POST на батч Solr-кандидатів, `addResult()` застосовує hybrid score замість легасі `score*128 + postRanking`. Конфіг через env (`VECTOR_RANK_ENABLED`/`URL`/`TIMEOUT_MS`) з fallback на `vector_rank.*` у `yacy.init`. Default OFF. Локальна латентність ~20ms після прогріву. Залишилось: RWI-результати поки лишаються з оригінальним ranking — потребує hook у `drainRWIStackToResult` (Solr-результати домінують у топі тож вплив незначний)
-- [ ] SEARCH: Підтримка довгих запитів (зараз обрізає) — збільшити ліміт, semantic chunking
-- [ ] SEARCH: Автодоповнення пошуку — на базі популярних запитів з БД
-- [ ] AI UNSATISFIED: Трекінг кліків — якщо 0 кліків на результати → запит незадоволений
-- [ ] AI UNSATISFIED: Логування незадоволених запитів в PostgreSQL
-- [ ] AI UNSATISFIED: Крон: аналіз незадоволених запитів → пошук відповідних ресурсів → черга краулера
+- [x] VECTORS: PostgreSQL + pgvector на проді (Hetzner `yacy-pgvector` контейнер, HNSW cosine, 768d). DB `yacy_pages` міграцій ідемпотентні
+- [x] VECTORS: Python мікросервіс (FastAPI) — `vector_service/` на порту 8001. Endpoints `/health`, `/index`, `/search`, `/doc/{id}`, `/rank`, `/track-search`, `/track-click`, `/unsatisfied[/seed]`, `/services`. Модель `intfloat/multilingual-e5-base` (768d, multilingual, локально). Cross-lingual перевірено
+- [x] VECTORS: Sync-скрипт `docs/yacy-project/scripts/sync_pages.py` під cron `cron-sync-pages.sh` (`5 * * * *`). Cursor-mark по `load_date_dt`. Працює на проді
+- [x] RANKING: hybrid scoring 60/25/15 (semantic / freshness / quality) у `/rank`. Default OFF на проді (Solr boostfunction `recip(ms(NOW,load_date_dt),3.16e-11,1,1)` справляється з freshness без додаткового ранкера)
+- [~] RANKING: Domain quality score — `_quality_score()` поки рахує лише HTTPS (1.0 vs 0.3). Speed/ads сигнали відкладено — не блокує
+- [x] RANKING: PageRank/backlinks zero-out — `coeff_authority = 0` + `coeff_citation = 0` у `RankingProfile`
+- [ ] SEARCH: Підтримка довгих запитів — нижчий пріоритет
+- [x] SEARCH: Автодоповнення пошуку — `suggest.json` API + native fetch dropdown на index.html та yacysearch.html (заміна jQuery typeahead)
+- [x] AI UNSATISFIED: Трекінг кліків — `/api/vector/track-click` пише в `query_clicks`. Yacysearch.html делегує mousedown через `sendBeacon`
+- [x] AI UNSATISFIED: Логування пошуків — `/api/vector/track-search` → `query_logs` (query, result_count, ts)
+- [x] AI UNSATISFIED: Крон `cron-unsat-seed.sh` (`0 3 * * *`) — zero-click queries → LLM (BYO key) → seed URL → YaCy CrawlStart. No-op доки `LLM_API_URL` пустий
 
 ---
 
 ## ФАЗА 3 — ПЛАТФОРМА (Тижні 8-12)
 *Мета: екосистема навколо пошуку*
 
-- [ ] AUTH: Встановити Authentik на сервері (Docker) — open-source SSO
-- [ ] AUTH: Інтегрувати Authentik з YaCy для авторизації
-- [ ] WEBMASTER: Кабінет вебмастера — сторінка для подачі сайту на індексування
-- [ ] WEBMASTER: Форма: URL + контакт email → запис в PostgreSQL → перевірка роботом
-- [ ] WEBMASTER: Фільтр перевірки сайтів — автоматична перевірка на: спам, порно, казино, пропаганда
-- [ ] WEBMASTER: Статистика для вебмастера — скільки разів знайдено, позиція в пошуку
-- [ ] USER CABINET: Реєстрація/вхід через Authentik
-- [ ] USER CABINET: Особистий пошуковий профіль — збережені запити, закладки
-- [ ] USER CABINET: Сповіщення — підписка на пошуковий запит (нові результати → повідомлення)
-- [ ] ADMIN: Панель адміна — список ресурсів для меню сервісів
-- [ ] ADMIN: CRUD для ресурсів: назва + URL + іконка (upload) → зберігається в PostgreSQL
-- [ ] ADMIN: AI-чат для адміна — "нам не вистачає контенту про X" → завдання краулеру
-- [ ] ADMIN: Черга краулера з пріоритетами — виконується в години низького трафіку
+- [x] AUTH: Native YaCy UserDB — самореєстрація через `/Register.html` (Tailwind, public-styled). Custom OIDC/Authentik відкинуто — занадто важко для `signup-as-a-feature` use case
+- [x] WEBMASTER: Кабінет — `/Register.html?webmaster=1` додає `WEBMASTER_RIGHT` авто-логіном; one-click "стати вебмайстром" для існуючих користувачів
+- [x] WEBMASTER: Форма + native YaCy WorkTable `crawl_requests` — `/CrawlRequest.html` + `CrawlRequest.java`. Auth chain: digest → cookie → IP. Live indexed-pages count
+- [x] WEBMASTER: Bot validator — in-process Java у `CrawlRequests_p.java`. Substring blacklist + HEAD-alive (8s timeout). Без зовнішнього сервісу
+- [x] WEBMASTER: Адмін-черга з фільтром (pending/approved/blocked/crawling/done) + Approve/Reject/Run/Delete + 🤖 "Запустити перевірку ботом" кнопка
+- [x] WEBMASTER: Статистика — `/WebmasterStats.html` per-host: indexed count, 4xx/5xx, last_crawl з Solr. Webmaster бачить свої host-и; admin — всі
+- [-] USER CABINET: Реєстрація/вхід — done через UserDB (див. вище). Пункт scope-out — окремий "saved searches / bookmarks / subs" cabinet видалено в Phase 1 rebuild
+- [-] USER CABINET: Особистий профіль — scope-out
+- [-] USER CABINET: Сповіщення — scope-out (cabinet_subscriptions таблиця DROP'нута)
+- [x] ADMIN: Панель адміна — `/Analytics_p.html` (vector_service health + zero-clicks) + `/CrawlRequests_p.html` (submission queue) + `/WebmasterStats.html`
+- [x] ADMIN: CRUD сервісів — `services_menu` table + REST CRUD у vector_service `/admin/services` + drawer показує іконки на index.html
+- [-] ADMIN: AI-чат — scope-out (LLM gap-analyzer покриває use case через крон)
+- [x] ADMIN: Черга краулера з пріоритетами — `/CrawlRequests_p.html` має `priority` колонку + Run кнопку, що 302's на CrawlStartExpert з pinned `crawlingMustMatch`
 
 ---
 
 ## ФАЗА 4 — МЕРЕЖА (Тижні 13-20)
 *Мета: справжня децентралізація*
 
-- [ ] NETWORK: Аудит існуючого P2P механізму YaCy — що залишити, що переписати
-- [ ] NETWORK: Фільтр якості для шерингу індексів — не ділимось сміттям з мережею
-- [ ] NETWORK: Чорний список контенту для шерингу (порно, казино, пропаганда, спам)
-- [ ] NETWORK: API для підключення нових вузлів до мережі
-- [ ] NETWORK: Документація для операторів вузлів — як запустити свій вузол
-- [ ] NETWORK: Механіка репутації вузла — вузли які дають якісні індекси отримують більше запитів
-- [ ] PROMO: README оновлення — чітке пояснення чим відрізняємось від Google
-- [ ] PROMO: Підготовка до публікації на Hacker News / Reddit r/privacy
-- [ ] PROMO: Product Hunt сторінка
+- [x] NETWORK: Аудит P2P — `docs/yacy-project/P2P-AUDIT.md`. Виявлено: outbound DHT не фільтрував blacklist (виправлено)
+- [x] NETWORK: Фільтр якості шерингу — `Dispatcher.filterDhtBlacklisted()` дропає WordReferences blacklisted hosts перед split + transmit
+- [x] NETWORK: Чорний список контенту для шерингу — `list.black` (401 entries) активний на DHT type. Hot-cache + Solr URL lookup
+- [-] NETWORK: API для підключення нових вузлів — used vanilla YaCy seed-list bootstrap (нічого свого не додаємо). Документовано як працює
+- [x] NETWORK: Документація для операторів — `docs/yacy-project/HOWTO-NODE-OPERATOR.md` (5-min install, sharing posture, cron, troubleshooting)
+- [ ] NETWORK: Механіка репутації вузла — defer (потребує per-peer hit-source tracking, infra heavy). Записано як deferred TODO у P2P-AUDIT.md §4
+- [x] PROMO: README — `README-VIR-GOO.md` оновлено під поточний стан (drop dead Authentik/cabinet refs, додати DHT filter + freshness recip + native UserDB)
+- [x] PROMO: HN/Reddit/PH — `PROMO.md` готовий: Show HN title, body, r/privacy / r/degoogle / r/selfhosted версії, Twitter thread, PH tagline
+- [x] PROMO: Webmaster onboarding — `docs/yacy-project/HOWTO-WEBMASTER.md` (5-min flow + troubleshooting + source pointers)
 
 ---
 
@@ -112,12 +111,12 @@
 *Мета: стабільність і ріст*
 
 - [ ] PERF: Load testing — знайти вузькі місця при 1000+ одночасних запитів
-- [ ] PERF: Кешування результатів популярних запитів (Redis або in-memory)
-- [ ] PERF: CDN для статики (CloudFlare free tier)
-- [ ] MONITORING: Grafana + Prometheus на сервері — метрики пошуку, краулера, БД
-- [ ] DOCS: Документація API для розробників
-- [ ] DOCS: Гайд "Як додати свій сайт"
-- [ ] MOBILE APP: Розглянути PWA або легкий мобільний клієнт
+- [x] PERF: Кешування результатів популярних запитів — `yacy-redis` контейнер активний (1GB allkeys-lru), використовується vector_service для query→result кешу
+- [x] PERF: CDN для статики — Cloudflare уже на проді (search.newsgroup.site), `tailwind.min.css` шипиться разом з YaCy, кешується CF
+- [-] MONITORING: Grafana + Prometheus — scope-out на запит юзера ("в мене є Portainer"). Container stats доступні через Portainer
+- [x] DOCS: API + flows — `vector_service/README.md` (endpoints) + `docs/yacy-project/{P2P-AUDIT, HOWTO-WEBMASTER, HOWTO-NODE-OPERATOR}.md`
+- [x] DOCS: Гайд "Як додати свій сайт" — `docs/yacy-project/HOWTO-WEBMASTER.md`
+- [-] MOBILE APP: PWA — scope-out у Phase 1 rebuild. Сайт повністю responsive Tailwind, install-as-app працює через "Add to Home Screen" без manifest
 
 ---
 
