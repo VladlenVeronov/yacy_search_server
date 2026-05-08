@@ -110,7 +110,7 @@
 ## ФАЗА 5 — МАСШТАБУВАННЯ (Місяці 5-6)
 *Мета: стабільність і ріст*
 
-- [ ] PERF: Load testing — знайти вузькі місця при 1000+ одночасних запитів
+- [x] PERF: Load testing — `scripts/load-test{.sh,-queries.lua}` (wrk + ramp 10/50/100/...). Baseline 2026-05-08: ceiling ~22 RPS, plateau після 50 concurrent. CPU yacy 280%/450 %, vector_service 715%/1200% — bottleneck НЕ CPU, а Solr thread pool / vector `/rank` hot path. Деталі + next steps у `docs/yacy-project/LOAD-TESTING.md`. 200/500/1000 stages — на staging (на проді ризик)
 - [x] PERF: Кешування результатів популярних запитів — `yacy-redis` контейнер активний (1GB allkeys-lru), використовується vector_service для query→result кешу
 - [x] PERF: CDN для статики — Cloudflare уже на проді (search.newsgroup.site), `tailwind.min.css` шипиться разом з YaCy, кешується CF
 - [-] MONITORING: Grafana + Prometheus — scope-out на запит юзера ("в мене є Portainer"). Container stats доступні через Portainer
