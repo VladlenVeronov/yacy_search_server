@@ -668,7 +668,7 @@ public final class QueryParams {
             //params.setHighlightRequireFieldMatch();
         	params.setHighlightSimplePost("</b>");
         	params.setHighlightSimplePre("<b>");
-        	params.setHighlightSnippets(5);
+        	params.setHighlightSnippets(2);
             for (final CollectionSchema field: SOLR_SNIPPET_FIELDS) {
             	params.addHighlightField(field.getSolrFieldName());
             }

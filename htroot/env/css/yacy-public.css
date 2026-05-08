@@ -237,6 +237,17 @@ label.yacy-pill:has(input[type="radio"]:checked) {
     color: #374151;
     line-height: 1.5;
     margin: 0 0 8px;
+    /* Cap snippets to ~3 lines so a single sprawling page can't dominate
+       the results column. The full text remains accessible by clicking
+       through to the page itself. */
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+            line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-break: break-word;
+    overflow-wrap: anywhere;
 }
 .yacy-result__meta {
     font-size: 12px;
