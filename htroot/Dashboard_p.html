@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dashboard — VIR GOO Admin</title>
+    #%env/templates/metas.template%#
+</head>
+<body>
+
+#%env/templates/header.template%#
+
+<div class="yg-pagehead">
+  <div>
+    <h1>Dashboard</h1>
+    <p>Огляд стану вузла VIR GOO</p>
+  </div>
+  <div class="yg-pagehead__actions" style="display:flex;gap:8px;flex-wrap:wrap;">
+    <a class="yg-btn yg-btn--primary" href="CrawlStartSite.html">
+      <svg class="yg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      Запустити скан
+    </a>
+    <a class="yg-btn" href="CrawlRequests_p.html">Заявки</a>
+    <a class="yg-btn" href="Analytics_p.html">Аналітика</a>
+  </div>
+</div>
+
+<!-- top metrics -->
+<div class="yg-grid yg-grid--auto" style="margin-bottom: 24px;">
+  <div class="yg-stat">
+    <div class="yg-stat__label">
+      <svg class="yg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2h-4a2 2 0 01-2-2v-5h-2v5a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+      Сторінок в індексі
+    </div>
+    <div class="yg-stat__value" id="stat-docs">—</div>
+    <div class="yg-stat__sub" id="stat-docs-sub">з усіх хостів</div>
+  </div>
+  <div class="yg-stat">
+    <div class="yg-stat__label">
+      <svg class="yg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
+      Хостів унікальних
+    </div>
+    <div class="yg-stat__value" id="stat-hosts">—</div>
+    <div class="yg-stat__sub">домени з документами</div>
+  </div>
+  <div class="yg-stat">
+    <div class="yg-stat__label">
+      <svg class="yg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      Запитів за добу
+    </div>
+    <div class="yg-stat__value" id="stat-queries">—</div>
+    <div class="yg-stat__sub" id="stat-queries-sub">останні 24 години</div>
+  </div>
+  <div class="yg-stat">
+    <div class="yg-stat__label">
+      <svg class="yg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+      Заявки на скан
+    </div>
+    <div class="yg-stat__value" id="stat-requests">—</div>
+    <div class="yg-stat__sub" id="stat-requests-sub">очікують модерації</div>
+  </div>
+</div>
+
+<!-- two columns -->
+<div class="yg-grid" style="grid-template-columns: minmax(0,2fr) minmax(0,1fr);">
+
+  <div class="yg-card">
+    <div class="yg-card__head">
+      <h2>Стан компонентів</h2>
+      <a href="Status.html?noforward=" class="yg-btn yg-btn--ghost" style="font-size:12px;">Деталі →</a>
+    </div>
+    <ul class="yg-list" id="comp-list">
+      <li>
+        <span style="font-weight:500;flex:1">YaCy core</span>
+        <span class="yg-pill yg-pill--ok" id="comp-yacy">live</span>
+      </li>
+      <li>
+        <span style="font-weight:500;flex:1">Vector service</span>
+        <span class="yg-pill" id="comp-vec">…</span>
+      </li>
+      <li>
+        <span style="font-weight:500;flex:1">PostgreSQL + pgvector</span>
+        <span class="yg-pill" id="comp-pg">…</span>
+      </li>
+      <li>
+        <span style="font-weight:500;flex:1">Redis cache</span>
+        <span class="yg-pill" id="comp-redis">…</span>
+      </li>
+      <li>
+        <span style="font-weight:500;flex:1">P2P-мережа</span>
+        <span class="yg-pill" id="comp-p2p">…</span>
+        <a href="Network.html" style="font-size:12px;margin-left:8px;">мапа →</a>
+      </li>
+    </ul>
+  </div>
+
+  <div class="yg-card">
+    <div class="yg-card__head"><h2>Швидкі дії</h2></div>
+    <ul class="yg-list">
+      <li>
+        <svg class="yg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;color:var(--yg-muted)"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        <a href="CrawlStartSite.html" style="flex:1">Запустити скан сайту</a>
+      </li>
+      <li>
+        <svg class="yg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;color:var(--yg-muted)"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        <a href="Services_p.html" style="flex:1">Сервіси меню</a>
+      </li>
+      <li>
+        <svg class="yg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;color:var(--yg-muted)"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/></svg>
+        <a href="RankingSolr_p.html" style="flex:1">Ранжування Solr</a>
+      </li>
+      <li>
+        <svg class="yg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;color:var(--yg-muted)"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+        <a href="Blacklist_p.html" style="flex:1">Чорні списки</a>
+      </li>
+      <li>
+        <svg class="yg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;color:var(--yg-muted)"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        <a href="ConfigUser_p.html" style="flex:1">Користувачі</a>
+      </li>
+    </ul>
+  </div>
+
+  <div class="yg-card">
+    <div class="yg-card__head">
+      <h2>Топ запитів без кліків</h2>
+      <a href="Analytics_p.html" class="yg-btn yg-btn--ghost" style="font-size:12px;">Усі →</a>
+    </div>
+    <ul class="yg-list" id="zero-click-list">
+      <li style="color:var(--yg-muted)">Завантаження…</li>
+    </ul>
+  </div>
+
+  <div class="yg-card">
+    <div class="yg-card__head">
+      <h2>Останні заявки</h2>
+      <a href="CrawlRequests_p.html" class="yg-btn yg-btn--ghost" style="font-size:12px;">Усі →</a>
+    </div>
+    <div id="recent-requests" style="font-size:13px;color:var(--yg-muted)">Завантаження…</div>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  function setPill(el, kind, txt) {
+    el.className = 'yg-pill yg-pill--' + kind;
+    el.textContent = txt;
+  }
+
+  // Vector service health
+  fetch('/api/vector/health').then(r => r.json()).then(j => {
+    var ok = j && (j.ok === true || j.status === 'ok');
+    setPill(document.getElementById('comp-vec'), ok ? 'ok' : 'err', ok ? 'live' : 'down');
+    // pg health is implicit from vector service if it queries it
+    setPill(document.getElementById('comp-pg'), ok ? 'ok' : 'warn', ok ? 'live' : 'check');
+    setPill(document.getElementById('comp-redis'), ok ? 'ok' : 'warn', ok ? 'live' : 'check');
+  }).catch(() => {
+    ['comp-vec', 'comp-pg', 'comp-redis'].forEach(id => setPill(document.getElementById(id), 'err', 'down'));
+  });
+
+  // Zero-click queries (vector_service /unsatisfied)
+  fetch('/api/vector/unsatisfied?limit=5&days=7').then(r => r.json()).then(j => {
+    var ul = document.getElementById('zero-click-list');
+    ul.innerHTML = '';
+    var rows = j.queries || j;
+    if (!rows || !rows.length) {
+      ul.innerHTML = '<li style="color:var(--yg-muted)">Чудово — жодних zero-click запитів</li>';
+      return;
+    }
+    rows.slice(0, 5).forEach(function (r) {
+      var q = (r.query || r[0] || '').replace(/[<>&]/g, '');
+      var c = r.count || r[1] || '';
+      var li = document.createElement('li');
+      li.innerHTML = '<span style="flex:1;font-family:ui-monospace,Menlo,Consolas,monospace">' + q + '</span><span class="yg-pill">' + c + '</span>';
+      ul.appendChild(li);
+    });
+  }).catch(() => {
+    document.getElementById('zero-click-list').innerHTML = '<li style="color:var(--yg-danger)">vector_service недоступний</li>';
+  });
+
+  // Solr aggregate stats — totalcount + uniq hosts (via select)
+  fetch('/solr/select?q=*:*&rows=0&facet=true&facet.field=host_s&facet.limit=1&wt=json')
+    .then(r => r.json())
+    .then(j => {
+      var n = j && j.response ? j.response.numFound : null;
+      if (n != null) document.getElementById('stat-docs').textContent = n.toLocaleString('uk-UA');
+      var hosts = j && j.facet_counts && j.facet_counts.facet_fields && j.facet_counts.facet_fields.host_s
+        ? Math.floor(j.facet_counts.facet_fields.host_s.length / 2)
+        : null;
+      // host_s facet limit=1 only returns 1 host, so we need a separate count of distinct values.
+      // Skip for now — show "—" rather than mislead.
+    })
+    .catch(() => { document.getElementById('stat-docs').textContent = 'n/a'; });
+
+  // Distinct hosts: use a stats facet to count unique
+  fetch('/solr/select?q=*:*&rows=0&json.facet=' + encodeURIComponent('{ uniq_hosts: "unique(host_s)" }') + '&wt=json')
+    .then(r => r.json())
+    .then(j => {
+      var u = j && j.facets ? j.facets.uniq_hosts : null;
+      if (u != null) document.getElementById('stat-hosts').textContent = u.toLocaleString('uk-UA');
+      else document.getElementById('stat-hosts').textContent = 'n/a';
+    })
+    .catch(() => { document.getElementById('stat-hosts').textContent = 'n/a'; });
+
+  // Queries last 24h — read from query_logs via vector_service
+  fetch('/api/vector/stats?days=1').then(r => r.ok ? r.json() : null).then(j => {
+    if (j && j.searches != null) {
+      document.getElementById('stat-queries').textContent = Number(j.searches).toLocaleString('uk-UA');
+      if (j.zero_click != null) {
+        document.getElementById('stat-queries-sub').innerHTML =
+          'з них <strong>' + j.zero_click + '</strong> без кліків';
+      }
+    } else {
+      document.getElementById('stat-queries').textContent = '—';
+    }
+  }).catch(() => { document.getElementById('stat-queries').textContent = '—'; });
+
+  // Pending crawl requests count — scrape from CrawlRequests_p
+  // (avoids adding a new endpoint just for this)
+  fetch('CrawlRequests_p.html?status=pending&limit=1', { credentials: 'same-origin' })
+    .then(r => r.ok ? r.text() : '')
+    .then(html => {
+      // try to parse total count from <strong id="total"> or similar pattern
+      var m = html.match(/Усього:\s*<strong[^>]*>(\d+)/i);
+      document.getElementById('stat-requests').textContent = m ? m[1] : '—';
+      document.getElementById('recent-requests').innerHTML =
+        '<a href="CrawlRequests_p.html?status=pending">Переглянути чергу →</a>';
+    })
+    .catch(() => {
+      document.getElementById('stat-requests').textContent = 'auth';
+      document.getElementById('recent-requests').innerHTML =
+        '<a href="CrawlRequests_p.html">Увійдіть як адмін, щоб побачити чергу</a>';
+    });
+})();
+</script>
+
+#%env/templates/footer.template%#
+
+</body>
+</html>

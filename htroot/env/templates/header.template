@@ -1,8 +1,8 @@
 <script type="text/javascript">
-  // mark body as admin-shell-styled (used by env/yacy-admin.css)
   document.documentElement.classList.add('yg-html');
   document.addEventListener('DOMContentLoaded', function () {
     document.body.classList.add('yg-admin');
+
     var burger = document.getElementById('ygBurger');
     var side = document.getElementById('ygSide');
     var bd = document.getElementById('ygBackdrop');
@@ -10,59 +10,62 @@
     if (burger) burger.addEventListener('click', toggle);
     if (bd) bd.addEventListener('click', toggle);
 
-    // Highlight current sidebar entry
+    // Active link highlight
     try {
-      var here = location.pathname.replace(/^.*\//, '');
-      document.querySelectorAll('.yg-sidebar__list a').forEach(function (a) {
-        var href = a.getAttribute('href') || '';
-        if (here && href.indexOf(here.split('?')[0]) === 0) a.classList.add('is-active');
+      var here = location.pathname.replace(/^.*\//, '').split('?')[0];
+      document.querySelectorAll('.yg-nav__items a').forEach(function (a) {
+        var hr = (a.getAttribute('href') || '').split('?')[0];
+        if (here && hr === here) a.classList.add('is-active');
       });
     } catch (_) {}
+
+    // Collapsible sections (state in localStorage)
+    document.querySelectorAll('.yg-nav__section[data-collapsible="true"]').forEach(function (sec) {
+      var key = 'yg.nav.' + (sec.dataset.key || sec.querySelector('.yg-nav__section-title-text').textContent.trim());
+      if (localStorage.getItem(key) === '1') sec.dataset.collapsed = 'true';
+      var ttl = sec.querySelector('.yg-nav__section-title');
+      if (ttl) ttl.addEventListener('click', function () {
+        var col = sec.dataset.collapsed === 'true';
+        sec.dataset.collapsed = col ? 'false' : 'true';
+        localStorage.setItem(key, col ? '0' : '1');
+      });
+    });
   });
 
-  /**
-   * Request the server for a valid transaction token and then send a steering request.
-   * @param tokenInputId HTML identifier of the transaction token input field
-   * @param formId identifier of the form
-   */
   function sendSteeringRequest(tokenInputId, formId) {
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function() {
       if (xhr.readyState == XMLHttpRequest.DONE) {
         if (xhr.status != 200) {
-          if (xhr.status == 401) {
-            alert("Please authenticate with administrator credentials.");
-          } else {
-            alert("The server rejected the request or is not responding!");
-          }
+          alert(xhr.status == 401
+            ? "Please authenticate with administrator credentials."
+            : "The server rejected the request or is not responding!");
         } else {
-          var sent = false;
           var t = document.getElementById(tokenInputId);
           if (t) {
             t.value = xhr.getResponseHeader("X-YaCy-Transaction-Token");
             var f = document.getElementById(formId);
-            if (f) { sent = true; f.submit(); }
+            if (f) { f.submit(); return; }
           }
-          if (!sent) alert("Could not send the request to the server!");
+          alert("Could not send the request to the server!");
         }
       }
     };
     xhr.open("get", "Steering.html", true);
     xhr.send();
   }
-  function confirmRestart() { if (confirm('Confirm Re-Start')) sendSteeringRequest("restartTransactionToken", "restartForm"); }
-  function confirmShutdown() { if (confirm('Confirm Shutdown')) sendSteeringRequest("shutdownTransactionToken", "shutdownForm"); }
+  function confirmRestart() { if (confirm('Перезапустити вузол?')) sendSteeringRequest("restartTransactionToken", "restartForm"); }
+  function confirmShutdown() { if (confirm('Зупинити вузол?')) sendSteeringRequest("shutdownTransactionToken", "shutdownForm"); }
 </script>
 
-<!-- top bar ------------------------------------------------------- -->
 <header class="yg-topbar" role="banner">
   <button type="button" class="yg-burger" id="ygBurger" aria-label="Toggle menu">
     <svg class="yg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
   </button>
-  <a class="yg-topbar__brand" href="./">
-    <img src="env/grafics/yacy.png" alt="YaCy" />
+  <a class="yg-topbar__brand" href="Dashboard_p.html">
+    <img src="env/grafics/yacy.png" alt="VIR GOO" />
     <span>VIR GOO</span>
-    <span class="yg-topbar__brand-tag">Адміністрування</span>
+    <span class="yg-topbar__brand-tag">Адмін</span>
   </a>
 
   <form class="yg-topbar__search" method="get" accept-charset="UTF-8" action="yacysearch.html" role="search">
@@ -75,8 +78,11 @@
   </form>
 
   <div class="yg-topbar__actions">
-    <a class="yg-btn yg-btn--icon" href="index.html" title="Public search">
+    <a class="yg-btn yg-btn--ghost yg-btn--icon" href="index.html" title="Публічний пошук">
       <svg class="yg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    </a>
+    <a class="yg-btn yg-btn--ghost yg-btn--icon" href="https://github.com/yacy/yacy_search_server" target="_blank" rel="noopener" title="GitHub">
+      <svg class="yg-ico" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6a3 3 0 0 0-1.3-1.7c-1-.7.1-.7.1-.7a2.4 2.4 0 0 1 1.8 1.2c1 1.7 2.8 1.2 3.4.9a2.5 2.5 0 0 1 .8-1.6c-2.6-.3-5.4-1.3-5.4-6a4.7 4.7 0 0 1 1.2-3.2 4.4 4.4 0 0 1 .1-3.2s1-.3 3.2 1.2a11 11 0 0 1 5.8 0c2.2-1.5 3.2-1.2 3.2-1.2a4.4 4.4 0 0 1 .1 3.2 4.7 4.7 0 0 1 1.2 3.3c0 4.6-2.8 5.6-5.4 6a2.7 2.7 0 0 1 .8 2.1v3.1c0 .3.2.7.8.6A12 12 0 0 0 12 .3"/></svg>
     </a>
     <form action="Steering.html" method="post" id="restartForm" style="display:none">
       <input type="hidden" name="transactionToken" value="" id="restartTransactionToken"/>
@@ -97,83 +103,229 @@
   </div>
 </header>
 
-<!-- left navigation ----------------------------------------------- -->
-<aside class="yg-sidebar" id="ygSide" aria-label="Admin navigation">
+<aside class="yg-sidebar" id="ygSide" aria-label="Адмін-навігація">
+  <nav class="yg-nav" aria-label="Розділи адмін-панелі">
 
-  <div class="yg-sidebar__group">
-    <h3>VIR GOO</h3>
-    <ul class="yg-sidebar__list">
-      <li><a href="Analytics_p.html">Аналітика</a></li>
-      <li><a href="CrawlRequests_p.html">Заявки на скан</a></li>
-      <li><a href="Services_p.html">Сервіси меню</a></li>
-      <li><a href="WebmasterStats.html">Статистика хостів</a></li>
-    </ul>
-  </div>
+    <div class="yg-nav__section">
+      <div class="yg-nav__section-title"><span class="yg-nav__section-title-text">Огляд</span></div>
+      <ul class="yg-nav__items">
+        <li><a href="Dashboard_p.html">
+          <svg class="yg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+          Dashboard
+        </a></li>
+        <li><a href="Analytics_p.html">
+          <svg class="yg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          Аналітика пошуку
+        </a></li>
+        <li><a href="Status.html?noforward=">
+          <svg class="yg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          Статус системи
+        </a></li>
+      </ul>
+    </div>
 
-  <div class="yg-sidebar__group">
-    <h3>Перші кроки</h3>
-    <ul class="yg-sidebar__list">
-      <li><a href="ConfigBasic.html">Use Case &amp; Account</a></li>
-      <li><a href="CrawlStartSite.html">Grab a whole site</a></li>
-    </ul>
-  </div>
+    <div class="yg-nav__section" data-collapsible="true" data-key="content">
+      <div class="yg-nav__section-title">
+        <span class="yg-nav__section-title-text">Контент</span>
+        <svg class="yg-nav__section-title-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <ul class="yg-nav__items">
+        <li><a href="CrawlRequests_p.html">
+          <svg class="yg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+          Заявки на скан
+        </a></li>
+        <li><a href="Services_p.html">
+          <svg class="yg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          Сервіси меню
+        </a></li>
+        <li><a href="WebmasterStats.html">
+          <svg class="yg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15 15 0 010 20M12 2a15 15 0 000 20"/></svg>
+          Статистика хостів
+        </a></li>
+        <li><a href="IndexBrowser_p.html?admin=true&amp;hosts=" class="#(authorized)#::is-locked#(/authorized)#">
+          <svg class="yg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2h-4a2 2 0 01-2-2v-5h-2v5a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+          Браузер індексу
+        </a></li>
+        <li><a href="IndexControlURLs_p.html" class="#(authorized)#::is-locked#(/authorized)#">
+          <svg class="yg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+          Керування URL
+        </a></li>
+        <li><a href="IndexDeletion_p.html" class="#(authorized)#::is-locked#(/authorized)#">
+          <svg class="yg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+          Видалення з індексу
+        </a></li>
+      </ul>
+    </div>
 
-  <div class="yg-sidebar__group">
-    <h3>Моніторинг</h3>
-    <ul class="yg-sidebar__list">
-      <li><a href="Status.html?noforward=">System Status</a></li>
-      #(navigation-p2p)#::<li><a href="Network.html" accesskey="w">Peer-to-Peer Network</a></li>#(/navigation-p2p)#
-      #(navigation-crawlmonitor)#::<li><a href="IndexBrowser_p.html?admin=true&amp;hosts=" class="#(authorized)#lock::unlock#(/authorized)#">Index Browser</a></li>#(/navigation-crawlmonitor)#
-      <li><a href="AccessGrid_p.html" class="#(authorized)#lock::unlock#(/authorized)#">Network Access</a></li>
-      #(navigation-crawlmonitor)#::<li><a href="Crawler_p.html" class="#(authorized)#lock::unlock#(/authorized)#">Crawler Monitor</a></li>#(/navigation-crawlmonitor)#
-    </ul>
-  </div>
+    <div class="yg-nav__section" data-collapsible="true" data-key="crawler">
+      <div class="yg-nav__section-title">
+        <span class="yg-nav__section-title-text">Краулер</span>
+        <svg class="yg-nav__section-title-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <ul class="yg-nav__items">
+        <li><a href="CrawlStartSite.html">
+          <svg class="yg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          Запустити скан
+        </a></li>
+        <li><a href="CrawlStartExpert.html">
+          <svg class="yg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09A1.65 1.65 0 008 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H2a2 2 0 110-4h.09A1.65 1.65 0 003.6 8a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H8a1.65 1.65 0 001-1.51V2a2 2 0 114 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V8a1.65 1.65 0 001.51 1H22a2 2 0 110 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+          Експертний скан
+        </a></li>
+        <li><a href="Crawler_p.html" class="#(authorized)#::is-locked#(/authorized)#">
+          <svg class="yg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          Монітор краулера
+        </a></li>
+        <li><a href="IndexCreateQueues_p.html" class="#(authorized)#::is-locked#(/authorized)#">
+          <svg class="yg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          Черги
+        </a></li>
+        <li><a href="IndexCreateLoaderQueue_p.html" class="#(authorized)#::is-locked#(/authorized)#">
+          <svg class="yg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Завантажувач
+        </a></li>
+        <li><a href="IndexCreateParserErrors_p.html" class="#(authorized)#::is-locked#(/authorized)#">
+          <svg class="yg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          Помилки парсера
+        </a></li>
+        <li><a href="CrawlResults.html">
+          <svg class="yg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Результати
+        </a></li>
+      </ul>
+    </div>
 
-  #(navigation-advanced)#::
-  <div class="yg-sidebar__group">
-    <h3>Виробництво</h3>
-    <ul class="yg-sidebar__list">
-      <li><a href="CrawlStartExpert.html">Crawler</a></li>
-      <li><a href="AILab.html">AI Lab</a></li>
-      <li><a href="Automation_p.html?sort=-date_recording" class="#(authorized)#lock::unlock#(/authorized)#">Automation</a></li>
-      <li><a href="IndexPackGenerator_p.html" class="#(authorized)#lock::unlock#(/authorized)#">YaCy Packs &amp; Import/Export</a></li>
-      <li><a href="Vocabulary_p.html" class="#(authorized)#lock::unlock#(/authorized)#">Content Semantic</a></li>
-      <li><a href="CrawlCheck_p.html" class="#(authorized)#lock::unlock#(/authorized)#">Target Analysis</a></li>
-    </ul>
-  </div>
+    <div class="yg-nav__section" data-collapsible="true" data-key="network">
+      <div class="yg-nav__section-title">
+        <span class="yg-nav__section-title-text">Мережа</span>
+        <svg class="yg-nav__section-title-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <ul class="yg-nav__items">
+        #(navigation-p2p)#::
+        <li><a href="Network.html" accesskey="w">
+          <svg class="yg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="9"/><line x1="12" y1="15" x2="12" y2="22"/><line x1="2" y1="12" x2="9" y2="12"/><line x1="15" y1="12" x2="22" y2="12"/></svg>
+          P2P-мережа
+        </a></li>
+        #(/navigation-p2p)#
+        <li><a href="AccessGrid_p.html" class="#(authorized)#::is-locked#(/authorized)#">
+          <svg class="yg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          Доступ до мережі
+        </a></li>
+        <li><a href="ConfigNetwork_p.html" class="#(authorized)#::is-locked#(/authorized)#">
+          <svg class="yg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 010 20"/></svg>
+          Налаштування мережі
+        </a></li>
+        <li><a href="ConfigHeuristics_p.html" class="#(authorized)#::is-locked#(/authorized)#">
+          <svg class="yg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          Евристики
+        </a></li>
+        <li><a href="Blacklist_p.html" class="#(authorized)#::is-locked#(/authorized)#">
+          <svg class="yg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+          Чорні списки
+        </a></li>
+      </ul>
+    </div>
 
-  <div class="yg-sidebar__group">
-    <h3>Адміністрування</h3>
-    <ul class="yg-sidebar__list">
-      <li><a href="IndexControlURLs_p.html" class="#(authorized)#lock::unlock#(/authorized)#">Index Administration</a></li>
-      <li><a href="Settings_p.html" class="#(authorized)#lock::unlock#(/authorized)#">System Administration</a></li>
-      <li><a href="Blacklist_p.html" class="#(authorized)#lock::unlock#(/authorized)#">Filter &amp; Blacklists</a></li>
-      <li><a href="Performance_p.html" class="#(authorized)#lock::unlock#(/authorized)#">RAM/Disk Usage &amp; Updates</a></li>
-      <li><a href="ConfigUser_p.html" class="#(authorized)#lock::unlock#(/authorized)#">Користувачі</a></li>
-    </ul>
-  </div>
+    <div class="yg-nav__section" data-collapsible="true" data-key="search">
+      <div class="yg-nav__section-title">
+        <span class="yg-nav__section-title-text">Пошук</span>
+        <svg class="yg-nav__section-title-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <ul class="yg-nav__items">
+        <li><a href="ConfigPortal_p.html" class="#(authorized)#::is-locked#(/authorized)#">
+          <svg class="yg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+          Портал
+        </a></li>
+        <li><a href="ConfigAppearance_p.html" class="#(authorized)#::is-locked#(/authorized)#">
+          <svg class="yg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="19" cy="13" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="10" cy="20" r="2.5"/></svg>
+          Дизайн порталу
+        </a></li>
+        <li><a href="RankingSolr_p.html" class="#(authorized)#::is-locked#(/authorized)#">
+          <svg class="yg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+          Ранжування
+        </a></li>
+        <li><a href="ConfigSearchPage_p.html" class="#(authorized)#::is-locked#(/authorized)#">
+          <svg class="yg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Пошукова сторінка
+        </a></li>
+      </ul>
+    </div>
 
-  <div class="yg-sidebar__group">
-    <h3>Search Portal</h3>
-    <ul class="yg-sidebar__list">
-      <li><a href="ConfigPortal_p.html" class="#(authorized)#lock::unlock#(/authorized)#">Portal Configuration</a></li>
-      <li><a href="ConfigAppearance_p.html" class="#(authorized)#lock::unlock#(/authorized)#">Portal Design</a></li>
-      <li><a href="RankingSolr_p.html" class="#(authorized)#lock::unlock#(/authorized)#">Ranking and Heuristics</a></li>
-    </ul>
-  </div>
-  #(/navigation-advanced)#
+    <div class="yg-nav__section" data-collapsible="true" data-key="system">
+      <div class="yg-nav__section-title">
+        <span class="yg-nav__section-title-text">Система</span>
+        <svg class="yg-nav__section-title-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <ul class="yg-nav__items">
+        <li><a href="ConfigBasic.html">
+          <svg class="yg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09A1.65 1.65 0 008 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H2a2 2 0 110-4h.09A1.65 1.65 0 003.6 8a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H8a1.65 1.65 0 001-1.51V2a2 2 0 114 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V8a1.65 1.65 0 001.51 1H22a2 2 0 110 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+          Базові налаштування
+        </a></li>
+        <li><a href="ConfigUser_p.html" class="#(authorized)#::is-locked#(/authorized)#">
+          <svg class="yg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+          Користувачі
+        </a></li>
+        <li><a href="Settings_p.html" class="#(authorized)#::is-locked#(/authorized)#">
+          <svg class="yg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/></svg>
+          Системні налаштування
+        </a></li>
+        <li><a href="Performance_p.html" class="#(authorized)#::is-locked#(/authorized)#">
+          <svg class="yg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          RAM / Disk / Updates
+        </a></li>
+        <li><a href="PerformanceMemory_p.html" class="#(authorized)#::is-locked#(/authorized)#">
+          <svg class="yg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><line x1="6" y1="10" x2="6" y2="14"/><line x1="10" y1="10" x2="10" y2="14"/><line x1="14" y1="10" x2="14" y2="14"/><line x1="18" y1="10" x2="18" y2="14"/></svg>
+          Пам'ять
+        </a></li>
+        <li><a href="ConfigUpdate_p.html" class="#(authorized)#::is-locked#(/authorized)#">
+          <svg class="yg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
+          Оновлення
+        </a></li>
+        <li><a href="ConfigLanguage_p.html" class="#(authorized)#::is-locked#(/authorized)#">
+          <svg class="yg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/></svg>
+          Мова
+        </a></li>
+      </ul>
+    </div>
 
-  <div class="yg-sidebar__group">
-    <h3>Зовнішні</h3>
-    <ul class="yg-sidebar__list">
-      <li><a href="https://github.com/yacy/yacy_search_server" target="_blank" rel="noreferrer noopener">Git Repository</a></li>
-      <li><a href="ViewProfile.html?hash=localhash">About this peer</a></li>
-    </ul>
-  </div>
+    #(navigation-advanced)#::
+    <div class="yg-nav__section" data-collapsible="true" data-key="advanced" data-collapsed="true">
+      <div class="yg-nav__section-title">
+        <span class="yg-nav__section-title-text">Розширені</span>
+        <svg class="yg-nav__section-title-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <ul class="yg-nav__items">
+        <li><a href="AILab.html">
+          <svg class="yg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11H5a2 2 0 00-2 2v7a2 2 0 002 2h14a2 2 0 002-2v-7a2 2 0 00-2-2h-4M12 2v9M9 5l3-3 3 3"/></svg>
+          AI Lab
+        </a></li>
+        <li><a href="Automation_p.html?sort=-date_recording" class="#(authorized)#::is-locked#(/authorized)#">
+          <svg class="yg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          Automation
+        </a></li>
+        <li><a href="IndexPackGenerator_p.html" class="#(authorized)#::is-locked#(/authorized)#">
+          <svg class="yg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
+          YaCy Packs
+        </a></li>
+        <li><a href="Vocabulary_p.html" class="#(authorized)#::is-locked#(/authorized)#">
+          <svg class="yg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2zM22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+          Vocabulary
+        </a></li>
+        <li><a href="IndexFederated_p.html" class="#(authorized)#::is-locked#(/authorized)#">
+          <svg class="yg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><circle cx="6" cy="6" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="18" r="2"/><line x1="9.4" y1="10.6" x2="6.7" y2="7.7"/><line x1="14.6" y1="10.6" x2="17.3" y2="7.7"/><line x1="14.6" y1="13.4" x2="17.3" y2="16.3"/><line x1="9.4" y1="13.4" x2="6.7" y2="16.3"/></svg>
+          Solr Federated
+        </a></li>
+        <li><a href="IndexSchema_p.html" class="#(authorized)#::is-locked#(/authorized)#">
+          <svg class="yg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+          Solr Schema
+        </a></li>
+      </ul>
+    </div>
+    #(/navigation-advanced)#
+
+  </nav>
 </aside>
 
 <div class="yg-sidebar__backdrop" id="ygBackdrop" aria-hidden="true"></div>
 
-<!-- main content ------------------------------------------------- -->
 <main class="yg-main" role="main">
   <div class="yg-main__inner">
