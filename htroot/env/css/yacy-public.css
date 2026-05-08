@@ -99,13 +99,15 @@
 .yp-iconbtn svg { width: 18px; height: 18px; }
 .yp-burger { display: none; }
 
-/* mobile drop nav under the top bar */
+/* mobile drop nav under the top bar — only visible below the breakpoint */
 .yp-mobile-nav {
+  display: none;
   border-top: 1px solid #e5e7eb;
   background: #fff;
   padding: 8px 16px 12px;
-  display: flex; flex-direction: column; gap: 2px;
+  flex-direction: column; gap: 2px;
 }
+.yp-mobile-nav[hidden] { display: none !important; }
 .yp-mobile-nav a {
   display: block;
   padding: 10px 12px;
@@ -132,6 +134,9 @@
   .yp-auth { display: none; }
   .yp-topbar__inner { gap: 8px; padding: 0 12px; }
   .yp-brand__word { font-size: 16px; }
+  /* below breakpoint, the mobile-nav becomes visible when its
+     `hidden` attribute is removed by the burger toggle */
+  .yp-mobile-nav:not([hidden]) { display: flex; }
 }
 @media (max-width: 380px) {
   .yp-iconbtn { width: 32px; height: 32px; }
