@@ -1,0 +1,245 @@
+/*
+ * VIR GOO admin shell — modern topbar + sidebar + content frame.
+ *
+ * Loaded ALONGSIDE Bootstrap on every page that uses
+ * env/templates/{metas,header,footer}.template, so we deliberately
+ * scope every selector with a `.yg-*` prefix and avoid touching the
+ * default form/button/table styling that legacy admin pages rely on.
+ */
+
+:root {
+  --yg-bg:        #f6f7f9;
+  --yg-surface:   #ffffff;
+  --yg-border:    #e5e7eb;
+  --yg-muted:     #6b7280;
+  --yg-text:      #111827;
+  --yg-accent:    #1d4ed8;
+  --yg-accent-bg: #eff6ff;
+  --yg-danger:    #b91c1c;
+  --yg-warn:      #92400e;
+  --yg-warn-bg:   #fef3c7;
+  --yg-shadow:    0 1px 2px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.04);
+  --yg-radius:    10px;
+  --yg-topbar-h:  56px;
+  --yg-side-w:    240px;
+}
+
+/* page chrome ----------------------------------------------------- */
+
+body.yg-admin {
+  background: var(--yg-bg);
+  color: var(--yg-text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* topbar */
+.yg-topbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: var(--yg-topbar-h);
+  background: var(--yg-surface);
+  border-bottom: 1px solid var(--yg-border);
+  z-index: 1030;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 12px;
+}
+.yg-topbar__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--yg-text);
+  font-weight: 600;
+  font-size: 15px;
+}
+.yg-topbar__brand img { height: 24px; width: auto; }
+.yg-topbar__brand-tag {
+  font-size: 11px;
+  color: var(--yg-muted);
+  font-weight: 400;
+  margin-left: 4px;
+  border-left: 1px solid var(--yg-border);
+  padding-left: 8px;
+}
+.yg-topbar__search {
+  flex: 1 1 auto;
+  max-width: 480px;
+  margin: 0 12px;
+}
+.yg-topbar__search input {
+  width: 100%;
+  height: 36px;
+  padding: 6px 14px;
+  border: 1px solid var(--yg-border);
+  border-radius: 999px;
+  font-size: 13px;
+  background: var(--yg-bg);
+  color: var(--yg-text);
+  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+}
+.yg-topbar__search input:focus {
+  outline: none;
+  background: #fff;
+  border-color: var(--yg-accent);
+  box-shadow: 0 0 0 3px rgba(29,78,216,0.12);
+}
+.yg-topbar__actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.yg-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid var(--yg-border);
+  background: var(--yg-surface);
+  color: var(--yg-text);
+  font-size: 13px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.yg-btn:hover { background: var(--yg-bg); border-color: #cbd5e1; }
+.yg-btn--warn { color: var(--yg-warn); background: var(--yg-warn-bg); border-color: #fcd34d; }
+.yg-btn--warn:hover { background: #fde68a; }
+.yg-btn--danger { color: var(--yg-danger); border-color: #fecaca; background: #fef2f2; }
+.yg-btn--danger:hover { background: #fee2e2; }
+.yg-btn--icon { padding: 0 10px; }
+.yg-btn .yg-ico { width: 16px; height: 16px; flex-shrink: 0; }
+.yg-burger {
+  display: none;
+  width: 36px; height: 36px;
+  border: 1px solid var(--yg-border);
+  border-radius: 8px;
+  background: var(--yg-surface);
+  align-items: center; justify-content: center;
+  cursor: pointer;
+}
+
+/* sidebar */
+.yg-sidebar {
+  position: fixed;
+  top: var(--yg-topbar-h);
+  bottom: 0;
+  left: 0;
+  width: var(--yg-side-w);
+  background: var(--yg-surface);
+  border-right: 1px solid var(--yg-border);
+  overflow-y: auto;
+  padding: 16px 10px 24px;
+  z-index: 1020;
+}
+.yg-sidebar__group { margin-bottom: 16px; }
+.yg-sidebar__group h3 {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--yg-muted);
+  letter-spacing: 0.04em;
+  margin: 12px 8px 6px;
+  padding: 0;
+  font-weight: 600;
+}
+.yg-sidebar__list { list-style: none; margin: 0; padding: 0; }
+.yg-sidebar__list li { margin: 0; padding: 0; }
+.yg-sidebar__list a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: 6px;
+  color: #374151;
+  text-decoration: none;
+  font-size: 13px;
+  line-height: 1.3;
+  transition: background 0.12s, color 0.12s;
+  border-bottom: none; /* override base.css */
+}
+.yg-sidebar__list a:hover { background: var(--yg-bg); color: var(--yg-text); }
+.yg-sidebar__list a.is-active { background: var(--yg-accent-bg); color: var(--yg-accent); font-weight: 500; }
+.yg-sidebar__list a.lock::before {
+  content: "🔒";
+  font-size: 10px;
+  opacity: 0.5;
+  margin-right: 2px;
+}
+.yg-sidebar__backdrop { display: none; }
+
+/* content area */
+.yg-main {
+  margin-left: var(--yg-side-w);
+  padding-top: var(--yg-topbar-h);
+  min-height: 100vh;
+}
+.yg-main__inner {
+  padding: 20px 24px 60px;
+  max-width: 1280px;
+}
+
+/* responsive --------------------------------------------------------- */
+
+@media (max-width: 900px) {
+  .yg-burger { display: inline-flex; }
+  .yg-sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.22s ease-out;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.16);
+  }
+  .yg-sidebar.is-open { transform: translateX(0); }
+  .yg-sidebar__backdrop {
+    display: block;
+    position: fixed;
+    inset: var(--yg-topbar-h) 0 0 0;
+    background: rgba(15,23,42,0.4);
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.22s ease-out;
+    z-index: 1015;
+  }
+  .yg-sidebar__backdrop.is-open { opacity: 1; pointer-events: auto; }
+  .yg-main { margin-left: 0; }
+  .yg-main__inner { padding: 14px 14px 40px; }
+  .yg-topbar__brand-tag { display: none; }
+  .yg-topbar__search { display: none; }
+}
+
+/* legacy bootstrap content compatibility ----------------------------- */
+
+/* Old pages still use .container / .row / .col-* inside main; reset
+   the outer container width that bootstrap assumes so it fits inside
+   our framed content area. */
+.yg-main .container,
+.yg-main .container-fluid {
+  width: 100%;
+  max-width: none;
+  padding-left: 0;
+  padding-right: 0;
+  margin: 0;
+}
+
+/* legacy headings inside legacy pages */
+.yg-main h1,
+.yg-main h2,
+.yg-main h3 {
+  color: var(--yg-text);
+}
+.yg-main h2 {
+  font-size: 22px;
+  margin-top: 0;
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+
+/* legacy white card surface */
+.yg-card {
+  background: var(--yg-surface);
+  border: 1px solid var(--yg-border);
+  border-radius: var(--yg-radius);
+  padding: 20px;
+  box-shadow: var(--yg-shadow);
+}

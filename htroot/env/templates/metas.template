@@ -57,6 +57,8 @@ for the JavaScript code in this page.
   <!-- old css styles -->
   <link rel="stylesheet" type="text/css" media="all" href="#[relativeBase]#env/base.css" />
   <link rel="stylesheet" type="text/css" media="screen" href="#[relativeBase]#env/style.css" />
+  <!-- VIR GOO admin shell (topbar + sidebar). Self-contained, .yg-* only. -->
+  <link rel="stylesheet" type="text/css" media="all" href="#[relativeBase]#env/yacy-admin.css" />
   <!--[if lt IE 6]>
    <link rel="stylesheet" type="text/css" media="screen" href="#[relativeBase]#env/oldie.css" />
   <![endif]-->
