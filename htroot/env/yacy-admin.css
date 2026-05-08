@@ -215,14 +215,26 @@ body.yg-admin {
 
 /* collapsible groups */
 .yg-nav__section[data-collapsible="true"] .yg-nav__section-title {
-  cursor: pointer; transition: color .1s;
+  cursor: pointer;
+  border-radius: 6px;
+  margin: 0 8px;
+  padding-left: 8px; padding-right: 8px;
+  transition: background .1s, color .1s;
 }
-.yg-nav__section[data-collapsible="true"] .yg-nav__section-title:hover { color: var(--yg-text); }
+.yg-nav__section[data-collapsible="true"] .yg-nav__section-title:hover {
+  color: var(--yg-text);
+  background: var(--yg-bg);
+}
+.yg-nav__section[data-collapsible="true"][data-has-active="true"] .yg-nav__section-title {
+  color: var(--yg-accent-strong);
+}
 .yg-nav__section-title-chev {
-  width: 12px; height: 12px;
+  width: 14px; height: 14px;
+  flex-shrink: 0;
   transform: rotate(0deg);
-  transition: transform .15s;
+  transition: transform .18s ease-out;
   color: var(--yg-muted-2);
+  stroke-width: 2.5;
 }
 .yg-nav__section[data-collapsed="true"] .yg-nav__section-title-chev { transform: rotate(-90deg); }
 .yg-nav__section[data-collapsed="true"] .yg-nav__items { display: none; }
@@ -1121,13 +1133,20 @@ body.yg-admin {
 /* ===== global readability tweaks ===========================
  * Bumping minimums so labels / table cells / Status detail
  * column don't drop below readable size. */
-.yg-main { font-size: 14px; }
-.yg-main p, .yg-main li, .yg-main td, .yg-main dd { font-size: 14px; }
+.yg-main { font-size: 14px; line-height: 1.6; }
+.yg-main p { margin: 0 0 12px; line-height: 1.65; font-size: 14px; max-width: 80ch; }
+.yg-main p:last-child { margin-bottom: 0; }
+.yg-main li, .yg-main td, .yg-main dd { font-size: 14px; }
+.yg-main ul:not(.SubMenu):not(.yg-list):not(.yg-nav__items),
+.yg-main ol { margin: 0 0 12px 22px; padding: 0; }
+.yg-main ul:not(.SubMenu):not(.yg-list):not(.yg-nav__items) li,
+.yg-main ol li { margin: 4px 0; }
+
 .yg-main small,
 .yg-main .small,
 .yg-main .help-block,
 .yg-main .form-text {
-  font-size: 12.5px !important;
+  font-size: 13px !important;
   line-height: 1.5;
   color: var(--yg-muted);
 }
@@ -1136,6 +1155,12 @@ body.yg-admin {
 .yg-main table tbody td,
 .yg-main table tbody th { font-size: 13.5px; }
 .yg-main table thead th { font-size: 12px; }
+/* font-size:0.9em / 0.8em sprinkles inside legacy pages — clamp lower bound */
+.yg-main * { min-block-size: auto; }
+.yg-main span[style*="font-size"],
+.yg-main div[style*="font-size"] { font-size: 13px !important; }
+.yg-main em, .yg-main i { font-style: italic; }
+.yg-main strong, .yg-main b { font-weight: 600; }
 
 /* hide the legacy "Fork me on GitHub" green ribbon image, in case
    any page still has it inline. */

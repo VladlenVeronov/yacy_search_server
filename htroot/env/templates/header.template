@@ -35,6 +35,7 @@
       || sections.find(function (s) { return s.dataset.key === savedOpen; })
       || sections[0]
       || null;
+    if (activeSec) activeSec.dataset.hasActive = 'true';
     sections.forEach(function (sec) {
       sec.dataset.collapsed = (sec === initialOpen) ? 'false' : 'true';
     });

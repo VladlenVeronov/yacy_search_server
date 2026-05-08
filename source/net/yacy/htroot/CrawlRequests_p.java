@@ -161,8 +161,12 @@ public class CrawlRequests_p {
         } catch (final IOException e) {
             ConcurrentLog.warn("CrawlRequests_p", "iterate: " + e.getMessage());
         }
-        prop.put("rows",  idx);
-        prop.put("total", total);
+        // Two distinct keys so the template never confuses alternative vs multi:
+        //   #(hasRows)# empty :: table-with-#{rows}# #(/hasRows)#
+        //   #{rows}# … #{/rows}#  iterates `rows` times via prop.put("rows", idx)
+        prop.put("hasRows", idx == 0 ? 0 : 1);
+        prop.put("rows",    idx);
+        prop.put("total",   total);
         prop.putHTML("filter", filter);
         prop.put("filter_empty",    filter.isEmpty()         ? 1 : 0);
         prop.put("filter_pending",  "pending".equals(filter)  ? 1 : 0);
