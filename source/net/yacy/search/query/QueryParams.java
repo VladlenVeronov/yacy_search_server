@@ -653,6 +653,13 @@ public final class QueryParams {
         }
         if (bq.length() > 0) params.setParam(DisMaxParams.BQ, bq.split("[\\r\\n]+")); // split on any sequence consisting of CR and/or LF
         if (bf.length() > 0) params.setParam("boost", bf); // a boost function extension, see http://wiki.apache.org/solr/ExtendedDisMax#bf_.28Boost_Function.2C_additive.29
+
+        // Long-query recall: for >=LONG_QUERY_THRESHOLD terms, getGoalQuery()
+        // omits AND and lets edismax mm decide. Strict AND on long phrases
+        // collapses to 0 hits the moment one term is missing in any doc.
+        if (this.queryGoal.isLongQuery()) {
+            params.setParam(DisMaxParams.MM, "50%");
+        }
         
         // set highlighting query attributes
         if (this.contentdom == Classification.ContentDomain.TEXT || this.contentdom == Classification.ContentDomain.ALL) {

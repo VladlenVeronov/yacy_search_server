@@ -65,7 +65,7 @@
 - [x] RANKING: hybrid scoring 60/25/15 (semantic / freshness / quality) у `/rank`. Default OFF на проді (Solr boostfunction `recip(ms(NOW,load_date_dt),3.16e-11,1,1)` справляється з freshness без додаткового ранкера)
 - [~] RANKING: Domain quality score — `_quality_score()` поки рахує лише HTTPS (1.0 vs 0.3). Speed/ads сигнали відкладено — не блокує
 - [x] RANKING: PageRank/backlinks zero-out — `coeff_authority = 0` + `coeff_citation = 0` у `RankingProfile`
-- [ ] SEARCH: Підтримка довгих запитів — нижчий пріоритет
+- [x] SEARCH: Підтримка довгих запитів — `QueryGoal.LONG_QUERY_THRESHOLD = 5`. ≥5 термів → query без AND + edismax `mm=50%` (`QueryParams.solrQuery`). 1-4 терми лишаються strict-AND для точності. Excludes завжди MUST-NOT через `-` префікс. Tests: `QueryGoalTest.testShortQueryUsesAnd` + `testLongQueryDropsAnd`
 - [x] SEARCH: Автодоповнення пошуку — `suggest.json` API + native fetch dropdown на index.html та yacysearch.html (заміна jQuery typeahead)
 - [x] AI UNSATISFIED: Трекінг кліків — `/api/vector/track-click` пише в `query_clicks`. Yacysearch.html делегує mousedown через `sendBeacon`
 - [x] AI UNSATISFIED: Логування пошуків — `/api/vector/track-search` → `query_logs` (query, result_count, ts)
