@@ -1174,6 +1174,12 @@ body.yg-admin {
 /* hide donate iframe used by some legacy pages — clutter, not nav */
 .yg-main iframe[src*="donate.html"] { display: none !important; }
 
+/* The legacy `<div id="api">` orange badge sits position:absolute
+   top:0 right:0 — it now collides with our topbar Shutdown button.
+   Hide everywhere; the same XML/JSON links live in the page footer
+   if anyone really needs them. */
+#api { display: none !important; }
+
 /* Status hint dl/dt icon row — prettier card style for hints */
 .yg-main dl dt.hintIcon {
   display: flex; align-items: center; justify-content: flex-start;
