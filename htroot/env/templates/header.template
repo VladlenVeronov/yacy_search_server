@@ -85,8 +85,22 @@
     <svg class="yg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
   </button>
   <a class="yg-topbar__brand" href="Dashboard_p.html">
-    <img src="env/grafics/yacy.png" alt="VIR GOO" />
-    <span>VIR GOO</span>
+    <span class="yg-brandmark" aria-hidden="true">
+      <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0.5" y="0.5" width="27" height="27" rx="7" fill="url(#vg)" />
+        <circle cx="11.5" cy="11.5" r="5" stroke="#fff" stroke-width="2" />
+        <line x1="15.4" y1="15.4" x2="20" y2="20" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="20" cy="9" r="1.4" fill="#fff" />
+        <circle cx="22.6" cy="11.6" r="1" fill="#fff" />
+        <circle cx="20" cy="14.2" r="0.8" fill="#fff" opacity="0.7" />
+        <defs>
+          <linearGradient id="vg" x1="0" y1="0" x2="28" y2="28" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#2563eb"/><stop offset="1" stop-color="#1e3a8a"/>
+          </linearGradient>
+        </defs>
+      </svg>
+    </span>
+    <span class="yg-topbar__wordmark">VIR GOO</span>
     <span class="yg-topbar__brand-tag">Адмін</span>
   </a>
 

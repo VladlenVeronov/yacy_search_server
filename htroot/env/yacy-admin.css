@@ -68,6 +68,17 @@ body.yg-admin {
   flex-shrink: 0;
 }
 .yg-topbar__brand img { height: 22px; width: auto; }
+.yg-topbar__brand .yg-brandmark { display: inline-flex; }
+.yg-topbar__brand .yg-brandmark svg { width: 28px; height: 28px; display: block; }
+.yg-topbar__wordmark {
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 70%);
+  -webkit-background-clip: text;
+          background-clip: text;
+  color: transparent;
+}
 .yg-topbar__brand-tag {
   font-size: 11px; color: var(--yg-muted); font-weight: 500;
   margin-left: 4px; padding: 2px 8px;
@@ -1106,3 +1117,58 @@ body.yg-admin {
 .yg-main .bs-callout-info { border-left-color: var(--yg-accent); }
 .yg-main .bs-callout-warning { border-left-color: #f59e0b; background: var(--yg-warn-bg); }
 .yg-main .bs-callout-danger { border-left-color: var(--yg-danger); background: var(--yg-danger-bg); }
+
+/* ===== global readability tweaks ===========================
+ * Bumping minimums so labels / table cells / Status detail
+ * column don't drop below readable size. */
+.yg-main { font-size: 14px; }
+.yg-main p, .yg-main li, .yg-main td, .yg-main dd { font-size: 14px; }
+.yg-main small,
+.yg-main .small,
+.yg-main .help-block,
+.yg-main .form-text {
+  font-size: 12.5px !important;
+  line-height: 1.5;
+  color: var(--yg-muted);
+}
+.yg-main .text-muted { color: var(--yg-muted) !important; }
+/* tables more readable */
+.yg-main table tbody td,
+.yg-main table tbody th { font-size: 13.5px; }
+.yg-main table thead th { font-size: 12px; }
+
+/* hide the legacy "Fork me on GitHub" green ribbon image, in case
+   any page still has it inline. */
+.yg-main img[src*="forkme_right"],
+.yg-main img[alt*="Fork me on GitHub"],
+.yg-main a.forceNoExternalIcon[href*="github.com/yacy"] { display: none !important; }
+
+/* hide the kaskelix / yacy-mascot welcome cat */
+.yg-main img[src*="kaskelix"] { display: none !important; }
+
+/* hide donate iframe used by some legacy pages — clutter, not nav */
+.yg-main iframe[src*="donate.html"] { display: none !important; }
+
+/* Status hint dl/dt icon row — prettier card style for hints */
+.yg-main dl dt.hintIcon {
+  display: flex; align-items: center; justify-content: flex-start;
+  padding: 6px 0;
+}
+.yg-main dl dt.hintIcon img {
+  width: 24px; height: 24px;
+  border-radius: 6px;
+  background: var(--yg-bg);
+  padding: 4px;
+}
+.yg-main dl dd.hint {
+  font-size: 13.5px;
+  padding: 6px 0;
+  color: var(--yg-text-2);
+}
+.yg-main dl dd.hint strong { color: var(--yg-text); }
+
+/* the brand wordmark gradient occasionally needs a fallback for
+   browsers that don't support background-clip:text */
+@supports not (background-clip: text) {
+  .yg-topbar__wordmark { color: var(--yg-text); background: none; }
+}
