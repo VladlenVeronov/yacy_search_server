@@ -360,3 +360,539 @@ body.yg-admin {
 .yg-pill--ok { background: #ecfdf5; color: var(--yg-success); }
 .yg-pill--warn { background: var(--yg-warn-bg); color: var(--yg-warn); }
 .yg-pill--err { background: var(--yg-danger-bg); color: var(--yg-danger); }
+
+/* ===== legacy bootstrap overlay ================================
+ * Re-skin every Bootstrap-3 patterned form / table / button / alert
+ * inside .yg-main so the dozens of unmigrated _p.html admin pages
+ * pick up the modern look automatically. We DO NOT touch elements
+ * outside .yg-main, so this never affects header/sidebar.
+ *
+ * Specificity: prefixing each rule with `.yg-main` already beats the
+ * Bootstrap defaults (single-class), so no !important needed except
+ * where Bootstrap itself uses !important.
+ */
+
+/* page wrapper inside content */
+.yg-main { font-size: 14px; line-height: 1.5; color: var(--yg-text); }
+.yg-main .container,
+.yg-main .container-fluid {
+  background: transparent;
+}
+
+/* headings */
+.yg-main h1 { font-size: 24px; font-weight: 600; margin: 0 0 16px; line-height: 1.25; letter-spacing: -0.01em; }
+.yg-main h2 { font-size: 19px; font-weight: 600; margin: 24px 0 12px; line-height: 1.3; }
+.yg-main h2:first-child { margin-top: 0; }
+.yg-main h3 { font-size: 15px; font-weight: 600; margin: 18px 0 10px; line-height: 1.3; color: var(--yg-text-2); }
+.yg-main h4 { font-size: 13px; font-weight: 600; margin: 14px 0 8px; color: var(--yg-text-2); text-transform: uppercase; letter-spacing: 0.04em; }
+.yg-main hr { border: none; border-top: 1px solid var(--yg-border); margin: 20px 0; }
+
+/* paragraphs / text */
+.yg-main p { margin: 0 0 12px; }
+.yg-main p.help-block,
+.yg-main .help-block { color: var(--yg-muted); font-size: 12px; margin-top: 4px; }
+.yg-main small,
+.yg-main .small { color: var(--yg-muted); font-size: 12px; }
+.yg-main code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12px;
+  background: var(--yg-bg);
+  border: 1px solid var(--yg-border);
+  border-radius: 4px;
+  padding: 1px 6px;
+  color: var(--yg-text);
+}
+.yg-main pre {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12px;
+  background: var(--yg-surface-hi);
+  border: 1px solid var(--yg-border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  overflow-x: auto;
+  margin: 0 0 12px;
+}
+.yg-main a { color: var(--yg-accent); text-decoration: none; }
+.yg-main a:hover { color: var(--yg-accent-strong); text-decoration: underline; }
+
+/* form fields — Bootstrap .form-control, raw inputs/selects/textarea */
+.yg-main .form-control,
+.yg-main input[type="text"],
+.yg-main input[type="email"],
+.yg-main input[type="url"],
+.yg-main input[type="password"],
+.yg-main input[type="search"],
+.yg-main input[type="number"],
+.yg-main input[type="tel"],
+.yg-main input[type="date"],
+.yg-main input[type="time"],
+.yg-main input[type="datetime-local"],
+.yg-main input[type="month"],
+.yg-main input[type="week"],
+.yg-main select,
+.yg-main textarea {
+  display: inline-block;
+  width: 100%;
+  max-width: 520px;
+  height: 36px;
+  padding: 6px 10px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--yg-text);
+  background: var(--yg-surface);
+  background-image: none;
+  border: 1px solid var(--yg-border);
+  border-radius: var(--yg-radius-sm);
+  box-shadow: none;
+  transition: border-color .12s, box-shadow .12s;
+  font-family: inherit;
+  vertical-align: middle;
+}
+.yg-main textarea {
+  height: auto;
+  min-height: 80px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+.yg-main .form-control:focus,
+.yg-main input[type="text"]:focus,
+.yg-main input[type="email"]:focus,
+.yg-main input[type="url"]:focus,
+.yg-main input[type="password"]:focus,
+.yg-main input[type="search"]:focus,
+.yg-main input[type="number"]:focus,
+.yg-main input[type="tel"]:focus,
+.yg-main input[type="date"]:focus,
+.yg-main input[type="time"]:focus,
+.yg-main select:focus,
+.yg-main textarea:focus {
+  outline: none;
+  border-color: var(--yg-accent);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+}
+.yg-main select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 30px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 14px;
+}
+.yg-main select[multiple] { background-image: none; padding-right: 10px; height: auto; min-height: 80px; }
+.yg-main input[type="checkbox"],
+.yg-main input[type="radio"] {
+  width: 16px; height: 16px;
+  margin: 0 6px 0 0;
+  accent-color: var(--yg-accent);
+  vertical-align: middle;
+}
+.yg-main label {
+  font-weight: 500;
+  font-size: 13px;
+  color: var(--yg-text-2);
+  margin-bottom: 4px;
+  display: inline-block;
+}
+.yg-main .form-group { margin-bottom: 14px; }
+.yg-main .form-control[disabled],
+.yg-main input[disabled] {
+  background: var(--yg-bg);
+  color: var(--yg-muted);
+  cursor: not-allowed;
+}
+.yg-main .input-group {
+  display: inline-flex;
+  align-items: stretch;
+  width: 100%;
+  max-width: 520px;
+}
+.yg-main .input-group .form-control {
+  border-radius: 0;
+  border-right-width: 0;
+}
+.yg-main .input-group .form-control:first-child { border-top-left-radius: var(--yg-radius-sm); border-bottom-left-radius: var(--yg-radius-sm); }
+.yg-main .input-group .form-control:last-child  { border-top-right-radius: var(--yg-radius-sm); border-bottom-right-radius: var(--yg-radius-sm); border-right-width: 1px; }
+.yg-main .input-group-addon {
+  display: inline-flex; align-items: center;
+  padding: 0 10px;
+  background: var(--yg-bg);
+  border: 1px solid var(--yg-border);
+  font-size: 12px; color: var(--yg-muted);
+}
+.yg-main .input-group-btn { display: inline-flex; align-items: stretch; }
+
+/* buttons — Bootstrap .btn family + raw button/input[type=submit] */
+.yg-main .btn,
+.yg-main button:not(.yg-btn):not(.yg-burger):not([class*="yg-"]),
+.yg-main input[type="submit"],
+.yg-main input[type="reset"],
+.yg-main input[type="button"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 14px;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1;
+  border-radius: var(--yg-radius-sm);
+  border: 1px solid var(--yg-border);
+  background: var(--yg-surface);
+  color: var(--yg-text-2);
+  text-decoration: none;
+  cursor: pointer;
+  vertical-align: middle;
+  transition: background .12s, border-color .12s, color .12s, box-shadow .12s;
+  font-family: inherit;
+  box-shadow: none;
+}
+.yg-main .btn:hover,
+.yg-main button:not(.yg-btn):not(.yg-burger):not([class*="yg-"]):hover,
+.yg-main input[type="submit"]:hover,
+.yg-main input[type="reset"]:hover,
+.yg-main input[type="button"]:hover {
+  background: var(--yg-bg);
+  color: var(--yg-text);
+  border-color: #cbd5e1;
+}
+.yg-main .btn:focus { outline: none; box-shadow: 0 0 0 3px rgba(37,99,235,0.12); }
+.yg-main .btn-primary,
+.yg-main input[type="submit"] {
+  background: var(--yg-accent);
+  border-color: var(--yg-accent);
+  color: #fff;
+}
+.yg-main .btn-primary:hover,
+.yg-main input[type="submit"]:hover {
+  background: var(--yg-accent-strong);
+  border-color: var(--yg-accent-strong);
+  color: #fff;
+}
+.yg-main .btn-success {
+  background: var(--yg-success);
+  border-color: var(--yg-success);
+  color: #fff;
+}
+.yg-main .btn-success:hover { background: #15803d; border-color: #15803d; color: #fff; }
+.yg-main .btn-danger {
+  background: var(--yg-danger);
+  border-color: var(--yg-danger);
+  color: #fff;
+}
+.yg-main .btn-danger:hover { background: #b91c1c; border-color: #b91c1c; color: #fff; }
+.yg-main .btn-warning {
+  background: #f59e0b;
+  border-color: #f59e0b;
+  color: #fff;
+}
+.yg-main .btn-warning:hover { background: #d97706; border-color: #d97706; color: #fff; }
+.yg-main .btn-info {
+  background: #0ea5e9;
+  border-color: #0ea5e9;
+  color: #fff;
+}
+.yg-main .btn-info:hover { background: #0284c7; border-color: #0284c7; color: #fff; }
+.yg-main .btn-link {
+  background: transparent; border-color: transparent;
+  color: var(--yg-accent); padding: 0 4px; height: auto;
+}
+.yg-main .btn-link:hover { background: transparent; color: var(--yg-accent-strong); text-decoration: underline; }
+.yg-main .btn-xs { height: 24px; padding: 0 8px; font-size: 11px; }
+.yg-main .btn-sm { height: 28px; padding: 0 10px; font-size: 12px; }
+.yg-main .btn-lg { height: 40px; padding: 0 18px; font-size: 14px; }
+.yg-main .btn-group { display: inline-flex; }
+.yg-main .btn-group > .btn { border-radius: 0; }
+.yg-main .btn-group > .btn:first-child { border-radius: var(--yg-radius-sm) 0 0 var(--yg-radius-sm); }
+.yg-main .btn-group > .btn:last-child  { border-radius: 0 var(--yg-radius-sm) var(--yg-radius-sm) 0; }
+.yg-main .btn-group > .btn + .btn { border-left-width: 0; }
+.yg-main .btn-group > .btn.active {
+  background: var(--yg-accent-bg);
+  color: var(--yg-accent-strong);
+  border-color: var(--yg-accent);
+}
+
+/* tables — Bootstrap .table family + bare <table> */
+.yg-main table,
+.yg-main .table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  background: var(--yg-surface);
+  border: 1px solid var(--yg-border);
+  border-radius: var(--yg-radius);
+  overflow: hidden;
+  margin: 0 0 14px;
+}
+.yg-main table thead,
+.yg-main .table thead { background: var(--yg-bg); }
+.yg-main table thead th,
+.yg-main .table thead th,
+.yg-main table thead td,
+.yg-main .table thead td {
+  padding: 10px 12px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--yg-text-2);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  border-bottom: 1px solid var(--yg-border);
+}
+.yg-main table tbody td,
+.yg-main .table tbody td,
+.yg-main table tbody th,
+.yg-main .table tbody th {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--yg-border-soft);
+  vertical-align: top;
+}
+.yg-main table tbody tr:last-child td,
+.yg-main .table tbody tr:last-child td { border-bottom: none; }
+.yg-main .table-hover tbody tr:hover { background: var(--yg-surface-hi); }
+.yg-main .table-condensed td,
+.yg-main .table-condensed th { padding: 6px 10px; font-size: 12px; }
+.yg-main .table-bordered { border: 1px solid var(--yg-border); }
+.yg-main .table-bordered td,
+.yg-main .table-bordered th { border: 1px solid var(--yg-border-soft); }
+.yg-main .table-striped tbody tr:nth-child(even) { background: var(--yg-surface-hi); }
+.yg-main .table-responsive { overflow-x: auto; border-radius: var(--yg-radius); }
+
+/* alerts */
+.yg-main .alert {
+  padding: 12px 14px;
+  border-radius: var(--yg-radius);
+  border: 1px solid var(--yg-border);
+  background: var(--yg-surface);
+  margin: 0 0 14px;
+  font-size: 13px;
+}
+.yg-main .alert-info {
+  background: var(--yg-accent-bg);
+  border-color: #bfdbfe;
+  color: #1e3a8a;
+}
+.yg-main .alert-success {
+  background: #ecfdf5;
+  border-color: #a7f3d0;
+  color: #065f46;
+}
+.yg-main .alert-warning {
+  background: var(--yg-warn-bg);
+  border-color: #fcd34d;
+  color: var(--yg-warn);
+}
+.yg-main .alert-danger,
+.yg-main .alert-error {
+  background: var(--yg-danger-bg);
+  border-color: #fca5a5;
+  color: var(--yg-danger);
+}
+.yg-main .alert-link { color: inherit; text-decoration: underline; font-weight: 600; }
+
+/* panels (Bootstrap 3) */
+.yg-main .panel {
+  background: var(--yg-surface);
+  border: 1px solid var(--yg-border);
+  border-radius: var(--yg-radius);
+  margin: 0 0 14px;
+  box-shadow: var(--yg-shadow-sm);
+  overflow: hidden;
+}
+.yg-main .panel-heading {
+  padding: 12px 16px;
+  background: var(--yg-bg);
+  border-bottom: 1px solid var(--yg-border);
+  font-weight: 600;
+}
+.yg-main .panel-title { margin: 0; font-size: 14px; font-weight: 600; }
+.yg-main .panel-body { padding: 16px; }
+.yg-main .panel-info { border-color: #bfdbfe; }
+.yg-main .panel-info .panel-heading { background: var(--yg-accent-bg); color: #1e3a8a; }
+.yg-main .panel-default .panel-heading { background: var(--yg-bg); }
+.yg-main .panel-success .panel-heading { background: #ecfdf5; color: #065f46; border-bottom-color: #a7f3d0; }
+.yg-main .panel-warning .panel-heading { background: var(--yg-warn-bg); color: var(--yg-warn); border-bottom-color: #fcd34d; }
+.yg-main .panel-danger .panel-heading { background: var(--yg-danger-bg); color: var(--yg-danger); border-bottom-color: #fca5a5; }
+
+/* well */
+.yg-main .well {
+  background: var(--yg-surface-hi);
+  border: 1px solid var(--yg-border);
+  border-radius: var(--yg-radius);
+  padding: 16px;
+  margin: 0 0 14px;
+  box-shadow: none;
+}
+
+/* labels (Bootstrap span.label) — render as pills */
+.yg-main .label {
+  display: inline-block;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 999px;
+  background: var(--yg-bg);
+  color: var(--yg-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  vertical-align: middle;
+}
+.yg-main .label-default { background: var(--yg-bg); color: var(--yg-muted); }
+.yg-main .label-primary { background: var(--yg-accent-bg); color: var(--yg-accent-strong); }
+.yg-main .label-success { background: #ecfdf5; color: var(--yg-success); }
+.yg-main .label-info    { background: #e0f2fe; color: #075985; }
+.yg-main .label-warning { background: var(--yg-warn-bg); color: var(--yg-warn); }
+.yg-main .label-danger  { background: var(--yg-danger-bg); color: var(--yg-danger); }
+
+/* badge */
+.yg-main .badge {
+  display: inline-block;
+  min-width: 18px;
+  padding: 1px 7px;
+  font-size: 11px; font-weight: 600;
+  background: var(--yg-accent);
+  color: #fff;
+  border-radius: 999px;
+  text-align: center;
+  line-height: 16px;
+  vertical-align: middle;
+}
+
+/* progress bars */
+.yg-main .progress {
+  height: 8px;
+  background: var(--yg-bg);
+  border-radius: 999px;
+  overflow: hidden;
+  margin: 0 0 12px;
+  box-shadow: none;
+}
+.yg-main .progress-bar {
+  background: var(--yg-accent);
+  color: #fff;
+  font-size: 11px;
+  line-height: 16px;
+  text-align: center;
+  height: 100%;
+  transition: width .25s;
+}
+.yg-main .progress-bar-info    { background: #0ea5e9; }
+.yg-main .progress-bar-success { background: var(--yg-success); }
+.yg-main .progress-bar-warning { background: #f59e0b; }
+.yg-main .progress-bar-danger  { background: var(--yg-danger); }
+
+/* tabs (Bootstrap nav-tabs) */
+.yg-main .nav-tabs {
+  display: flex; flex-wrap: wrap;
+  list-style: none; padding: 0; margin: 0 0 16px;
+  border-bottom: 1px solid var(--yg-border);
+  gap: 2px;
+}
+.yg-main .nav-tabs > li > a {
+  display: inline-block;
+  padding: 8px 14px;
+  border: 1px solid transparent;
+  border-radius: var(--yg-radius-sm) var(--yg-radius-sm) 0 0;
+  color: var(--yg-text-2);
+  font-size: 13px; font-weight: 500;
+  text-decoration: none;
+  margin-bottom: -1px;
+}
+.yg-main .nav-tabs > li > a:hover { background: var(--yg-bg); }
+.yg-main .nav-tabs > li.active > a {
+  background: var(--yg-surface);
+  border-color: var(--yg-border) var(--yg-border) var(--yg-surface);
+  color: var(--yg-accent-strong);
+}
+
+/* form-control-static (read-only display value) */
+.yg-main .form-control-static {
+  display: inline-block;
+  padding: 6px 0;
+  font-size: 13px;
+  color: var(--yg-text);
+  min-height: 36px;
+}
+
+/* dl — definition lists used by Status / Network */
+.yg-main dl {
+  display: grid;
+  grid-template-columns: minmax(160px, 200px) 1fr;
+  gap: 6px 14px;
+  margin: 0 0 14px;
+}
+.yg-main dl dt {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--yg-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 6px 0;
+}
+.yg-main dl dd { margin: 0; padding: 6px 0; font-size: 13px; }
+
+/* fieldset */
+.yg-main fieldset {
+  border: 1px solid var(--yg-border);
+  border-radius: var(--yg-radius);
+  padding: 16px 18px;
+  margin: 0 0 16px;
+  background: var(--yg-surface);
+}
+.yg-main legend {
+  padding: 0 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--yg-text-2);
+  width: auto;
+  border: none;
+  margin-bottom: 0;
+}
+
+/* checkbox/radio rows */
+.yg-main .checkbox,
+.yg-main .radio {
+  margin: 6px 0;
+}
+.yg-main .checkbox label,
+.yg-main .radio label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 400;
+  color: var(--yg-text);
+  cursor: pointer;
+}
+
+/* hide ancient bootstrap glyphicons that load no font (yacy ships only css) */
+.yg-main .glyphicon { display: inline-block; width: 14px; height: 14px; }
+
+/* Bootstrap row/col grid — keep the layout but tighten gutters */
+.yg-main .row { margin-left: -8px; margin-right: -8px; }
+.yg-main [class^="col-"], .yg-main [class*=" col-"] { padding-left: 8px; padding-right: 8px; }
+
+/* Bootstrap form-horizontal */
+.yg-main .form-horizontal .control-label {
+  text-align: right;
+  padding-top: 7px;
+  margin-bottom: 0;
+}
+@media (max-width: 720px) {
+  .yg-main .form-horizontal .control-label { text-align: left; }
+  .yg-main dl { grid-template-columns: 1fr; gap: 0; }
+  .yg-main dl dt { padding-bottom: 0; }
+  .yg-main dl dd { padding-top: 2px; padding-bottom: 12px; }
+}
+
+/* boxed/table on Status page */
+.yg-main .greysym {
+  display: inline-flex;
+  width: 28px; height: 28px;
+  align-items: center; justify-content: center;
+  background: var(--yg-bg);
+  border-radius: 50%;
+  color: var(--yg-muted);
+  margin-right: 8px;
+}
