@@ -1,5 +1,11 @@
 /* YACY public-facing pages — small overrides on top of Tailwind */
 
+/* The HTML `hidden` attribute must always win over any later display:
+   block/flex/inline-flex declared by .yp-btn / .yp-mobile-nav rules. */
+.yp-topbar [hidden],
+.yp-mobile-nav [hidden],
+[data-yp-auth][hidden] { display: none !important; }
+
 /* ==== top bar (header.template, used by index.html, yacysearch.html, etc) ==== */
 .yp-topbar {
   background: #fff;
