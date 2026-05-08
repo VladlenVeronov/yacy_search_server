@@ -38,10 +38,24 @@ public class Register {
         // header.template auth slot — Register page is anon by definition
         prop.put("publicLoggedIn", 0);
 
-        // already logged in? bounce
-        final UserDB.Entry already = (sb.userDB == null) ? null : sb.userDB.proxyAuth(header);
+        // Already logged in? Match the User.java auth chain (digest → cookie → IP).
+        // ?webmaster=1 means the user wanted to land on the submit-site page;
+        // bounce there instead of dropping them on a register form they don't need.
+        UserDB.Entry already = (sb.userDB == null) ? null : sb.userDB.proxyAuth(header);
+        if (already == null && sb.userDB != null) already = sb.userDB.cookieAuth(header.getCookies());
+        if (already == null && sb.userDB != null) {
+            final String ip = header.getRemoteAddr();
+            if (ip != null) already = sb.userDB.ipAuth(ip);
+        }
         if (already != null) {
-            prop.put(serverObjects.ACTION_LOCATION, "/index.html");
+            final boolean wantsWebmaster = post != null && "1".equals(post.get("webmaster", ""));
+            // grant WEBMASTER_RIGHT inline if asked and they don't have it yet
+            if (wantsWebmaster && !already.hasRight(UserDB.AccessRight.WEBMASTER_RIGHT)) {
+                try {
+                    already.setProperty(UserDB.AccessRight.WEBMASTER_RIGHT.toString(), "true");
+                } catch (final Exception ignored) {}
+            }
+            prop.put(serverObjects.ACTION_LOCATION, wantsWebmaster ? "/CrawlRequest.html" : "/index.html");
             return prop;
         }
 

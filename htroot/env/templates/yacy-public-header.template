@@ -22,8 +22,12 @@
 
     <nav class="yp-nav" aria-label="Primary">
       <a href="About.html" class="yp-nav__link">Про</a>
-      <a href="Register.html?webmaster=1" class="yp-nav__link">Вебмайстер</a>
-      <a href="ConfigBasic.html" class="yp-nav__link">Адмін</a>
+      #(publicLoggedIn)#
+        <a href="Register.html?webmaster=1" class="yp-nav__link">Вебмайстер</a>
+        <a href="ConfigBasic.html" class="yp-nav__link">Адмін</a>
+      ::
+        <a href="CrawlRequest.html" class="yp-nav__link">Подати сайт</a>
+      #(/publicLoggedIn)#
     </nav>
 
     <div class="yp-actions">
@@ -55,8 +59,12 @@
 
   <div class="yp-mobile-nav" id="yp-mobile-nav" hidden>
     <a href="About.html">Про</a>
-    <a href="Register.html?webmaster=1">Вебмайстер</a>
-    <a href="ConfigBasic.html">Адмін</a>
+    #(publicLoggedIn)#
+      <a href="Register.html?webmaster=1">Вебмайстер</a>
+      <a href="ConfigBasic.html">Адмін</a>
+    ::
+      <a href="CrawlRequest.html">Подати сайт</a>
+    #(/publicLoggedIn)#
     <hr/>
     <div class="yp-mobile-nav__auth">
       #(publicLoggedIn)#
