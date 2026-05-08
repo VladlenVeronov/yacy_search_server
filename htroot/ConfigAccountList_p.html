@@ -1,29 +1,139 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <title>YaCy '#[clientname]#': User Accounts</title>
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <title>Користувачі — VIR GOO Admin</title>
     #%env/templates/metas.template%#
-    <script type="text/javascript" src="js/sorttable.js"></script>
-  </head>
+</head>
 <body>
-    #%env/templates/header.template%#
-    #%env/templates/submenuUseCaseAccount.template%#
-    <h2>User List</h2>
+#%env/templates/header.template%#
 
-    <fieldset><legend>User Accounts</legend>
-      <table class="sortable">
-        <tr class="TableHeader">
-          <th>User</th><th>First name</th><th>Last name</th><th>Address</th><th>Last Access</th><th>Rights</th><th>Time</th><th>Traffic</th>
-        </tr> 
+<div class="yg-pagehead">
+  <div>
+    <h1>Користувачі</h1>
+    <p>Зареєстровані акаунти у локальній UserDB. Адмін може редагувати, відкликати права або видаляти.</p>
+  </div>
+  <div style="display:flex;gap:8px;">
+    <a class="yg-btn yg-btn--primary" href="#yg-add-user">+ Додати користувача</a>
+  </div>
+</div>
+
+<div class="yg-card">
+  <div class="yg-card__head">
+    <h2>Список користувачів</h2>
+  </div>
+
+  #(userlist)#
+    <div style="padding:24px;text-align:center;color:var(--yg-muted);">
+      Користувачів ще немає. Додайте першого нижче.
+    </div>
+  ::
+    <div style="overflow-x:auto;">
+      <table style="width:100%;">
+        <thead>
+          <tr>
+            <th>Логін</th>
+            <th>Імʼя</th>
+            <th>Адреса</th>
+            <th>Останній вхід</th>
+            <th>Права</th>
+            <th style="text-align:right;">Дії</th>
+          </tr>
+        </thead>
+        <tbody>
         #{userlist}#
-        <tr>
-          <td><a href="ConfigUser_p.html?user=#[username]#">#[username]#</a></td><td>#[firstname]#</td><td>#[lastname]#</td><td>#[address]#</td><td>#[lastaccess]#</td><td>#[rights]#</td><td>#[time]#</td><td>#[traffic]#</td>
-        </tr>
+          <tr>
+            <td><strong>#[username]#</strong></td>
+            <td>#[firstname]# #[lastname]#</td>
+            <td style="color:var(--yg-muted);font-size:13px;">#[address]#</td>
+            <td style="color:var(--yg-muted);font-size:13px;font-variant-numeric:tabular-nums;">#[lastaccess]#</td>
+            <td><span class="label label-primary">#[rights]#</span></td>
+            <td style="text-align:right;white-space:nowrap;">
+              <a class="btn btn-sm btn-default" href="ConfigUser_p.html?user=#[username]#">Редагувати</a>
+              <form method="post" action="ConfigUser_p.html" style="display:inline-block;margin-left:4px;"
+                    onsubmit="return confirm('Видалити користувача #[username]#?');">
+                <input type="hidden" name="username" value="#[username]#" />
+                <button type="submit" name="delete" value="Delete User" class="btn btn-sm btn-danger">Видалити</button>
+              </form>
+            </td>
+          </tr>
         #{/userlist}#
+        </tbody>
       </table>
+    </div>
+  #(/userlist)#
+</div>
 
+<details id="yg-add-user" class="yg-card" style="margin-top:16px;">
+  <summary style="cursor:pointer;font-weight:600;font-size:15px;color:var(--yg-text);list-style:none;">
+    <span style="display:inline-flex;align-items:center;gap:8px;">
+      <span style="font-size:18px;color:var(--yg-accent);">+</span>
+      Додати нового користувача
+    </span>
+  </summary>
+
+  <form action="ConfigUser_p.html" method="post" accept-charset="UTF-8" style="margin-top:16px;">
+    <input type="hidden" name="current_user" value="newuser" />
+    <div class="yg-grid yg-grid--3" style="gap:14px;">
+      <div>
+        <label for="add_username">Логін</label>
+        <input type="text" id="add_username" name="username" required minlength="4" placeholder="напр. john" />
+      </div>
+      <div>
+        <label for="add_firstname">Імʼя</label>
+        <input type="text" id="add_firstname" name="firstname" />
+      </div>
+      <div>
+        <label for="add_lastname">Прізвище</label>
+        <input type="text" id="add_lastname" name="lastname" />
+      </div>
+      <div>
+        <label for="add_password">Пароль</label>
+        <input type="password" id="add_password" name="password" required minlength="6" />
+      </div>
+      <div>
+        <label for="add_password2">Повторити пароль</label>
+        <input type="password" id="add_password2" name="password2" required minlength="6" />
+      </div>
+      <div>
+        <label for="add_address">Email / адреса</label>
+        <input type="text" id="add_address" name="address" />
+      </div>
+    </div>
+
+    <fieldset style="margin-top:14px;">
+      <legend>Права</legend>
+      <div style="display:flex;flex-wrap:wrap;gap:14px;">
+        <label class="checkbox" style="margin:0;">
+          <input type="checkbox" id="add_admin" name="ADMIN_RIGHT" /> Admin
+        </label>
+        <label class="checkbox" style="margin:0;">
+          <input type="checkbox" id="add_webmaster" name="WEBMASTER_RIGHT" checked /> Webmaster
+        </label>
+        <label class="checkbox" style="margin:0;">
+          <input type="checkbox" id="add_extsearch" name="EXTENDED_SEARCH_RIGHT" /> Extended search
+        </label>
+        <label class="checkbox" style="margin:0;">
+          <input type="checkbox" id="add_bookmark" name="BOOKMARK_RIGHT" /> Bookmarks
+        </label>
+        <label class="checkbox" style="margin:0;">
+          <input type="checkbox" id="add_blog" name="BLOG_RIGHT" /> Blog
+        </label>
+        <label class="checkbox" style="margin:0;">
+          <input type="checkbox" id="add_upload" name="UPLOAD_RIGHT" /> Upload
+        </label>
+        <label class="checkbox" style="margin:0;">
+          <input type="checkbox" id="add_download" name="DOWNLOAD_RIGHT" /> Download
+        </label>
+      </div>
     </fieldset>
-    
+
+    <div style="margin-top:14px;display:flex;gap:8px;">
+      <button type="submit" name="change" value="Save User" class="btn btn-primary">Створити</button>
+      <button type="reset" class="btn btn-default">Скинути</button>
+    </div>
+  </form>
+</details>
+
 #%env/templates/footer.template%#
 </body>
 </html>
