@@ -4,28 +4,21 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Сервіси меню — VIR GOO Admin</title>
+    #%env/templates/metas.template%#
     <link rel="stylesheet" type="text/css" href="env/css/tailwind.min.css" />
-    <link rel="stylesheet" type="text/css" href="env/css/yacy-public.css" />
 </head>
-<body class="min-h-screen bg-white text-gray-900 flex flex-col">
+<body>
 
-#%env/templates/yacy-public-header.template%#
+#%env/templates/header.template%#
 
-<main class="flex-1 px-4 py-8">
-  <div class="max-w-5xl mx-auto">
-    <div class="flex items-baseline justify-between mb-4 flex-wrap gap-2">
-      <h1 class="text-2xl font-light tracking-tight">Сервіси у меню</h1>
-      <div class="flex items-center gap-3 text-sm">
-        <a href="Analytics_p.html" class="text-blue-600 hover:underline">Аналітика</a>
-        <a href="CrawlRequests_p.html" class="text-blue-600 hover:underline">Заявки на скан</a>
-      </div>
-    </div>
-
-    <p class="text-sm text-gray-600 mb-4">
-      Іконки що показуються у бічному меню на головній сторінці. Поле <em>icon_url</em>
-      може бути або абсолютним URL, або відносним шляхом (напр. <code>env/grafics/news.png</code>).
-      Неактивні сервіси у меню не показуються.
-    </p>
+<div class="yg-pagehead">
+  <div>
+    <h1>Сервіси у меню</h1>
+    <p>Іконки що показуються у бічному меню на головній сторінці.
+       Поле <em>icon_url</em> — абсолютний URL або відносний шлях (<code>env/grafics/news.png</code>).
+       Неактивні у меню не показуються.</p>
+  </div>
+</div>
 
     <!-- token bar -->
     <div id="tokenBar" class="mb-4 p-3 rounded-lg border border-amber-200 bg-amber-50 text-sm text-amber-900">
@@ -84,8 +77,6 @@
     </div>
 
     <p id="opStatus" class="mt-3 text-sm" role="status"></p>
-  </div>
-</main>
 
 <script>
 const API = '/api/vector';
@@ -218,6 +209,8 @@ async function addSvc(ev) {
 document.getElementById('adminToken').value = getToken();
 loadServices();
 </script>
+
+#%env/templates/footer.template%#
 
 </body>
 </html>

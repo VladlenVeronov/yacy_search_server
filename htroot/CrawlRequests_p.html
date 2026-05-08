@@ -4,24 +4,19 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Заявки на сканування — VIR GOO Admin</title>
+    #%env/templates/metas.template%#
     <link rel="stylesheet" type="text/css" href="env/css/tailwind.min.css" />
-    <link rel="stylesheet" type="text/css" href="env/css/yacy-public.css" />
 </head>
-<body class="min-h-screen bg-white text-gray-900 flex flex-col">
+<body>
 
-#%env/templates/yacy-public-header.template%#
+#%env/templates/header.template%#
 
-<main class="flex-1 px-4 py-8">
-  <div class="max-w-7xl mx-auto">
-
-    <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
-      <h1 class="text-2xl font-light tracking-tight">Заявки на сканування</h1>
-      <div class="flex flex-wrap items-center gap-3 text-sm">
-        <a href="Analytics_p.html" class="text-blue-600 hover:underline">Аналітика</a>
-        <a href="Services_p.html" class="text-blue-600 hover:underline">Сервіси меню</a>
-        <span class="text-gray-500">Усього: <strong>#[total]#</strong></span>
-      </div>
-    </div>
+<div class="yg-pagehead">
+  <div>
+    <h1>Заявки на сканування</h1>
+    <p>Запити від вебмайстрів на скан їхніх доменів. Усього: <strong>#[total]#</strong></p>
+  </div>
+</div>
 
     #(flash)#::
       <div class="mb-4 rounded-md bg-blue-50 border border-blue-200 p-3 text-sm text-blue-800">
@@ -113,15 +108,7 @@
       виходить за межі запитаного домену та фільтрує за blacklist.
     </p>
 
-  </div>
-</main>
-
-<footer class="border-t border-gray-200 py-4">
-  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-wrap justify-between items-center gap-3 text-xs text-gray-500">
-    <span>VIR GOO admin · powered by YaCy</span>
-    <a href="ConfigBasic.html" class="hover:text-blue-600 transition">Адмін-панель</a>
-  </div>
-</footer>
+#%env/templates/footer.template%#
 
 </body>
 </html>

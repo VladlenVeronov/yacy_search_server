@@ -3,29 +3,29 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Моя статистика — VIR GOO</title>
+    <title>Статистика хостів — VIR GOO Admin</title>
+    #%env/templates/metas.template%#
     <link rel="stylesheet" type="text/css" href="env/css/tailwind.min.css" />
-    <link rel="stylesheet" type="text/css" href="env/css/yacy-public.css" />
 </head>
-<body class="min-h-screen bg-white text-gray-900 flex flex-col">
+<body>
 
-#%env/templates/yacy-public-header.template%#
-
-<main class="flex-1 px-4 py-12 sm:py-16">
-  <div class="max-w-5xl mx-auto">
+#%env/templates/header.template%#
 
     #(loggedIn)#
-      <div class="rounded-lg border border-amber-200 bg-amber-50 p-6">
-        <h1 class="text-lg font-semibold text-amber-900 mb-2">Потрібен вхід</h1>
-        <p class="text-sm text-amber-800 mb-4">
+      <div class="yg-pagehead"><div><h1>Потрібен вхід</h1></div></div>
+      <div class="yg-card" style="background: var(--yg-warn-bg); border-color: #fbbf24;">
+        <p style="color: var(--yg-warn); margin: 0 0 12px;">
           Статистика доступна лише для залогінених вебмайстрів.
         </p>
-        <a href="User.html?returnto=/WebmasterStats.html"
-           class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 transition">Увійти</a>
+        <a href="User.html?returnto=/WebmasterStats.html" class="yg-btn yg-btn--primary">Увійти</a>
       </div>
     ::
-      <h1 class="text-3xl font-light tracking-tight mb-2">Моя статистика</h1>
-      <p class="text-sm text-gray-500 mb-6">Користувач: <strong>#[username]#</strong></p>
+      <div class="yg-pagehead">
+        <div>
+          <h1>Статистика хостів</h1>
+          <p>Користувач: <strong>#[username]#</strong></p>
+        </div>
+      </div>
 
       #(hosts)#
         <div class="rounded-lg border border-gray-200 p-8 text-center text-gray-500">
@@ -68,17 +68,7 @@
       #(/hosts)#
     #(/loggedIn)#
 
-  </div>
-</main>
-
-<footer class="border-t border-gray-200 py-4">
-  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-wrap justify-between items-center gap-3 text-xs text-gray-500">
-    <span>VIR GOO — відкритий децентралізований пошук · powered by YaCy</span>
-    <div class="flex items-center gap-4">
-      <a href="ConfigBasic.html" class="hover:text-blue-600 transition">Адмін</a>
-    </div>
-  </div>
-</footer>
+#%env/templates/footer.template%#
 
 </body>
 </html>

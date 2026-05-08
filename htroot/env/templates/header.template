@@ -19,15 +19,37 @@
       });
     } catch (_) {}
 
-    // Collapsible sections (state in localStorage)
-    document.querySelectorAll('.yg-nav__section[data-collapsible="true"]').forEach(function (sec) {
-      var key = 'yg.nav.' + (sec.dataset.key || sec.querySelector('.yg-nav__section-title-text').textContent.trim());
-      if (localStorage.getItem(key) === '1') sec.dataset.collapsed = 'true';
+    // Accordion sections — only one open at a time. Persist the open
+    // section in localStorage; on first load, expand the section that
+    // contains the active link, falling back to the saved one.
+    var sections = Array.prototype.slice.call(
+      document.querySelectorAll('.yg-nav__section[data-collapsible="true"]')
+    );
+    var OPEN_KEY = 'yg.nav.open';
+    var savedOpen = localStorage.getItem(OPEN_KEY) || '';
+    var activeSec = (function () {
+      var a = document.querySelector('.yg-nav__items a.is-active');
+      return a ? a.closest('.yg-nav__section[data-collapsible="true"]') : null;
+    })();
+    var initialOpen = activeSec
+      || sections.find(function (s) { return s.dataset.key === savedOpen; })
+      || sections[0]
+      || null;
+    sections.forEach(function (sec) {
+      sec.dataset.collapsed = (sec === initialOpen) ? 'false' : 'true';
+    });
+    sections.forEach(function (sec) {
       var ttl = sec.querySelector('.yg-nav__section-title');
-      if (ttl) ttl.addEventListener('click', function () {
-        var col = sec.dataset.collapsed === 'true';
-        sec.dataset.collapsed = col ? 'false' : 'true';
-        localStorage.setItem(key, col ? '0' : '1');
+      if (!ttl) return;
+      ttl.addEventListener('click', function () {
+        var openNow = sec.dataset.collapsed === 'false';
+        sections.forEach(function (s) { s.dataset.collapsed = 'true'; });
+        if (!openNow) {
+          sec.dataset.collapsed = 'false';
+          localStorage.setItem(OPEN_KEY, sec.dataset.key || '');
+        } else {
+          localStorage.setItem(OPEN_KEY, '');
+        }
       });
     });
   });
@@ -106,8 +128,11 @@
 <aside class="yg-sidebar" id="ygSide" aria-label="Адмін-навігація">
   <nav class="yg-nav" aria-label="Розділи адмін-панелі">
 
-    <div class="yg-nav__section">
-      <div class="yg-nav__section-title"><span class="yg-nav__section-title-text">Огляд</span></div>
+    <div class="yg-nav__section" data-collapsible="true" data-key="overview">
+      <div class="yg-nav__section-title">
+        <span class="yg-nav__section-title-text">Огляд</span>
+        <svg class="yg-nav__section-title-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
       <ul class="yg-nav__items">
         <li><a href="Dashboard_p.html">
           <svg class="yg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
@@ -288,7 +313,7 @@
     </div>
 
     #(navigation-advanced)#::
-    <div class="yg-nav__section" data-collapsible="true" data-key="advanced" data-collapsed="true">
+    <div class="yg-nav__section" data-collapsible="true" data-key="advanced">
       <div class="yg-nav__section-title">
         <span class="yg-nav__section-title-text">Розширені</span>
         <svg class="yg-nav__section-title-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
