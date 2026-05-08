@@ -27,18 +27,16 @@
     </nav>
 
     <div class="yp-actions">
-      <div class="yp-auth" id="ypAuth">
-        <div class="yp-auth__anon" data-yp-auth="anon">
+      <div class="yp-auth">
+        #(publicLoggedIn)#
           <a href="Register.html" class="yp-btn yp-btn--ghost">Реєстрація</a>
           <a href="User.html" class="yp-btn yp-btn--primary">Увійти</a>
-        </div>
-        <a href="User.html" class="yp-auth__user yp-btn yp-btn--primary" data-yp-auth="user" hidden>
-          <svg class="yp-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/>
-            <path d="M22 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
-          </svg>
-          <span>Кабінет</span>
-        </a>
+        ::
+          <a href="User.html" class="yp-btn yp-btn--primary">
+            <svg class="yp-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+            <span>Кабінет</span>
+          </a>
+        #(/publicLoggedIn)#
       </div>
 
       <button type="button" id="yp-menu-toggle"
@@ -61,14 +59,17 @@
     <a href="ConfigBasic.html">Адмін</a>
     <hr/>
     <div class="yp-mobile-nav__auth">
-      <div data-yp-auth="anon" class="yp-mobile-nav__auth-row">
-        <a href="Register.html" class="yp-btn yp-btn--ghost">Реєстрація</a>
-        <a href="User.html" class="yp-btn yp-btn--primary">Увійти</a>
-      </div>
-      <a href="User.html" class="yp-btn yp-btn--primary" data-yp-auth="user" hidden>
-        <svg class="yp-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-        Кабінет
-      </a>
+      #(publicLoggedIn)#
+        <div class="yp-mobile-nav__auth-row">
+          <a href="Register.html" class="yp-btn yp-btn--ghost">Реєстрація</a>
+          <a href="User.html" class="yp-btn yp-btn--primary">Увійти</a>
+        </div>
+      ::
+        <a href="User.html" class="yp-btn yp-btn--primary">
+          <svg class="yp-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          Кабінет
+        </a>
+      #(/publicLoggedIn)#
     </div>
   </div>
 </header>
@@ -90,16 +91,7 @@
 
 <script>
 (function () {
-  function isLoggedIn() {
-    return document.cookie.split(';').some(function (c) { return c.trim().startsWith('login='); });
-  }
-  function applyAuth() {
-    var logged = isLoggedIn();
-    document.querySelectorAll('[data-yp-auth="anon"]').forEach(function (el) { el.hidden = logged; });
-    document.querySelectorAll('[data-yp-auth="user"]').forEach(function (el) { el.hidden = !logged; });
-  }
-  applyAuth();
-
+  // Auth toggle is rendered server-side via #(publicLoggedIn)# alternative.
   var burger = document.getElementById('yp-burger');
   var mob = document.getElementById('yp-mobile-nav');
   if (burger && mob) burger.addEventListener('click', function () { mob.hidden = !mob.hidden; });

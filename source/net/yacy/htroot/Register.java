@@ -35,6 +35,9 @@ public class Register {
         final servletProperties prop = new servletProperties();
         final Switchboard sb = (Switchboard) env;
 
+        // header.template auth slot — Register page is anon by definition
+        prop.put("publicLoggedIn", 0);
+
         // already logged in? bounce
         final UserDB.Entry already = (sb.userDB == null) ? null : sb.userDB.proxyAuth(header);
         if (already != null) {
@@ -118,7 +121,7 @@ public class Register {
         // ---- auto-login: drop the same cookie User.java uses ----
         final String cookie = sb.userDB.getCookie(entry);
         final ResponseHeader outgoing = new ResponseHeader(200);
-        outgoing.setCookie("login", cookie);
+        outgoing.setCookie("login", cookie, null, "/", null, false);
         prop.setOutgoingHeader(outgoing);
 
         prop.put(serverObjects.ACTION_LOCATION, returnTo);

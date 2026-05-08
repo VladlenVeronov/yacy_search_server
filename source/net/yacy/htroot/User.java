@@ -56,6 +56,7 @@ public class User{
         prop.put("status", "0");
         prop.put("logged-in_username", "");
         prop.put("logged-in_returnto", "");
+        prop.put("publicLoggedIn", 0); // header.template anon slot by default
         //identified via HTTPPassword
         entry=sb.userDB.proxyAuth(requestHeader);
         if(entry != null){
@@ -77,6 +78,8 @@ public class User{
         //identified via userDB
         if(entry != null){
             prop.put("logged-in", "1");
+            prop.put("publicLoggedIn", 1);
+            prop.putHTML("publicLoggedIn_userName", entry.getUserName());
             prop.put("logged-in_username", entry.getUserName());
             if(entry.getTimeLimit() > 0){
                 prop.put("logged-in_limit", "1");
@@ -93,6 +96,8 @@ public class User{
         //logged in via static Password
         }else if(sb.verifyAuthentication(requestHeader)){
             prop.put("logged-in", "2");
+            prop.put("publicLoggedIn", 1);
+            prop.put("publicLoggedIn_userName", sb.getConfig(SwitchboardConstants.ADMIN_ACCOUNT_USER_NAME, "admin"));
         //identified via form-login
         } else if (post != null && post.containsKey("username") && post.containsKey("password")) {
         	if (post.containsKey("returnto"))
@@ -120,10 +125,12 @@ public class User{
                 //set a random token in a cookie
                 cookie=sb.userDB.getCookie(entry);
                 final ResponseHeader outgoingHeader=new ResponseHeader(200);
-                outgoingHeader.setCookie("login", cookie);
+                outgoingHeader.setCookie("login", cookie, null, "/", null, false);
                 prop.setOutgoingHeader(outgoingHeader);
 
                 prop.put("logged-in", "1");
+                prop.put("publicLoggedIn", 1);
+                prop.putHTML("publicLoggedIn_userName", username);
                 prop.put("logged-in_identified-by", "1");
                 prop.putHTML("logged-in_username", username);
                 if(post.containsKey("returnto")){

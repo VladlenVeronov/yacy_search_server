@@ -68,6 +68,10 @@ public class CrawlRequest {
         final String username = isAdmin ? "admin" : (loggedIn ? user.getUserName() : "");
         prop.putHTML("loggedIn_canSubmit_username", username);
 
+        // Public header auth slot (Cabinet vs Login+Register)
+        prop.put("publicLoggedIn", (loggedIn || isAdmin) ? 1 : 0);
+        if (!username.isEmpty()) prop.putHTML("publicLoggedIn_userName", username);
+
         if (post != null && post.containsKey("url") && canSubmit) {
             final String url = post.get("url", "").trim();
             final String email = post.get("email", "").trim();
