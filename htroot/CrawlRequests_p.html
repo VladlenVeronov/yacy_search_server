@@ -14,9 +14,13 @@
 <main class="flex-1 px-4 py-8">
   <div class="max-w-7xl mx-auto">
 
-    <div class="flex items-center justify-between mb-4">
+    <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
       <h1 class="text-2xl font-light tracking-tight">Заявки на сканування</h1>
-      <span class="text-sm text-gray-500">Усього: <strong>#[total]#</strong></span>
+      <div class="flex flex-wrap items-center gap-3 text-sm">
+        <a href="Analytics_p.html" class="text-blue-600 hover:underline">Аналітика</a>
+        <a href="Services_p.html" class="text-blue-600 hover:underline">Сервіси меню</a>
+        <span class="text-gray-500">Усього: <strong>#[total]#</strong></span>
+      </div>
     </div>
 
     #(flash)#::

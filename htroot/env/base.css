@@ -302,13 +302,34 @@ tt, *.tt {
 .diff .deleted { font-family: monospace; text-decoration: line-through; }
 
 .thumbcontainer {
-  margin: 2px;
-  width: 256px;
-  height: 256px; /* 96px thumbnail + some lines of text */
-  float: left;
-  /* Cut non square images not rendered by YaCy ViewImage */
+  display: inline-block;
+  vertical-align: top;
+  margin: 4px;
+  width: 240px;
   overflow: hidden;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.06);
 }
+.thumbcontainer img {
+  display: block;
+  width: 100%;
+  height: 240px;
+  object-fit: cover;
+  border-radius: 8px 8px 0 0;
+}
+.thumbcontainer .highslide-caption {
+  padding: 6px 8px;
+  font-size: 12px;
+  line-height: 1.3;
+  color: #4b5563;
+  word-break: break-word;
+}
+.thumbcontainer .highslide-caption a {
+  color: #1d4ed8;
+  text-decoration: none;
+}
+.thumbcontainer .highslide-caption a:hover { text-decoration: underline; }
 
 .hides .hoverShow {
   display: none;
