@@ -896,3 +896,213 @@ body.yg-admin {
   color: var(--yg-muted);
   margin-right: 8px;
 }
+
+/* ===== legacy SubMenu / TableCell rescue ======================
+ * Old YaCy admin pages use bespoke classes (.SubMenu, .SubMenugroup,
+ * .MenuItemLink, .TableCellDark/Light, .TableHeader) that aren't in
+ * Bootstrap. Re-render them as modern tabs / cards / cells.
+ */
+
+/* Submenu container (top of every legacy admin page after header.template) */
+.yg-main div.SubMenu {
+  background: transparent !important;
+  border: none !important;
+  margin: 0 0 16px !important;
+  padding: 0 !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 16px !important;
+}
+/* The first .SubMenu on most pages is just `<div class="SubMenu"><h3>Title</h3></div>` */
+.yg-main div.SubMenu > h3 {
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  font-size: 19px !important;
+  font-weight: 600 !important;
+  color: var(--yg-text) !important;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+  flex: 1 1 100%;
+  margin-bottom: 4px !important;
+}
+.yg-main div.SubMenugroup {
+  background: var(--yg-surface);
+  border: 1px solid var(--yg-border);
+  border-radius: var(--yg-radius);
+  padding: 12px 14px;
+  margin: 0 !important;
+  float: none !important;
+  flex: 0 1 auto;
+  min-width: 220px;
+  box-shadow: var(--yg-shadow-sm);
+}
+.yg-main div.SubMenugroup h3 {
+  margin: 0 0 8px !important;
+  padding: 0 !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.04em !important;
+  color: var(--yg-muted) !important;
+  background: transparent !important;
+  clear: none !important;
+}
+.yg-main ul.SubMenu {
+  list-style: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 4px !important;
+}
+.yg-main ul.SubMenu li {
+  float: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  list-style: none !important;
+}
+.yg-main a.MenuItemLink {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px !important;
+  margin: 0 !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  border-radius: 6px !important;
+  border: 1px solid var(--yg-border) !important;
+  background: var(--yg-bg) !important;
+  color: var(--yg-text-2) !important;
+  text-decoration: none !important;
+  background-image: none !important; /* kill the lockclose.png/lockopen.png */
+  transition: background .12s, border-color .12s, color .12s;
+}
+.yg-main a.MenuItemLink:hover {
+  background: var(--yg-surface) !important;
+  color: var(--yg-text) !important;
+  border-color: #cbd5e1 !important;
+  text-decoration: none !important;
+}
+/* lock indicator without gif */
+.yg-main a.MenuItemLink.lock::before {
+  content: "";
+  width: 11px; height: 11px;
+  background: currentColor;
+  opacity: 0.45;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='currentColor' d='M12 2a5 5 0 015 5v3h1a2 2 0 012 2v9a2 2 0 01-2 2H6a2 2 0 01-2-2v-9a2 2 0 012-2h1V7a5 5 0 015-5zm3 8V7a3 3 0 10-6 0v3z'/%3E%3C/svg%3E") center/contain no-repeat;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='currentColor' d='M12 2a5 5 0 015 5v3h1a2 2 0 012 2v9a2 2 0 01-2 2H6a2 2 0 01-2-2v-9a2 2 0 012-2h1V7a5 5 0 015-5zm3 8V7a3 3 0 10-6 0v3z'/%3E%3C/svg%3E") center/contain no-repeat;
+}
+.yg-main a.MenuItemLink.unlock::before { display: none; }
+
+/* legacy menugroup (sidebar-ish elements that some pages still embed) */
+.yg-main ul.menugroup,
+.yg-main li.menugroup { list-style: none !important; }
+
+/* TableCell variants used by old admin tables — stop the brown/sand fill */
+.yg-main .TableCellDark,
+.yg-main .TableCellLight,
+.yg-main .TableHeader {
+  background: transparent !important;
+}
+.yg-main tr.TableHeader {
+  background: var(--yg-bg) !important;
+}
+.yg-main tr.TableHeader td,
+.yg-main tr.TableHeader th {
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--yg-text-2);
+}
+.yg-main tr.TableCellDark { background: var(--yg-surface-hi) !important; }
+.yg-main tr.TableCellLight { background: var(--yg-surface) !important; }
+
+/* Force grid layout on <dl> even when base.css declared inline-block */
+.yg-main dl {
+  display: grid !important;
+  grid-template-columns: minmax(180px, 220px) 1fr !important;
+  width: 100% !important;
+  gap: 8px 18px !important;
+  margin: 0 0 14px !important;
+  align-items: start !important;
+}
+.yg-main dl dt {
+  float: none !important;
+  width: auto !important;
+  margin: 0 !important;
+  padding: 8px 0 !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  color: var(--yg-muted) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.03em !important;
+  background: transparent !important;
+  clear: none !important;
+  word-break: normal !important;
+}
+.yg-main dl dd {
+  float: none !important;
+  width: auto !important;
+  margin: 0 !important;
+  padding: 8px 0 !important;
+  font-size: 13px;
+}
+.yg-main dl.pairs {
+  display: grid !important;
+  grid-template-columns: minmax(180px, 220px) 1fr !important;
+}
+.yg-main dl.pairs dt,
+.yg-main dl.pairs dd { width: auto !important; float: none !important; padding: 8px 0 !important; }
+@media (max-width: 720px) {
+  .yg-main dl,
+  .yg-main dl.pairs {
+    grid-template-columns: 1fr !important;
+    gap: 0 !important;
+  }
+  .yg-main dl dt { padding-bottom: 0 !important; }
+  .yg-main dl dd { padding-top: 2px !important; padding-bottom: 12px !important; }
+}
+
+/* Legacy "settings" tables on pages that use <table> instead of <dl>:
+   neutralise any inline white/sand bg and right-align labels. */
+.yg-main table.settings { background: transparent !important; }
+.yg-main td[bgcolor],
+.yg-main th[bgcolor],
+.yg-main tr[bgcolor] {
+  background-color: transparent !important;
+}
+.yg-main td[bgcolor="#FFFFFF"],
+.yg-main td[bgcolor="#ffffff"] {
+  background: var(--yg-surface) !important;
+}
+
+/* Fieldset legend — make it a modern section header instead of a chip */
+.yg-main fieldset > legend {
+  background: transparent !important;
+  border: none !important;
+  padding: 0 8px !important;
+  margin-left: -8px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: var(--yg-text-2) !important;
+  width: auto !important;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+}
+
+/* Sane spacing inside legacy <p> blocks that contain forms */
+.yg-main form > p { margin: 0 0 12px; }
+
+/* "navi" / "bs-callout" used by some pages as banner alerts */
+.yg-main .bs-callout {
+  padding: 12px 14px;
+  border-left: 4px solid var(--yg-accent);
+  background: var(--yg-accent-bg);
+  border-radius: 0 var(--yg-radius) var(--yg-radius) 0;
+  margin: 0 0 14px;
+}
+.yg-main .bs-callout-info { border-left-color: var(--yg-accent); }
+.yg-main .bs-callout-warning { border-left-color: #f59e0b; background: var(--yg-warn-bg); }
+.yg-main .bs-callout-danger { border-left-color: var(--yg-danger); background: var(--yg-danger-bg); }
