@@ -91,7 +91,7 @@
 
 <script>
 (function () {
-  // Auth toggle is rendered server-side via #(publicLoggedIn)# alternative.
+  // Auth toggle is rendered server-side by the template engine.
   var burger = document.getElementById('yp-burger');
   var mob = document.getElementById('yp-mobile-nav');
   if (burger && mob) burger.addEventListener('click', function () { mob.hidden = !mob.hidden; });
