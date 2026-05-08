@@ -1,97 +1,145 @@
-<!-- YACY public header: logo (left) + menu trigger + Login (right) -->
-<header class="w-full border-b border-gray-200 bg-white">
-  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-14">
-    <a href="index.html" class="flex items-baseline gap-1 text-gray-900 hover:text-blue-600 transition">
-      <span class="text-lg font-light tracking-tight">VIR</span>
-      <span class="text-lg font-semibold tracking-tight text-blue-600">GOO</span>
+<!-- VIR GOO public top bar: brand + nav (About / Webmasters / Admin) + auth slot (Login/Register OR Cabinet) + services drawer trigger -->
+<header class="yp-topbar">
+  <div class="yp-topbar__inner">
+    <a href="index.html" class="yp-brand" aria-label="VIR GOO home">
+      <span class="yp-brand__mark" aria-hidden="true">
+        <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0.5" y="0.5" width="27" height="27" rx="7" fill="url(#vgp)" />
+          <circle cx="11.5" cy="11.5" r="5" stroke="#fff" stroke-width="2" />
+          <line x1="15.4" y1="15.4" x2="20" y2="20" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="20" cy="9" r="1.4" fill="#fff" />
+          <circle cx="22.6" cy="11.6" r="1" fill="#fff" />
+          <circle cx="20" cy="14.2" r="0.8" fill="#fff" opacity="0.7" />
+          <defs>
+            <linearGradient id="vgp" x1="0" y1="0" x2="28" y2="28" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#2563eb"/><stop offset="1" stop-color="#1e3a8a"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </span>
+      <span class="yp-brand__word">VIR<span>GOO</span></span>
     </a>
 
-    <div class="flex items-center gap-1 sm:gap-2">
-      <a href="Register.html" class="hidden sm:inline-flex items-center px-3 py-1.5 text-sm font-medium text-gray-700 hover:text-blue-600 transition">
-        Реєстрація
-      </a>
-      <a href="User.html" class="hidden sm:inline-flex items-center px-3 py-1.5 text-sm font-medium text-gray-700 hover:text-blue-600 transition">
-        Увійти
-      </a>
-      <button type="button" id="yacy-menu-toggle"
-              aria-label="Open services menu" aria-expanded="false" aria-controls="yacy-drawer"
-              class="inline-flex items-center justify-center w-10 h-10 rounded-md text-gray-700 hover:bg-gray-100 transition">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
-          <path d="M3 6.75A.75.75 0 0 1 3.75 6h16.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 6.75ZM3 12a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 12Zm0 5.25a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 0 1.5H3.75a.75.75 0 0 1-.75-.75Z" />
-        </svg>
+    <nav class="yp-nav" aria-label="Primary">
+      <a href="About.html" class="yp-nav__link">Про</a>
+      <a href="Register.html?webmaster=1" class="yp-nav__link">Вебмайстер</a>
+      <a href="ConfigBasic.html" class="yp-nav__link">Адмін</a>
+    </nav>
+
+    <div class="yp-actions">
+      <div class="yp-auth" id="ypAuth">
+        <div class="yp-auth__anon" data-yp-auth="anon">
+          <a href="Register.html" class="yp-btn yp-btn--ghost">Реєстрація</a>
+          <a href="User.html" class="yp-btn yp-btn--primary">Увійти</a>
+        </div>
+        <a href="User.html" class="yp-auth__user yp-btn yp-btn--primary" data-yp-auth="user" hidden>
+          <svg class="yp-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/>
+            <path d="M22 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+          </svg>
+          <span>Кабінет</span>
+        </a>
+      </div>
+
+      <button type="button" id="yp-menu-toggle"
+              aria-label="Open services menu" aria-expanded="false" aria-controls="yp-drawer"
+              class="yp-iconbtn" title="Сервіси">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
       </button>
+
+      <button type="button" id="yp-burger"
+              aria-label="Open menu"
+              class="yp-iconbtn yp-burger">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="yp-mobile-nav" id="yp-mobile-nav" hidden>
+    <a href="About.html">Про</a>
+    <a href="Register.html?webmaster=1">Вебмайстер</a>
+    <a href="ConfigBasic.html">Адмін</a>
+    <hr/>
+    <div class="yp-mobile-nav__auth">
+      <div data-yp-auth="anon" class="yp-mobile-nav__auth-row">
+        <a href="Register.html" class="yp-btn yp-btn--ghost">Реєстрація</a>
+        <a href="User.html" class="yp-btn yp-btn--primary">Увійти</a>
+      </div>
+      <a href="User.html" class="yp-btn yp-btn--primary" data-yp-auth="user" hidden>
+        <svg class="yp-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        Кабінет
+      </a>
     </div>
   </div>
 </header>
 
-<!-- Right-side services drawer (bottomsheet on mobile, drawer on desktop) -->
 <div id="yacy-drawer-backdrop" class="yacy-drawer-backdrop fixed inset-0 bg-black/40 z-40"></div>
-<aside id="yacy-drawer"
-       class="yacy-drawer fixed top-0 right-0 h-full w-80 max-w-[90vw] bg-white shadow-xl z-50 overflow-y-auto"
-       aria-hidden="true">
+<aside id="yp-drawer" class="yacy-drawer fixed top-0 right-0 h-full w-80 max-w-[90vw] bg-white shadow-xl z-50 overflow-y-auto" aria-hidden="true">
   <div class="flex items-center justify-between px-4 h-14 border-b border-gray-200">
-    <h2 class="text-base font-semibold text-gray-900">Services</h2>
-    <button type="button" id="yacy-drawer-close" aria-label="Close menu"
+    <h2 class="text-base font-semibold text-gray-900">Сервіси</h2>
+    <button type="button" id="yp-drawer-close" aria-label="Close menu"
             class="w-9 h-9 rounded-md text-gray-700 hover:bg-gray-100 transition inline-flex items-center justify-center">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
         <path fill-rule="evenodd" d="M5.47 5.47a.75.75 0 0 1 1.06 0L12 10.94l5.47-5.47a.75.75 0 1 1 1.06 1.06L13.06 12l5.47 5.47a.75.75 0 1 1-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 0 1-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/>
       </svg>
     </button>
   </div>
-
-  <div id="yacy-services-grid" class="p-4 grid grid-cols-3 gap-3"></div>
-
-  <p id="yacy-services-empty" class="px-4 pb-4 text-xs text-gray-500 hidden">
-    No services configured.
-  </p>
+  <div id="yp-services-grid" class="p-4 grid grid-cols-3 gap-3"></div>
+  <p id="yp-services-empty" class="px-4 pb-4 text-xs text-gray-500 hidden">No services configured.</p>
 </aside>
 
 <script>
-  (function () {
-    var toggle = document.getElementById('yacy-menu-toggle');
-    var close = document.getElementById('yacy-drawer-close');
-    var drawer = document.getElementById('yacy-drawer');
-    var backdrop = document.getElementById('yacy-drawer-backdrop');
+(function () {
+  function isLoggedIn() {
+    return document.cookie.split(';').some(function (c) { return c.trim().startsWith('login='); });
+  }
+  function applyAuth() {
+    var logged = isLoggedIn();
+    document.querySelectorAll('[data-yp-auth="anon"]').forEach(function (el) { el.hidden = logged; });
+    document.querySelectorAll('[data-yp-auth="user"]').forEach(function (el) { el.hidden = !logged; });
+  }
+  applyAuth();
 
-    function setOpen(open) {
-      drawer.classList.toggle('open', open);
-      backdrop.classList.toggle('open', open);
-      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-      drawer.setAttribute('aria-hidden', open ? 'false' : 'true');
-    }
-    toggle.addEventListener('click', function () { setOpen(!drawer.classList.contains('open')); loadServices(); });
-    close.addEventListener('click', function () { setOpen(false); });
-    backdrop.addEventListener('click', function () { setOpen(false); });
-    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setOpen(false); });
+  var burger = document.getElementById('yp-burger');
+  var mob = document.getElementById('yp-mobile-nav');
+  if (burger && mob) burger.addEventListener('click', function () { mob.hidden = !mob.hidden; });
 
-    var loaded = false;
-    function loadServices() {
-      if (loaded) return;
-      loaded = true;
-      var grid = document.getElementById('yacy-services-grid');
-      var empty = document.getElementById('yacy-services-empty');
-      fetch('/api/vector/services').then(function (r) {
-        if (!r.ok) throw new Error('http ' + r.status);
-        return r.json();
-      }).then(function (items) {
-        if (!Array.isArray(items) || items.length === 0) {
-          empty.classList.remove('hidden');
-          return;
-        }
-        var esc = function (s) { return String(s).replace(/[<>&"]/g, function (c) { return ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'})[c]; }); };
-        grid.innerHTML = items.map(function (s) {
-          var icon = s.icon_url
-            ? '<img src="' + esc(s.icon_url) + '" alt="" class="w-8 h-8 object-contain" loading="lazy" />'
-            : '<span class="text-gray-400 text-lg">' + esc((s.name || '?').slice(0, 1).toUpperCase()) + '</span>';
-          return '<a href="' + esc(s.url) + '" target="_blank" rel="noopener" class="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-gray-100 transition text-center">' +
-                 '<span class="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center">' + icon + '</span>' +
-                 '<span class="text-xs text-gray-700 line-clamp-1">' + esc(s.name) + '</span>' +
-                 '</a>';
-        }).join('');
-      }).catch(function () {
-        loaded = false; // allow retry
-        empty.classList.remove('hidden');
-      });
-    }
-  })();
+  var toggle = document.getElementById('yp-menu-toggle');
+  var close = document.getElementById('yp-drawer-close');
+  var drawer = document.getElementById('yp-drawer');
+  var backdrop = document.getElementById('yacy-drawer-backdrop');
+  function setOpen(open) {
+    drawer.classList.toggle('open', open);
+    backdrop.classList.toggle('open', open);
+    if (toggle) toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    drawer.setAttribute('aria-hidden', open ? 'false' : 'true');
+  }
+  var loaded = false;
+  function loadServices() {
+    if (loaded) return;
+    loaded = true;
+    var grid = document.getElementById('yp-services-grid');
+    var empty = document.getElementById('yp-services-empty');
+    fetch('/api/vector/services').then(function (r) {
+      if (!r.ok) throw new Error('http ' + r.status);
+      return r.json();
+    }).then(function (items) {
+      if (!Array.isArray(items) || items.length === 0) { empty.classList.remove('hidden'); return; }
+      var esc = function (s) { return String(s).replace(/[<>&"]/g, function (c) { return ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'})[c]; }); };
+      grid.innerHTML = items.map(function (s) {
+        var icon = s.icon_url
+          ? '<img src="' + esc(s.icon_url) + '" alt="" class="w-8 h-8 object-contain" loading="lazy" />'
+          : '<span class="text-gray-400 text-lg">' + esc((s.name || '?').slice(0, 1).toUpperCase()) + '</span>';
+        return '<a href="' + esc(s.url) + '" target="_blank" rel="noopener" class="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-gray-100 transition text-center">' +
+               '<span class="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center">' + icon + '</span>' +
+               '<span class="text-xs text-gray-700 line-clamp-1">' + esc(s.name) + '</span>' +
+               '</a>';
+      }).join('');
+    }).catch(function () { loaded = false; empty.classList.remove('hidden'); });
+  }
+  if (toggle) toggle.addEventListener('click', function () { setOpen(!drawer.classList.contains('open')); loadServices(); });
+  if (close)  close.addEventListener('click', function () { setOpen(false); });
+  if (backdrop) backdrop.addEventListener('click', function () { setOpen(false); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setOpen(false); });
+})();
 </script>
