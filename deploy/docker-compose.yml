@@ -19,8 +19,12 @@ services:
     environment:
       JAVA_OPTS: "-Xmx4096m -Djava.awt.headless=true"
       VECTOR_RANK_ENABLED: "true"
-      VECTOR_RANK_URL: "http://yacy-vector-service:8001"
+      VECTOR_RANK_URL: "http://yacy-vector-service:8001/rank"
       VECTOR_RANK_TIMEOUT_MS: "1500"
+      # Webmaster submission classifier (LLM zero-shot). Optional — Java
+      # gracefully degrades to substring blacklist + HEAD if unreachable.
+      VECTOR_CLASSIFY_URL: "http://yacy-vector-service:8001/classify-submission"
+      VECTOR_CLASSIFY_TIMEOUT_MS: "12000"
     volumes:
       - ./yacy-data:/opt/yacy_search_server/DATA
     networks: [yacy-net, traefik-public]
@@ -75,6 +79,11 @@ services:
       SERVER_HOST: "0.0.0.0"
       SERVER_PORT: "8001"
       ADMIN_TOKEN: ${ADMIN_TOKEN}
+      # Optional LLM (used by gap-analyzer and submission classifier).
+      # Empty values → both features fall back to graceful no-op.
+      LLM_API_URL: ${LLM_API_URL:-}
+      LLM_API_KEY: ${LLM_API_KEY:-}
+      LLM_MODEL:   ${LLM_MODEL:-deepseek-chat}
     volumes:
       - yacy-models:/models
     networks: [yacy-net, traefik-public]

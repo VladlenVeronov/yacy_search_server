@@ -79,7 +79,7 @@
 - [x] AUTH: Native YaCy UserDB — самореєстрація через `/Register.html` (Tailwind, public-styled). Custom OIDC/Authentik відкинуто — занадто важко для `signup-as-a-feature` use case
 - [x] WEBMASTER: Кабінет — `/Register.html?webmaster=1` додає `WEBMASTER_RIGHT` авто-логіном; one-click "стати вебмайстром" для існуючих користувачів
 - [x] WEBMASTER: Форма + native YaCy WorkTable `crawl_requests` — `/CrawlRequest.html` + `CrawlRequest.java`. Auth chain: digest → cookie → IP. Live indexed-pages count
-- [x] WEBMASTER: Bot validator — in-process Java у `CrawlRequests_p.java`. Substring blacklist + HEAD-alive (8s timeout). Без зовнішнього сервісу
+- [x] WEBMASTER: Bot validator — in-process Java у `CrawlRequests_p.java`. 3 шари: substring blacklist → HEAD-alive (8s) → LLM zero-shot через `vector_service /classify-submission` (gated на `LLM_API_KEY`, graceful no-op якщо відсутній)
 - [x] WEBMASTER: Адмін-черга з фільтром (pending/approved/blocked/crawling/done) + Approve/Reject/Run/Delete + 🤖 "Запустити перевірку ботом" кнопка
 - [x] WEBMASTER: Статистика — `/WebmasterStats.html` per-host: indexed count, 4xx/5xx, last_crawl з Solr. Webmaster бачить свої host-и; admin — всі
 - [-] USER CABINET: Реєстрація/вхід — done через UserDB (див. вище). Пункт scope-out — окремий "saved searches / bookmarks / subs" cabinet видалено в Phase 1 rebuild

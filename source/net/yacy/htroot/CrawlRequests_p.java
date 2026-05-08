@@ -4,11 +4,19 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import net.yacy.cora.protocol.RequestHeader;
 import net.yacy.cora.util.ConcurrentLog;
@@ -25,10 +33,16 @@ import net.yacy.server.serverSwitch;
  * - POST action=run id=PK               → 302 to Crawler_p.html with crawlingURL prefilled and a
  *                                          must-match regex pinned to the requested host (no leak
  *                                          to external domains). Admin clicks "Start" once.
- * - POST action=validate                → bot pass over all pending rows (blacklist substring +
- *                                          HEAD alive). Sets bot_decision/bot_reason; admin still
- *                                          decides approve/reject. LLM porn/casino check is a
- *                                          phase-5 add-on (gated on llm_api_key in vector_service).
+ * - POST action=validate                → bot pass over all pending rows. Three layers in order,
+ *                                          each one only runs if the previous accepted:
+ *                                            1. substring blacklist over url+host (fast).
+ *                                            2. HEAD alive (skips dead/4xx/5xx URLs).
+ *                                            3. POST to vector_service /classify-submission for an
+ *                                               LLM zero-shot pass over (url, description). Blocks
+ *                                               on porn/casino/spam/malware/phishing. Skipped/no-op
+ *                                               when the vector_service or its LLM key are unset.
+ *                                          Sets bot_decision/bot_reason; admin still decides
+ *                                          approve/reject.
  *
  * Admin-protected by filename suffix `_p.html` — YaCy default servlet enforces digest auth.
  */
@@ -159,7 +173,7 @@ public class CrawlRequests_p {
         return prop;
     }
 
-    /** Run the substring blacklist + HEAD-alive sweep over every pending row. */
+    /** Run blacklist → HEAD-alive → LLM zero-shot classifier over every pending row. */
     private static int validatePending(final Switchboard sb) {
         int n = 0;
         try {
@@ -170,6 +184,7 @@ public class CrawlRequests_p {
                 if (!"pending".equals(row.get("status", ""))) continue;
                 final String url  = row.get("url", "");
                 final String host = row.get("host", "").toLowerCase(Locale.ROOT);
+                final String desc = row.get("description", "");
                 String decision = "approved", reason = "OK: blacklist clean + URL alive";
 
                 // 1. substring blacklist
@@ -202,6 +217,22 @@ public class CrawlRequests_p {
                     }
                 }
 
+                // 3. LLM zero-shot via vector_service. Soft signal: "blocked" overrides
+                //    only if the service confidently named a bad category. Network/LLM
+                //    failures keep the row approved-from-blacklist.
+                if ("approved".equals(decision)) {
+                    final ClassifyVerdict v = classifyViaVectorService(url, host, desc);
+                    if (v != null) {
+                        if ("blocked".equals(v.decision)) {
+                            decision = "blocked";
+                            reason   = v.reason;
+                        } else {
+                            // Append LLM verdict so admin sees both layers.
+                            reason = reason + " | " + v.reason;
+                        }
+                    }
+                }
+
                 row.put("bot_decision", decision.getBytes());
                 row.put("bot_reason",   reason.getBytes());
                 sb.tables.update(CrawlRequest.TABLE, row);
@@ -211,6 +242,74 @@ public class CrawlRequests_p {
             ConcurrentLog.warn("CrawlRequests_p", "validate: " + e.getMessage());
         }
         return n;
+    }
+
+    /** Verdict from vector_service /classify-submission. Null on transport/parse error. */
+    private static final class ClassifyVerdict {
+        final String decision; // "approved" | "blocked"
+        final String reason;   // human-readable, prefixed with category
+        ClassifyVerdict(final String d, final String r) { this.decision = d; this.reason = r; }
+    }
+
+    /**
+     * POST {url,host,description} to vector_service classifier; return null on
+     * any failure so the caller treats the row as already-approved by the
+     * blacklist+HEAD layers. Disabled/missing service → null (no override).
+     */
+    private static ClassifyVerdict classifyViaVectorService(final String url,
+                                                             final String host,
+                                                             final String description) {
+        final String endpoint = resolveEnv("VECTOR_CLASSIFY_URL", "");
+        if (endpoint == null || endpoint.isBlank()) return null;
+        final long timeoutMs = parseLongOr(resolveEnv("VECTOR_CLASSIFY_TIMEOUT_MS", "12000"), 12000L);
+
+        final String body;
+        try {
+            final JSONObject req = new JSONObject();
+            req.put("url", url);
+            if (host != null && !host.isEmpty())                req.put("host", host);
+            if (description != null && !description.isEmpty()) req.put("description", description);
+            body = req.toString();
+        } catch (final JSONException e) {
+            return null;
+        }
+
+        try {
+            final HttpClient client = HttpClient.newBuilder()
+                    .version(HttpClient.Version.HTTP_1_1)
+                    .connectTimeout(Duration.ofMillis(Math.max(1000L, timeoutMs / 4)))
+                    .build();
+            final HttpRequest httpReq = HttpRequest.newBuilder()
+                    .uri(URI.create(endpoint))
+                    .timeout(Duration.ofMillis(timeoutMs))
+                    .header("content-type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(body, StandardCharsets.UTF_8))
+                    .build();
+            final HttpResponse<String> resp = client.send(httpReq, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+            if (resp.statusCode() != 200) {
+                ConcurrentLog.warn("CrawlRequests_p", "classify non-200: " + resp.statusCode());
+                return null;
+            }
+            final JSONObject obj = new JSONObject(resp.body());
+            final String decision = obj.optString("decision", "");
+            final String category = obj.optString("category", "unsure");
+            final String reasonText = obj.optString("reason", category);
+            if (decision.isEmpty()) return null;
+            return new ClassifyVerdict(decision, "LLM[" + category + "]: " + reasonText);
+        } catch (final Exception e) {
+            ConcurrentLog.warn("CrawlRequests_p", "classify failed: " + e.getClass().getSimpleName()
+                    + ": " + e.getMessage());
+            return null;
+        }
+    }
+
+    private static String resolveEnv(final String key, final String defaultValue) {
+        final String v = System.getenv(key);
+        return (v == null || v.isBlank()) ? defaultValue : v.trim();
+    }
+
+    private static long parseLongOr(final String s, final long fallback) {
+        try { return Long.parseLong(s); } catch (final Exception e) { return fallback; }
     }
 
     private static long parseLong(final String s) {

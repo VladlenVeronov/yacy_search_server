@@ -554,6 +554,107 @@ async def unsatisfied_seed(limit_queries: int = 10, hours: int = 168,
     return plan
 
 
+# ---------------------------------------------------------------------------
+# Webmaster submission classifier (called by CrawlRequests_p.java).
+# Java already runs substring blacklist + HEAD-alive; this layer adds an
+# LLM zero-shot pass to catch porn/casino/spam/malware/phishing that the
+# blacklist missed. Disabled gracefully if LLM_API_URL/KEY are unset.
+# ---------------------------------------------------------------------------
+
+
+_CLASSIFY_PROMPT = (
+    "You are a content moderator for the submission queue of a privacy-respecting "
+    "decentralized search engine. Given a URL plus an operator-supplied description, "
+    "classify the site into ONE of these categories:\n"
+    "- clean: legitimate (news, blog, docs, software project, community, tools).\n"
+    "- porn: pornography, adult cam, escort.\n"
+    "- casino: gambling, sports betting, online lottery.\n"
+    "- spam: link farm, SEO doorway, fake content, MFA-style site.\n"
+    "- malware: malware distribution, browser hijack, drive-by download.\n"
+    "- phishing: credential theft, brand impersonation.\n"
+    "- unsure: not enough information to decide confidently.\n"
+    "Return strict JSON: {\"category\": \"<one of the above>\", \"reason\": \"<<= 12 words>\"} "
+    "and nothing else."
+)
+
+
+_BLOCK_CATEGORIES = {"porn", "casino", "spam", "malware", "phishing"}
+
+
+class ClassifyRequest(BaseModel):
+    url: str = Field(..., min_length=1, max_length=2000)
+    host: Optional[str] = Field(default=None, max_length=255)
+    title: Optional[str] = Field(default=None, max_length=500)
+    description: Optional[str] = Field(default=None, max_length=2000)
+
+
+class ClassifyResponse(BaseModel):
+    decision: str  # "approved" | "blocked"
+    category: str  # "clean" | "porn" | "casino" | "spam" | "malware" | "phishing" |
+                   # "unsure" | "llm_disabled" | "llm_error"
+    reason: str
+
+
+async def _llm_classify(url: str, title: Optional[str], description: Optional[str]) -> tuple[str, str]:
+    """Returns (category, reason). Falls back to ('llm_error', <msg>) on any
+    transport/parse failure so the caller can still decide what to do."""
+    import json as _json
+    import httpx
+    user_blob_lines = [f"URL: {url}"]
+    if title:
+        user_blob_lines.append(f"Title: {title[:300]}")
+    if description:
+        user_blob_lines.append(f"Description: {description[:1000]}")
+    payload = {
+        "model": settings.llm_model,
+        "messages": [
+            {"role": "system", "content": _CLASSIFY_PROMPT},
+            {"role": "user", "content": "\n".join(user_blob_lines)},
+        ],
+        "temperature": 0.0,
+        "max_tokens": 80,
+        "response_format": {"type": "json_object"},
+    }
+    try:
+        async with httpx.AsyncClient(timeout=settings.llm_timeout_s) as cli:
+            r = await cli.post(
+                settings.llm_api_url.rstrip("/") + "/chat/completions",
+                headers={"Authorization": f"Bearer {settings.llm_api_key}"},
+                json=payload,
+            )
+            r.raise_for_status()
+            content = r.json()["choices"][0]["message"]["content"]
+            obj = _json.loads(content)
+            cat = str(obj.get("category", "unsure")).strip().lower()
+            reason = str(obj.get("reason", "")).strip()[:140]
+            allowed = _BLOCK_CATEGORIES | {"clean", "unsure"}
+            if cat not in allowed:
+                cat = "unsure"
+            if not reason:
+                reason = cat
+            return cat, reason
+    except Exception as e:
+        return "llm_error", f"{type(e).__name__}: {str(e)[:80]}"
+
+
+@app.post("/classify-submission", response_model=ClassifyResponse)
+async def classify_submission(req: ClassifyRequest):
+    if not settings.llm_api_url or not settings.llm_api_key:
+        return ClassifyResponse(
+            decision="approved",
+            category="llm_disabled",
+            reason="LLM not configured; passed local blacklist+HEAD only",
+        )
+    category, reason = await _llm_classify(req.url, req.title, req.description)
+    if category in _BLOCK_CATEGORIES:
+        return ClassifyResponse(decision="blocked", category=category, reason=f"LLM: {reason}")
+    if category == "llm_error":
+        # Don't block on transport failures — the operator still has the
+        # blacklist+HEAD verdict from the Java side and a manual review.
+        return ClassifyResponse(decision="approved", category=category, reason=reason)
+    return ClassifyResponse(decision="approved", category=category, reason=f"LLM: {reason}")
+
+
 @app.get("/unsatisfied")
 async def unsatisfied(hours: int = 168, limit: int = 100):
     """Top recent queries with zero clicks. Crawler picks from this list to
