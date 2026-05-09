@@ -98,6 +98,10 @@ public class ConfigAccountList_p {
 
             numUsers++;
         }
+        // Two distinct keys so the template never confuses alternative vs multi:
+        //   #(hasUsers)# empty :: table-with-#{userlist}# #(/hasUsers)#
+        //   #{userlist}# … #{/userlist}#  iterates `userlist` times
+        prop.put("hasUsers", numUsers == 0 ? 0 : 1);
         prop.put("userlist", numUsers);
 
         // return rewrite properties
