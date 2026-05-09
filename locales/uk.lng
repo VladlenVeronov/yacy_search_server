@@ -3901,4 +3901,477 @@ Set==Виставити
 </body>==<script>window.onload = function () {$("td:contains('url of document, string')").text('url документу, string'); $("td:contains('primary key of document, the URL hash, string')").text('первинний ключ документу, контрольна сума URL, string'); $("td:contains('longitude of location as declared in WSG84, tdouble')").text('довгота місцевості як визначено у WSG84, tdouble'); $("td:contains('last-modified from http header, date')").text('востаннє змінений із заголовку http, date'); $("td:contains('ip of host of url (after DNS lookup), string')").text('ip розміщення url (після DNS-пошуку), string'); $("td:contains('mime-type of document, string')").text('mime-тип документу, string'); $("td:contains('content of title tag, text')").text('вміст тегу title, text'); $("td:contains('content of author-tag, texgen')").text('вміст тегу author, texgen'); $("td:contains('content of description-tag, text')").text('вміст тегу description, text'); $("td:contains('content of keywords tag; words are separated by comma, semicolon or space, textgen')").text('вміст тегу keywords; слова розділені пропуском, textgen'); $("td:contains('character encoding, string')").text('кодування знаків, string'); $("td:contains('tags of css entries, normalized with absolute URL, textgen')").text('теги записів css, вирівняні до аблолютних URL, textgen'); $("td:contains('urls of css entries, normalized with absolute URL, textgen')").text('url записів css, вирівняні до абсолютних URL, textgen'); $("td:contains('number of css entries, int')").text('кількість записів css, int'); $("td:contains('urls of script entries, normalized with absolute URL, textgen')").text('url записів сценарію, вирівняні до абсолютних URL, textgen'); $("td:contains('number of script entries, int')").text('кількість записів сценарію, int'); $("td:contains('content of <meta name=.robots')").text('вміст тегу <meta name="robots" content=#content> і the "X-Robots-Tag" HTTP властивостей'); $("td:contains('html status return code')").text('html код повернення стану (наприклад, "200" для ok), -1 якщо не завантажено, int'); $("td:contains('content of <meta name=.generator')").text('вміст тегу <meta name="generator" content=#content#>, text'); $("td:contains('all visible text, text')").text('видимий текст, text'); $("td:contains('number of words in visible area, int')").text('кількість слів у видимій області, int'); $("td:contains('internal links, normalized (absolute URLs), as <a')").text('внутрішні посилання, вирівняні (абсолютні URL), як <a> -тег якорями text і nofollow, textgen'); $("td:contains('internal links, only the protocol')").text('внутрішні посилання, тільки протокол'); $("td:contains('internal links, the url only without the protocol')").text('внутрішні посилання, тільки url без протоколу'); $("td:contains('internal links, the name property of the a-tag')").text('внутрішні посилання, властивість name a-тегу'); $("td:contains('internal links, the text content of the a-tag')").text('внутрішні посилання, текстовий вміст a-тегу'); $("td:contains('total number of inbound links, int')").text('загальне число вхідних посилань, int'); $("td:contains('number of inbound links with noindex tag, int')").text('кількість вхідних посилань з тегом noindex, int'); $("td:contains('external links, normalized (absolute URLs), as <a')").text('зовнішні посилання, вирівняні (абсолютні URL), як <a> - тег з якорями text і nofollow, textgen'); $("td:contains('external links, only the protocol')").text('зовнішні посилання, тільки протокол'); $("td:contains('external links, the url only without the protocol')").text('зовнішні посилання, тільки url без протоколу'); $("td:contains('external links, the name property of the a-tag')").text('зовнішні посилання, властивість name a-тегу'); $("td:contains('external links, the text content of the a-tag')").text('зовнішні посилання, текстовий вміст a-тегу'); $("td:contains('external number of inbound links, int')").text('зовнішнє число вхідних посилань, int'); $("td:contains('number of external links with noindex tag, int')").text('кількість зовнішніх посилань з тегом noindex, int'); $("td:contains('all image tags, encoded as <img')").text('всі теги зображень, закодовані як теги <img> включаючи властивості alt- і title, textgen'); $("td:contains('all image links without the protocol and '://'')").text('всі посилання на зображення без протоколу і "://"'); $("td:contains('all image link protocols')").text('всі протокли посилань на зображення'); $("td:contains('all image link alt tag')").text('alt-теги всіх посилань на зображення'); $("td:contains('number of images, int')").text('кількість зображень, int'); $("td:contains('h1 header, textgen')").text('заголовок h1, textgen'); $("td:contains('h2 header, textgen')").text('заголовок h2, textgen'); $("td:contains('h3 header, textgen')").text('заголовок h3, textgen'); $("td:contains('h4 header, textgen')").text('заголовок h4, textgen'); $("td:contains('h5 header, textgen')").text('заголовок h5, textgen'); $("td:contains('h6 header, textgen')").text('заголовок h6, textgen'); $("td:contains('binary pattern for the existance of h1..h6 headlines, int')").text('двійковий шаблон для наявності заголовків h1..h6, int'); $("td:contains('all path elements in the url, textgen')").text('всі елементи шляху в url, textgen'); $("td:contains('host of the url, string')").text('хост url, string'); $("td:contains('url inside the canonical link element, string')").text('url всередині сталого елементу посилання, string'); $("td:contains('all texts in <li')").text('всі тексти в тегах <li>, textgen'); $("td:contains('number of <li')").text('кількість тегів <li>, int'); $("td:contains('all texts inside of <b')").text('всі тексти всередині тегів <b> чи <strong>. без повторів. подані відносно кількості входжень в порядку спадання, textgen'); $("td:contains('number of occurrences of texts in attr_bold, textgen')").text('кількість входжень текстів в attr_bold, textgen'); $("td:contains('total number of occurrences of <b')").text('загальна кількість входжень <b> або <strong>, int'); $("td:contains('all texts inside of <i')").text('всі тексти всереді тегів <i>. без повторів. подано відносно кількості входжень в порядку спадання, textgen'); $("td:contains('number of occurrences of texts in attr_italic, textgen')").text('кількість входжень текстів в attr_italic, textgen'); $("td:contains('total number of occurrences of <i')").text('загальне число входжень <i>, int'); $("td:contains('flag that shows if a swf file is linked, boolean')").text('прапор, що показує чи прив’язаний файл swf, boolean'); $("td:contains('list of all links to frames, textgen')").text('список усіх посилань до frame-ів, textgen'); $("td:contains('number of attr_frames, int')").text('кількість attr_frames, int'); $("td:contains('list of all links to iframes, textgen')").text('кількість посилань на iframe-и, textgen'); $("td:contains('number of attr_iframes, int')").text('кількість attr_iframes, int'); $("td:contains('names of cms attributes; if several are recognized then they are listen in decreasing order of number of matching criterias, textgen')").text('імена властивостей cms; якщо декілька розпізнані, вони подаються в спадному порядку від співпадаючих критеріїв, textgen'); $("td:contains('number of attributes that count for a specific cms in attr_cms, textgen')").text('кількість властивостей конкретних cms в attr_cms, textgen'); $("td:contains('names of ad-servers/ad-services, textgen')").text('імена ad-servers/ad-services, textgen'); $("td:contains('number of attributes counts in attr_ads, textgen')").text('кількість входжень властивостей в attr_ads, textgen'); $("td:contains('names of recognized community functions, textgen')").text('імена розпізнаних функцій спільноти, textgen'); $("td:contains('number of attribute counts in attr_community, textgen')").text('кількість входжень властивостей в attr_community, textgen'); $("td:contains('names of map services, textgen')").text('назви картографічних служб, textgen'); $("td:contains('number of attribute counts in attr_maps, textgen')").text('кількість властивостей в attr_maps, textgen'); $("td:contains('names of tracker server, textgen')").text('імена серверів-спостерігачів, textgen'); $("td:contains('number of attribute counts in attr_tracker, textgen')").text('кількість властивостей в attr_tracker, textgen'); $("td:contains('names matching title expressions, textgen')").text('імена співпадаючі з виразом заголовку, textgen'); $("td:contains('number of matching title expressions, textgen')").text('кількість виразів співпадаючих із заголовком, textgen'); $("td:contains('fail reason if a page was not loaded. if the page was loaded then this field is empty, text')").text('причина невдачі, якщо сторінка не була завантажена. якщо ж сторінка була завантажена, тоді це поле порожнє, text'); $("td:contains('response time of target server in milliseconds, int')").text('час відгуку кінцевого серверу в мілісекундах, int'); $("td:contains('internal links, the rel property of the a-tag, coded binary')").text('внутрішні посилання, властивість rel a-тега, coded binary'); $("td:contains('internal links, the rel property of the a-tag')").text('внутрішні посилання, властивість rel a-тега'); $("td:contains('external links, the rel property of the a-tag, coded binary')").text('зовнішні посилання, властивість rel a-тега, coded binary'); $("td:contains('external links, the rel property of the a-tag')").text('зовнішні посилання, властивість rel a-тега');}</script></body>
 #-----------------------------
 
+### Round 2 — public pages translation backfill (2026-05-09) ###
+
+#File: yacysearch.html
+#---------------------------
+Failed to render==Не вдалося відобразити
+Hide==Приховати
+Illegal prefer mask:==Невалідна маска переваги:
+Illegal URL mask:==Невалідна URL-маска:
+Location — click on map to enlarge==Розташування — клацніть по карті щоб збільшити
+Media==Медіа
+No results.==Результати відсутні.
+No results. (length of search words must be at least 1 character)==Результати відсутні. (Довжина пошукового запиту має бути щонайменше 1 символ)
+Play all==Відтворити все
+Player==Плеєр
+RSS==RSS
+Refresh sorting. Depending on their rank, some results fetched in background may then appear on this page.==Оновити сортування. Залежно від рангу деякі результати, отримані у фоновому режимі, з'являться на цій сторінці.
+Searching the web with this peer is disabled for unauthorized users. Please==Пошук в Інтернеті на цьому вузлі заборонено для неавторизованих користувачів. Будь ласка,
+Stop all==Зупинити все
+URL==URL
+YaCy server is fetching results from available data sources.==Сервер YaCy отримує результати з доступних джерел.
+You are not allowed to search the web with this peer.==Вам не дозволено шукати в Інтернеті на цьому вузлі.
+You have reached the maximum allowed number of accesses to this search page within one minute. Please try again later or log in as administrator or as a user with extended search right.==Ви досягли максимально дозволеної кількості звернень до цієї сторінки пошуку за хвилину. Спробуйте пізніше або увійдіть як адміністратор чи користувач з розширеними правами пошуку.
+You have reached the maximum allowed number of accesses to this search page within ten minutes. Please try again later or log in as administrator or as a user with extended search right.==Ви досягли максимально дозволеної кількості звернень до цієї сторінки пошуку за десять хвилин. Спробуйте пізніше або увійдіть як адміністратор чи користувач з розширеними правами пошуку.
+You have reached the maximum allowed number of accesses to this search page within three seconds. Please try again later or log in as administrator or as a user with extended search right.==Ви досягли максимально дозволеної кількості звернень до цієї сторінки пошуку за три секунди. Спробуйте пізніше або увійдіть як адміністратор чи користувач з розширеними правами пошуку.
+as administrator to use the search function.==як адміністратор, щоб скористатися пошуком.
+log in==увійти
+search==пошук
+search again==шукати знову
+thumbnail(s)==мініатюри
+#-----------------------------
+
+#File: yacysearchitem.html
+#---------------------------
+(new link)==(нове посилання)
+(redundant)==(дубль)
+Browse index==Оглянути індекс
+Cache==Кеш
+Citations==Цитати
+Last known modification date==Дата останньої відомої модифікації
+Metadata==Метадані
+Parser==Парсер
+Pictures==Зображення
+Ranking:==Ранжування:
+Raw ranking score value==Сире значення оцінки рангу
+Show all==Показати все
+Snapshot==Знімок
+Tags:==Теги:
+View via proxy==Дивитися через проксі
+blacklist host==додати хост у чорний список
+bookmark==закладка
+delete==видалити
+heuristic:==евристика:
+on==на
+recommend==рекомендувати
+#-----------------------------
+
+#File: yacysearchtrailer.html
+#---------------------------
+Apps==Додатки
+Audio==Аудіо
+Date==Дата
+Default ranking — by relevance==Стандартне ранжування — за релевантністю
+Documents==Документи
+Extend media search to pages including such media==Розширити пошук медіа до сторінок, що містять таке медіа
+Extended==Розширений
+Match==Збіг
+Mode==Режим
+Peer-to-Peer==Однорангова мережа
+Privacy==Приватність
+Protocol==Протокол
+Relevance==Релевантність
+Sort==Сортування
+Sort by document last modification date==Сортувати за датою останньої модифікації документа
+Stealth==Прихований
+Strict==Строгий
+Strictly limit to indexed documents matching exactly the desired content domain==Строго обмежити документами, які точно відповідають бажаному домену контенту
+Topics==Теми
+Type==Тип
+show "#[query]#" on map==Показати "#[query]#" на карті
+#-----------------------------
+
+#File: index.html
+#---------------------------
+App==Застосунок
+Image==Зображення
+VIR GOO — open, decentralized search==VIR GOO — відкритий децентралізований пошук
+#-----------------------------
+
+#File: About.html
+#---------------------------
+About==Про нас
+Admin==Адмін
+How it works==Як це працює
+Idea==Ідея
+License, repo==Ліцензія, репозиторій
+Set up your own node==Запусти свій вузол
+VIR GOO==VIR GOO
+Webmasters==Веб-майстрам
+#-----------------------------
+
+#File: Register.html
+#---------------------------
+(optional)==(необов'язково)
+Already have an account?==Вже маєте акаунт?
+Create account==Створити акаунт
+Creating…==Створення…
+Email==Email
+Free. Regular account gives bookmarks and personal search.==Безкоштовно. Звичайний акаунт дає закладки і персональний пошук.
+I am a webmaster==Я веб-майстер
+Log in==Увійти
+Mark "webmaster" — and you can submit domains for scanning.==Позначте "веб-майстер" — і зможете подавати домени на сканування.
+Network error:==Помилка мережі:
+Only needed for status notifications (as webmaster)==Потрібно лише для повідомлень про статус (для веб-майстрів)
+Password==Пароль
+Repeat password==Повторіть пароль
+and see index statistics.==і дивитися статистику індексу.
+want to submit my sites for scanning==хочу подати свої сайти на сканування
+#-----------------------------
+
+#File: env/templates/simpleheader.template
+#---------------------------
+API Solr Default Core / JSON==API Solr основне ядро / JSON
+API Solr Default Core / XML==API Solr основне ядро / XML
+API Solr RSS/Opensearch==API Solr RSS/Opensearch
+API Solr Webgraph Core / XML==API Solr ядро Webgraph / XML
+API YaCy JSON==API YaCy JSON
+API YaCy RSS/Opensearch==API YaCy RSS/Opensearch
+About This Page==Про цю сторінку
+Administration==Адміністрування
+Bugtracker==Багтрекер
+Chat==Чат
+Compare Search==Порівняльний пошук
+Community (Web Forums)==Спільнота (форуми)
+Download YaCy==Завантажити YaCy
+Example Calls to the Search API:==Приклади викликів пошукового API:
+File Search==Пошук файлів
+Git Repository==Git-репозиторій
+Help==Допомога
+JavaScript information==Інформація про JavaScript
+Search Interfaces==Інтерфейси пошуку
+Toggle navigation==Перемкнути навігацію
+URL Viewer==Переглядач URL
+Web Search==Веб-пошук
+YaCy Tutorials==Уроки YaCy
+#-----------------------------
+
+#File: env/templates/simpleSearchHeader.template
+#---------------------------
+API Solr Default Core / JSON==API Solr основне ядро / JSON
+API Solr Default Core / XML==API Solr основне ядро / XML
+API Solr RSS/Opensearch==API Solr RSS/Opensearch
+API Solr Webgraph Core / XML==API Solr ядро Webgraph / XML
+API YaCy JSON==API YaCy JSON
+API YaCy RSS/Opensearch==API YaCy RSS/Opensearch
+About This Page==Про цю сторінку
+Administration==Адміністрування
+Bugtracker==Багтрекер
+Chat==Чат
+Compare Search==Порівняльний пошук
+Community (Web Forums)==Спільнота (форуми)
+Download YaCy==Завантажити YaCy
+Example Calls to the Search API:==Приклади викликів пошукового API:
+File Search==Пошук файлів
+Git Repository==Git-репозиторій
+Help==Допомога
+JavaScript information==Інформація про JavaScript
+Log in==Увійти
+Log in to use extended search features==Увійдіть щоб використовувати розширений пошук
+Search Interfaces==Інтерфейси пошуку
+Toggle navigation==Перемкнути навігацію
+URL Viewer==Переглядач URL
+Web Search==Веб-пошук
+YaCy Tutorials==Уроки YaCy
+You are authenticated as==Ви авторизовані як
+#-----------------------------
+
+### Round 2 — admin pages translation backfill (2026-05-09) ###
+
+#File: Dashboard_p.html
+#---------------------------
+Dashboard==Панель керування
+PostgreSQL + pgvector==PostgreSQL + pgvector
+Redis cache==Кеш Redis
+Vector service==Векторний сервіс
+YaCy core==Ядро YaCy
+live==активний
+#-----------------------------
+
+#File: ConfigBasic.html
+#---------------------------
+Accounts Menu==Меню акаунтів
+Active : translated pages are available==Активна: перекладені сторінки доступні
+Browser==Браузер
+Click to generate translated pages==Натисніть щоб згенерувати перекладені сторінки
+Configure your router for YaCy using UPnP:&nbsp;==Налаштувати ваш роутер для YaCy через UPnP:&nbsp;
+Deutsch==Deutsch
+English==English
+Español==Español
+Fran&ccedil;ais==Fran&ccedil;ais
+Greek==Greek
+Index Sources &amp; Targets==Джерела та цілі індексу
+Italiano==Italiano
+Open Ports on a &lt;our-router-type&gt; Router==Відкрити порти на роутері &lt;ваш-тип-роутера&gt;
+URL Database Administration==Адміністрування бази URL
+Use the browser preferred language if available==Використовувати мову браузера якщо доступна
+Usecase Freeworld==Сценарій Freeworld
+Usecase Intranet==Сценарій Intranet
+Usecase Portal==Сценарій Portal
+Your basic configuration is complete! You can now (for example):==Базова конфігурація завершена! Тепер ви можете (наприклад):
+location==розташуванню
+monitor at the network page==переглядати сторінку мережі
+set a personal peer profile==налаштувати персональний профіль вузла
+start your own crawl==запустити власний краулінг
+warning==попередження
+#-----------------------------
+
+#File: ConfigAccounts_p.html
+#---------------------------
+Access Rules==Правила доступу
+Username already used (not allowed).==Це ім'я користувача вже зайняте (не дозволено).
+Username too short. Username must be &gt;= 4 Characters.==Ім'я користувача занадто коротке. Має бути &gt;= 4 символи.
+account list==список акаунтів
+#-----------------------------
+
+#File: Settings_p.html
+#---------------------------
+Debug/Analysis Settings==Налаштування діагностики/аналізу
+HTTP client Settings==Налаштування HTTP-клієнта
+Referrer Policy Settings==Політика Referrer
+Transparent Proxy Access Settings==Прозорий проксі-доступ
+URL/Web Proxy Access Settings==Доступ до URL/Web проксі
+#-----------------------------
+
+#File: Status.html
+#---------------------------
+Performance==Продуктивність
+accounts configuration==налаштування акаунтів
+bad==погано
+forum==форум
+good==добре
+here==тут
+idea==ідея
+lock icon==іконка замка
+monitor your web crawl==моніторити ваш краулінг
+search the internet==шукати в Інтернеті
+search yourself==пошук на собі
+#-----------------------------
+
+#File: ConfigUpdate_p.html
+#---------------------------
+You installed YaCy with a package manager. To update YaCy, please use the package manager:==Ви встановили YaCy через пакетний менеджер. Для оновлення скористайтеся пакетним менеджером:
+http://www.yacy.net/==http://www.yacy.net/
+#-----------------------------
+
+#File: ConfigLanguage_p.html
+#---------------------------
+Author(s) (chronological)==Автори (хронологічно)
+Available Languages==Доступні мови
+Current language==Поточна мова
+Download Language File==Завантажити файл мови
+Make sure that you only download data from trustworthy sources. The new language file might overwrite existing data if a file of the same name exists already.==Завантажуйте дані лише з довірених джерел. Новий файл мови може перезаписати існуючі дані якщо файл з таким ім'ям вже існує.
+Simple Editor==Простий редактор
+Supported formats are .lng and XLIFF (.xlf or .xliff).==Підтримуються формати .lng та XLIFF (.xlf або .xliff).
+#-----------------------------
+
+#File: PerformanceMemory_p.html
+#---------------------------
+PerformanceGraph==Графік продуктивності
+use Standard Memory Strategy==Використовувати стандартну стратегію пам'яті
+#-----------------------------
+
+#File: Performance_p.html
+#---------------------------
+Absolute maximum==Абсолютний максимум
+Absolute minimum==Абсолютний мінімум
+Autoregulate==Авторегулювання
+Distributed Hash Table==Розподілена хеш-таблиця
+Exhausted state info==Інформація про вичерпаний стан
+Free space disk==Вільне місце на диску
+Free space disk autoregulation info==Інформація про авторегуляцію вільного місця
+Java Virtual Machine==Java Virtual Machine
+Manually reset to==Скинути вручну до
+Maximum amount of space==Максимальний обсяг простору
+Mebibyte==Мебібайт
+Minimum required==Мінімально необхідно
+Online Caution Settings:==Налаштування online-обережності:
+PerformanceGraph==Графік продуктивності
+Proper state info==Інформація про коректний стан
+Random Access Memory==Оперативна пам'ять (RAM)
+Restart now==Перезапустити зараз
+Steady-state maximum==Максимум усталеного стану
+Steady-state minimum==Мінімум усталеного стану
+Used space disk==Використано місця на диску
+Used space disk autoregulation info==Інформація про авторегуляцію використаного місця
+proper==коректно
+#-----------------------------
+
+#File: Services_p.html
+#---------------------------
+vector_service admin_token==vector_service admin_token
+#-----------------------------
+
+#File: env/templates/header.template
+#---------------------------
+GitHub==GitHub
+Re-Start==Перезапуск
+Shutdown==Зупинити
+Toggle menu==Перемкнути меню
+VIR GOO==VIR GOO
+#-----------------------------
+
+#File: env/templates/submenuAI.template
+#---------------------------
+AI Lab==AI-лабораторія
+AI Shield==AI Shield
+LLM Selection==Вибір LLM
+RAG Config==Налаштування RAG
+Skills Config==Навички
+#-----------------------------
+
+#File: env/templates/submenuAccessTracker.template
+#---------------------------
+Access Tracker==Трекер доступу
+Server Access==Доступ до сервера
+Access Grid==Сітка доступу
+Incoming Requests Overview==Огляд вхідних запитів
+Incoming Requests Details==Деталі вхідних запитів
+All Connections==Усі з'єднання
+Access Rate Limitations==Обмеження частоти доступу
+Remote Search==Віддалений пошук
+Incoming Cookies==Вхідні cookies
+Outgoing Cookies==Вихідні cookies
+#-----------------------------
+
+#File: env/templates/submenuBlacklist.template
+#---------------------------
+Filter & Blacklists==Фільтри і чорні списки
+Blacklist Administration==Адміністрування чорних списків
+Blacklist Cleaner==Очищення чорних списків
+Blacklist Test==Тестування чорних списків
+#-----------------------------
+
+#File: env/templates/submenuComputation.template
+#---------------------------
+Application Status==Статус застосунку
+System==Система
+Incoming News==Вхідні новини
+Processed News==Оброблені новини
+Outgoing News==Вихідні новини
+Published News==Опубліковані новини
+Community Data==Дані спільноти
+Bookmarks==Закладки
+#-----------------------------
+
+#File: env/templates/submenuConfig.template
+#---------------------------
+System Administration==Адміністрування системи
+UI Translations==Переклади інтерфейсу
+#-----------------------------
+
+#File: env/templates/submenuCrawler.template
+#---------------------------
+Load Web Pages==Завантаження веб-сторінок
+Site Crawling==Сканування сайту
+#-----------------------------
+
+#File: env/templates/submenuCrawlMonitor.template
+#---------------------------
+Crawler==Краулер
+Loader==Завантажувач
+Queues==Черги
+Local==Локальний
+Global==Глобальний
+Remote==Віддалений
+No-Load==Без завантаження
+Scheduler and Profile Editor==Планувальник і редактор профілів
+#-----------------------------
+
+#File: env/templates/submenuDesign.template
+#---------------------------
+Design==Дизайн
+Appearance==Зовнішній вигляд
+Language==Мова
+Search Page Layout==Макет сторінки пошуку
+#-----------------------------
+
+#File: env/templates/submenuIndexControl.template
+#---------------------------
+URL Database Administration==Адміністрування бази URL
+Index Deletion==Видалення індексу
+Index Sources & Targets==Джерела та цілі індексу
+Solr Schema Editor==Редактор схеми Solr
+Field Re-Indexing==Переіндексація полів
+Reverse Word Index==Зворотний індекс слів
+Content Analysis==Аналіз контенту
+#-----------------------------
+
+#File: env/templates/submenuIndexCreate.template
+#---------------------------
+Advanced Crawler==Розширений краулер
+Crawler/Spider==Краулер/Spider
+Crawl Start (Expert)==Запуск краулінгу (експерт)
+Crawling of MediaWikis==Сканування MediaWiki
+Crawling of phpBB3 Forums==Сканування форумів phpBB3
+Network Harvesting==Збір з мережі
+Remote Crawling==Віддалений краулінг
+Scraping Proxy==Парсинг через проксі
+Autocrawl==Авто-краулінг
+#-----------------------------
+
+#File: env/templates/submenuIndexImport.template
+#---------------------------
+Content Export / Import==Експорт / імпорт контенту
+YaCy Packs==YaCy-пакети
+Pack Generator==Генератор пакетів
+Pack Downloader==Завантажувач пакетів
+Pack Manager==Менеджер пакетів
+Export==Експорт
+Index Export==Експорт індексу
+Solr Dump Export/Import==Експорт/імпорт Solr-дампу
+Import==Імпорт
+OAI-PMH==OAI-PMH
+WARC==WARC
+ZIM==ZIM
+JsonList==JsonList
+Database Reader==Читач БД
+phpBB3 Database==БД phpBB3
+MediaWiki Dump==Дамп MediaWiki
+#-----------------------------
+
+#File: env/templates/submenuMaintenance.template
+#---------------------------
+RAM/Disk Usage & Updates==RAM/диск і оновлення
+Performance==Продуктивність
+Download System Update==Завантажити оновлення системи
+#-----------------------------
+
+#File: env/templates/submenuPortalConfiguration.template
+#---------------------------
+Portal Configuration==Конфігурація порталу
+Generic Search Portal==Загальний пошуковий портал
+Search Box Anywhere==Пошуковий бокс будь-де
+User Profile==Профіль користувача
+#-----------------------------
+
+#File: env/templates/submenuRanking.template
+#---------------------------
+Ranking and Heuristics==Ранжування і евристика
+Solr Ranking Config==Налаштування ранжування Solr
+RWI Ranking Config==Налаштування ранжування RWI
+Heuristics==Евристика
+#-----------------------------
+
+#File: env/templates/submenuSemantic.template
+#---------------------------
+Content Semantic==Семантика контенту
+Automated Annotation==Автоматична анотація
+Auto-Annotation Vocabulary Editor==Редактор словника авто-анотації
+Knowledge Loader==Завантажувач знань
+#-----------------------------
+
+#File: env/templates/submenuTargetAnalysis.template
+#---------------------------
+Target Analysis==Аналіз цілі
+Mass Crawl Check==Масова перевірка краулінгу
+#-----------------------------
+
+#File: env/templates/submenuUseCaseAccount.template
+#---------------------------
+Use Case & Accounts==Сценарій і акаунти
+Accounts==Акаунти
+#-----------------------------
+
 # EOF

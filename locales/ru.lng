@@ -4451,6 +4451,425 @@ List of Sentences in==Список предложений в
 List of other web pages with citations==Список других вэб-страниц с цитатами
 #-----------------------------
 
+### Round 2 — public pages translation backfill (2026-05-09) ###
 
+#File: yacysearch.html
+#---------------------------
+Failed to render==Не удалось отрендерить
+Hide==Скрыть
+Location — click on map to enlarge==Местоположение — кликните по карте чтобы увеличить
+Media==Медиа
+No results.==Нет результатов.
+No results. (length of search words must be at least 1 character)==Нет результатов. (Длина поискового запроса должна быть не менее 1 символа)
+Play all==Воспроизвести все
+Player==Плеер
+RSS==RSS
+Refresh sorting. Depending on their rank, some results fetched in background may then appear on this page.==Обновить сортировку. В зависимости от ранга некоторые результаты, полученные в фоне, появятся на этой странице.
+Stop all==Остановить все
+URL==URL
+YaCy server is fetching results from available data sources.==Сервер YaCy получает результаты из доступных источников.
+You are not allowed to search the web with this peer.==Вам запрещено искать в Интернете на этом узле.
+You have reached the maximum allowed number of accesses to this search page within one minute. Please try again later or log in as administrator or as a user with extended search right.==Вы достигли максимально разрешённого числа обращений к этой странице поиска за одну минуту. Попробуйте позже или войдите как администратор либо пользователь с расширенными правами поиска.
+You have reached the maximum allowed number of accesses to this search page within ten minutes. Please try again later or log in as administrator or as a user with extended search right.==Вы достигли максимально разрешённого числа обращений к этой странице поиска за десять минут. Попробуйте позже или войдите как администратор либо пользователь с расширенными правами поиска.
+You have reached the maximum allowed number of accesses to this search page within three seconds. Please try again later or log in as administrator or as a user with extended search right.==Вы достигли максимально разрешённого числа обращений к этой странице поиска за три секунды. Попробуйте позже или войдите как администратор либо пользователь с расширенными правами поиска.
+as administrator to use the search function.==как администратор, чтобы использовать поиск.
+log in==войти
+search==поиск
+search again==искать снова
+thumbnail(s)==миниатюры
+#-----------------------------
+
+#File: yacysearchitem.html
+#---------------------------
+(new link)==(новая ссылка)
+(redundant)==(дубль)
+Browse index==Обзор индекса
+Cache==Кэш
+Citations==Цитаты
+Last known modification date==Дата последней известной модификации
+Metadata==Метаданные
+Parser==Парсер
+Pictures==Изображения
+Ranking:==Ранжирование:
+Raw ranking score value==Сырое значение оценки ранга
+Show all==Показать все
+Snapshot==Снимок
+Tags:==Теги:
+View via proxy==Смотреть через прокси
+blacklist host==добавить хост в чёрный список
+bookmark==закладка
+delete==удалить
+heuristic:==эвристика:
+on==на
+recommend==рекомендовать
+#-----------------------------
+
+#File: yacysearchtrailer.html
+#---------------------------
+Apps==Приложения
+Audio==Аудио
+Date==Дата
+Default ranking — by relevance==Стандартное ранжирование — по релевантности
+Extend media search to pages including such media==Расширить медиа-поиск на страницы с такими медиа
+Extended==Расширенный
+Match==Совпадение
+Mode==Режим
+Peer-to-Peer==Одноранговая сеть
+Protocol==Протокол
+Relevance==Релевантность
+Sort==Сортировка
+Sort by document last modification date==Сортировать по дате последней модификации документа
+Stealth==Скрытый
+Strict==Строгий
+Strictly limit to indexed documents matching exactly the desired content domain==Строго ограничить документами, точно соответствующими нужному домену контента
+Topics==Темы
+Type==Тип
+show "#[query]#" on map==Показать "#[query]#" на карте
+#-----------------------------
+
+#File: index.html
+#---------------------------
+App==Приложение
+Image==Изображение
+VIR GOO — open, decentralized search==VIR GOO — открытый децентрализованный поиск
+#-----------------------------
+
+#File: About.html
+#---------------------------
+About==О проекте
+Admin==Админ
+How it works==Как это работает
+Idea==Идея
+License, repo==Лицензия, репозиторий
+Set up your own node==Запустите свой узел
+VIR GOO==VIR GOO
+Webmasters==Веб-мастерам
+#-----------------------------
+
+#File: Register.html
+#---------------------------
+(optional)==(необязательно)
+Already have an account?==Уже есть аккаунт?
+Create account==Создать аккаунт
+Creating…==Создание…
+Email==Email
+Free. Regular account gives bookmarks and personal search.==Бесплатно. Обычный аккаунт даёт закладки и персональный поиск.
+I am a webmaster==Я веб-мастер
+Log in==Войти
+Mark "webmaster" — and you can submit domains for scanning.==Отметьте "веб-мастер" — и сможете отправлять домены на сканирование.
+Network error:==Ошибка сети:
+Only needed for status notifications (as webmaster)==Нужно только для уведомлений о статусе (веб-мастерам)
+Password==Пароль
+Repeat password==Повторите пароль
+and see index statistics.==и смотреть статистику индекса.
+want to submit my sites for scanning==хочу отправить свои сайты на сканирование
+#-----------------------------
+
+#File: env/templates/simpleheader.template
+#---------------------------
+API Solr Default Core / JSON==API Solr основное ядро / JSON
+API Solr Default Core / XML==API Solr основное ядро / XML
+API Solr RSS/Opensearch==API Solr RSS/Opensearch
+API Solr Webgraph Core / XML==API Solr ядро Webgraph / XML
+API YaCy JSON==API YaCy JSON
+API YaCy RSS/Opensearch==API YaCy RSS/Opensearch
+Administration==Администрирование
+Chat==Чат
+Compare Search==Сравнительный поиск
+File Search==Поиск файлов
+Help==Помощь
+JavaScript information==Информация о JavaScript
+URL Viewer==Просмотрщик URL
+Web Search==Веб-поиск
+YaCy Tutorials==Уроки YaCy
+#-----------------------------
+
+#File: env/templates/simpleSearchHeader.template
+#---------------------------
+API Solr Default Core / JSON==API Solr основное ядро / JSON
+API Solr Default Core / XML==API Solr основное ядро / XML
+API Solr RSS/Opensearch==API Solr RSS/Opensearch
+API Solr Webgraph Core / XML==API Solr ядро Webgraph / XML
+API YaCy JSON==API YaCy JSON
+API YaCy RSS/Opensearch==API YaCy RSS/Opensearch
+Administration==Администрирование
+Chat==Чат
+Compare Search==Сравнительный поиск
+File Search==Поиск файлов
+Help==Помощь
+JavaScript information==Информация о JavaScript
+Log in==Войти
+Log in to use extended search features==Войдите чтобы использовать расширенный поиск
+URL Viewer==Просмотрщик URL
+Web Search==Веб-поиск
+YaCy Tutorials==Уроки YaCy
+You are authenticated as==Вы авторизованы как
+#-----------------------------
+
+### Round 2 — admin pages translation backfill (2026-05-09) ###
+
+#File: Dashboard_p.html
+#---------------------------
+Dashboard==Панель управления
+PostgreSQL + pgvector==PostgreSQL + pgvector
+Redis cache==Кэш Redis
+Vector service==Векторный сервис
+YaCy core==Ядро YaCy
+live==активен
+#-----------------------------
+
+#File: ConfigBasic.html
+#---------------------------
+Accounts Menu==Меню аккаунтов
+Active : translated pages are available==Активный: переведённые страницы доступны
+Browser==Браузер
+Click to generate translated pages==Нажмите чтобы сгенерировать переведённые страницы
+Configure your router for YaCy using UPnP:&nbsp;==Настроить роутер для YaCy через UPnP:&nbsp;
+Deutsch==Deutsch
+English==English
+Español==Español
+Fran&ccedil;ais==Fran&ccedil;ais
+Greek==Greek
+Italiano==Italiano
+Open Ports on a &lt;our-router-type&gt; Router==Открыть порты на роутере &lt;ваш-тип-роутера&gt;
+Use the browser preferred language if available==Использовать язык браузера если доступен
+Usecase Freeworld==Сценарий Freeworld
+Usecase Intranet==Сценарий Intranet
+Usecase Portal==Сценарий Portal
+Your basic configuration is complete! You can now (for example):==Базовая конфигурация завершена! Теперь вы можете (например):
+location==расположению
+monitor at the network page==смотреть страницу сети
+set a personal peer profile==настроить персональный профиль узла
+start your own crawl==запустить свой кроулинг
+warning==предупреждение
+#-----------------------------
+
+#File: ConfigAccounts_p.html
+#---------------------------
+Access Rules==Правила доступа
+Password==Пароль
+Username already used (not allowed).==Это имя пользователя уже занято (не разрешено).
+account list==список аккаунтов
+#-----------------------------
+
+#File: Settings_p.html
+#---------------------------
+Debug/Analysis Settings==Настройки диагностики/анализа
+HTTP client Settings==Настройки HTTP-клиента
+Referrer Policy Settings==Политика Referrer
+Transparent Proxy Access Settings==Прозрачный прокси-доступ
+URL/Web Proxy Access Settings==Доступ к URL/Web прокси
+#-----------------------------
+
+#File: Status.html
+#---------------------------
+Performance==Производительность
+accounts configuration==настройка аккаунтов
+bad==плохо
+forum==форум
+good==хорошо
+here==тут
+idea==идея
+lock icon==иконка замка
+monitor your web crawl==мониторить ваш кроулинг
+search the internet==искать в Интернете
+search yourself==искать себя
+#-----------------------------
+
+#File: ConfigUpdate_p.html
+#---------------------------
+System Update==Обновление системы
+You installed YaCy with a package manager. To update YaCy, please use the package manager:==Вы установили YaCy через пакетный менеджер. Для обновления используйте пакетный менеджер:
+changelog==список изменений
+http://www.yacy.net/==http://www.yacy.net/
+#-----------------------------
+
+#File: ConfigLanguage_p.html
+#---------------------------
+Author(s) (chronological)==Авторы (хронологически)
+Available Languages==Доступные языки
+Current language==Текущий язык
+Download Language File==Скачать файл языка
+Make sure that you only download data from trustworthy sources. The new language file might overwrite existing data if a file of the same name exists already.==Скачивайте данные только из доверенных источников. Новый файл языка может перезаписать существующие данные, если файл с таким именем уже существует.
+Simple Editor==Простой редактор
+Supported formats are .lng and XLIFF (.xlf or .xliff).==Поддерживаются форматы .lng и XLIFF (.xlf или .xliff).
+#-----------------------------
+
+#File: PerformanceMemory_p.html
+#---------------------------
+PerformanceGraph==График производительности
+use Standard Memory Strategy==Использовать стандартную стратегию памяти
+#-----------------------------
+
+#File: Performance_p.html
+#---------------------------
+Absolute maximum==Абсолютный максимум
+Absolute minimum==Абсолютный минимум
+Autoregulate==Авторегулирование
+Distributed Hash Table==Распределённая хеш-таблица
+Exhausted state info==Информация об исчерпанном состоянии
+Free space disk==Свободное место на диске
+Free space disk autoregulation info==Информация об авторегуляции свободного места
+Java Virtual Machine==Java Virtual Machine
+Manually reset to==Сбросить вручную до
+Maximum amount of space==Максимальный объём пространства
+Mebibyte==Мебибайт
+Minimum required==Минимально необходимо
+PerformanceGraph==График производительности
+Proper state info==Информация о корректном состоянии
+Random Access Memory==Оперативная память (RAM)
+Restart now==Перезапустить сейчас
+Steady-state maximum==Максимум устоявшегося состояния
+Steady-state minimum==Минимум устоявшегося состояния
+Used space disk==Использовано места на диске
+Used space disk autoregulation info==Информация об авторегуляции использованного места
+proper==корректно
+#-----------------------------
+
+#File: Services_p.html
+#---------------------------
+vector_service admin_token==vector_service admin_token
+#-----------------------------
+
+#File: env/templates/header.template
+#---------------------------
+GitHub==GitHub
+Re-Start==Перезапуск
+Shutdown==Остановить
+Toggle menu==Переключить меню
+VIR GOO==VIR GOO
+#-----------------------------
+
+#File: env/templates/submenuAI.template
+#---------------------------
+AI Lab==AI-лаборатория
+AI Shield==AI Shield
+LLM Selection==Выбор LLM
+RAG Config==Настройки RAG
+Skills Config==Навыки
+#-----------------------------
+
+#File: env/templates/submenuAccessTracker.template
+#---------------------------
+Access Tracker==Трекер доступа
+Server Access==Доступ к серверу
+Access Grid==Сетка доступа
+Incoming Requests Overview==Обзор входящих запросов
+Incoming Requests Details==Детали входящих запросов
+All Connections==Все соединения
+Access Rate Limitations==Ограничения частоты доступа
+Remote Search==Удалённый поиск
+Incoming Cookies==Входящие cookies
+Outgoing Cookies==Исходящие cookies
+#-----------------------------
+
+#File: env/templates/submenuBlacklist.template
+#---------------------------
+Filter & Blacklists==Фильтры и чёрные списки
+Blacklist Administration==Администрирование чёрных списков
+Blacklist Cleaner==Очистка чёрных списков
+Blacklist Test==Тестирование чёрных списков
+#-----------------------------
+
+#File: env/templates/submenuComputation.template
+#---------------------------
+Application Status==Статус приложения
+Processes==Процессы
+Concurrent Indexing==Параллельная индексация
+Search Sequence==Последовательность поиска
+Messages==Сообщения
+Incoming News==Входящие новости
+Processed News==Обработанные новости
+Outgoing News==Исходящие новости
+Published News==Опубликованные новости
+Community Data==Данные сообщества
+Local Peer Wiki==Локальная Peer Wiki
+Bookmarks==Закладки
+#-----------------------------
+
+#File: env/templates/submenuConfig.template
+#---------------------------
+UI Translations==Переводы интерфейса
+#-----------------------------
+
+#File: env/templates/submenuCrawlMonitor.template
+#---------------------------
+Web Crawler==Веб-краулер
+Crawler==Краулер
+Queues==Очереди
+Local==Локальный
+Scheduler and Profile Editor==Планировщик и редактор профилей
+Receipts==Квитанции
+Queries==Запросы
+Local Crawling==Локальный кроулинг
+Global Crawling==Глобальный кроулинг
+Pack Import==Импорт пакетов
+#-----------------------------
+
+#File: env/templates/submenuDesign.template
+#---------------------------
+Appearance==Внешний вид
+Language==Язык
+#-----------------------------
+
+#File: env/templates/submenuIndexControl.template
+#---------------------------
+Index Sources & Targets==Источники и цели индекса
+#-----------------------------
+
+#File: env/templates/submenuIndexCreate.template
+#---------------------------
+Crawler/Spider==Краулер/Spider
+Crawling of phpBB3 Forums==Сканирование форумов phpBB3
+Network Harvesting==Сбор из сети
+Autocrawl==Авто-кроулинг
+#-----------------------------
+
+#File: env/templates/submenuIndexImport.template
+#---------------------------
+Content Export / Import==Экспорт / импорт контента
+YaCy Packs==YaCy-пакеты
+Pack Generator==Генератор пакетов
+Pack Downloader==Загрузчик пакетов
+Pack Manager==Менеджер пакетов
+Export==Экспорт
+Index Export==Экспорт индекса
+Solr Dump Export/Import==Экспорт/импорт Solr-дампа
+Import==Импорт
+OAI-PMH==OAI-PMH
+WARC==WARC
+ZIM==ZIM
+JsonList==JsonList
+Database Reader==Читатель БД
+phpBB3 Database==БД phpBB3
+MediaWiki Dump==Дамп MediaWiki
+#-----------------------------
+
+#File: env/templates/submenuMaintenance.template
+#---------------------------
+RAM/Disk Usage & Updates==RAM/диск и обновления
+Performance==Производительность
+#-----------------------------
+
+#File: env/templates/submenuPublication.template
+#---------------------------
+Wiki==Wiki
+#-----------------------------
+
+#File: env/templates/submenuRanking.template
+#---------------------------
+Heuristics==Эвристика
+#-----------------------------
+
+#File: env/templates/submenuSemantic.template
+#---------------------------
+Automated Annotation==Автоматическая аннотация
+#-----------------------------
+
+#File: env/templates/submenuUseCaseAccount.template
+#---------------------------
+Use Case & Accounts==Сценарий и аккаунты
+Accounts==Аккаунты
+#-----------------------------
 
 # EOF
