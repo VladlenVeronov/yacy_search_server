@@ -125,8 +125,8 @@
 .yp-mobile-nav__auth-row {
   display: flex; gap: 8px;
 }
-.yp-mobile-nav__auth-row .yp-btn { flex: 1; height: 40px; font-size: 14px; }
-.yp-mobile-nav__auth > a.yp-btn { height: 40px; font-size: 14px; }
+.yp-mobile-nav__auth-row .yp-btn { flex: 1; height: 44px; font-size: 14px; }
+.yp-mobile-nav__auth > a.yp-btn { height: 44px; font-size: 14px; }
 
 @media (max-width: 760px) {
   .yp-nav { display: none; }
@@ -285,4 +285,42 @@ label.yacy-pill:has(input[type="radio"]:checked) {
     margin-left: auto;
     display: flex;
     gap: 6px;
+}
+
+/* ---------------------------------------------------------------
+   Mobile responsive overrides — round 1 (2026-05-09)
+   --------------------------------------------------------------- */
+
+@media (max-width: 1024px) {
+    /* search-results sidebar (lg:col-span-4) drops below results on tablet */
+    .yacy-results-grid > .yacy-results-sidebar {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 760px) {
+    /* tighter topbar on phones */
+    .yp-topbar__inner { height: 50px; }
+    /* result cards — pad tighter */
+    .yacy-result { padding: 12px 0; }
+    .yacy-result__title { font-size: 17px; }
+    .yacy-result__snippet { font-size: 14.5px; }
+    .yacy-result__actions { gap: 4px; }
+    /* keep tap targets honest on small phones */
+    .yp-iconbtn { width: 40px; height: 40px; }
+    .yacy-pill { padding: 6px 10px; font-size: 13px; }
+}
+
+@media (max-width: 480px) {
+    .yp-topbar__inner { padding: 0 10px; }
+    .yacy-result { padding: 10px 0; }
+    .yacy-result__title { font-size: 16px; }
+    .yacy-result__meta { font-size: 11.5px; }
+    /* search input never overflows on tiny screens */
+    .yacy-search-input { font-size: 15px; }
+}
+
+@media (max-width: 360px) {
+    .yp-topbar__inner { padding: 0 8px; gap: 6px; }
+    .yp-brand__word { font-size: 15px; }
 }

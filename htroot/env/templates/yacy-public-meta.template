@@ -5,4 +5,4 @@
   <meta name="description" content="YaCy — open, decentralized search" />
 
   <link rel="stylesheet" type="text/css" href="#[relativeBase]#env/css/tailwind.min.css" />
-  <link rel="stylesheet" type="text/css" href="#[relativeBase]#env/css/yacy-public.css?v=20260509b" />
+  <link rel="stylesheet" type="text/css" href="#[relativeBase]#env/css/yacy-public.css?v=20260509c" />
