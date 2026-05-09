@@ -98,10 +98,12 @@ public class ConfigAccountList_p {
 
             numUsers++;
         }
-        // Two distinct keys so the template never confuses alternative vs multi:
-        //   #(hasUsers)# empty :: table-with-#{userlist}# #(/hasUsers)#
-        //   #{userlist}# … #{/userlist}#  iterates `userlist` times
-        prop.put("hasUsers", numUsers == 0 ? 0 : 1);
+        // `empty` drives a flat #(empty)#::msg#(/empty)# alternative ABOVE
+        // the table; `userlist` drives a multi #{userlist}#…#{/userlist}#
+        // that lives outside any alternative — otherwise the template
+        // engine prefixes the multi keys with the enclosing alt name and
+        // never finds the per-user props.
+        prop.put("empty", numUsers == 0 ? 1 : 0);
         prop.put("userlist", numUsers);
 
         // return rewrite properties
