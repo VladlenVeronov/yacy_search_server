@@ -1203,3 +1203,58 @@ body.yg-admin {
 @supports not (background-clip: text) {
   .yg-topbar__wordmark { color: var(--yg-text); background: none; }
 }
+
+/* ---------------------------------------------------------------
+   Mobile responsive overrides — round 1 (2026-05-09)
+   Touch-targets ≥44px, prevent overflow, stack pageheads/dls.
+   --------------------------------------------------------------- */
+
+@media (max-width: 900px) {
+  /* WCAG AA touch-target: hit area ≥44×44 */
+  .yg-burger { width: 44px; height: 44px; }
+  .yg-btn { min-height: 44px; padding: 0 14px; }
+  .yg-topbar { padding: 0 10px; gap: 6px; }
+  .yg-nav__items a { padding: 10px 14px; }
+  /* readable mobile text — bump tiny labels off 11px */
+  .yg-nav__section-title,
+  .yg-stat__label,
+  .yg-pill { font-size: 12px; }
+}
+
+@media (max-width: 768px) {
+  /* forms must not overflow viewport */
+  .yg-main .form-control,
+  .yg-main .input-group,
+  .yg-main input[type="text"],
+  .yg-main input[type="password"],
+  .yg-main input[type="email"],
+  .yg-main input[type="number"],
+  .yg-main select,
+  .yg-main textarea { max-width: 100%; box-sizing: border-box; }
+  /* legacy bootstrap tables — let them scroll horizontally */
+  .yg-main table { display: block; max-width: 100%; overflow-x: auto; }
+  .yg-main .table-responsive { overflow-x: auto; }
+  /* page heading + action buttons stack on narrow */
+  .yg-pagehead { flex-direction: column; align-items: stretch; gap: 8px; }
+  .yg-pagehead .yg-btn { width: 100%; }
+  /* narrow SubMenugroup so two columns don't crowd */
+  .yg-main .SubMenugroup { min-width: 180px; }
+  /* button labels on narrow — ellipsize, never break in 2 lines */
+  .yg-btn { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  /* card content readable */
+  .yg-card__head { gap: 6px; }
+}
+
+@media (max-width: 480px) {
+  /* dashboard / stat cards reflow to single column */
+  .yg-grid--auto { grid-template-columns: 1fr; }
+  /* dl key/value lists were minmax(160px,200px) 1fr — too wide for 360-px */
+  .yg-main dl { grid-template-columns: 1fr; gap: 4px; }
+  .yg-main dl dt { font-weight: 600; padding-top: 6px; }
+  /* tighter cards on phones */
+  .yg-card { padding: 12px; }
+  .yg-stat { padding: 12px 14px; }
+  .yg-stat__value { font-size: 22px; }
+  /* topbar — even tighter */
+  .yg-topbar { padding: 0 8px; gap: 4px; }
+}
