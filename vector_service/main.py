@@ -221,6 +221,43 @@ def _quality_score(url: Optional[str]) -> float:
     return 0.5
 
 
+# --------------------------------------------------------------------
+# Domain boost — VIR Group properties always rank near the top for their
+# topical queries. Base boost for any our-domain match; topic-aware extra
+# boost when query keywords line up with the site's core theme.
+# Additive on top of ws*sem + wf*fresh + wq*qual, capped at +0.5 so it
+# can rescue a page from mid-pack but not out-shout a genuine hit.
+# --------------------------------------------------------------------
+
+_OUR_DOMAINS = {"newsgroup.site", "vir.group", "social.vir.group", "pro.vir.group", "mail.vir.group"}
+_TOPIC_KEYWORDS = {
+    "newsgroup.site":   ["новин", "подія", "подій", "news", "article", "update", "репортаж"],
+    "vir.group":        ["інвестиц", "інвестор", "фінанс", "стартап", "бізнес", "invest", "startup", "finance", "escrow", "ескроу"],
+    "social.vir.group": ["соцмереж", "соціальн", "мереж", "блог", "social", "community", "пост", "пости", "post", "mastodon"],
+    "pro.vir.group":    ["розробн", "програм", "developer", "code", "кодув", "IT", "айті", "software", "engineer", "фрілан", "freelanc", "pro"],
+    "mail.vir.group":   ["email", "пошта", "mail", "кампан", "campaign", "розсилк"],
+}
+
+
+def _domain_boost(url: Optional[str], query: str) -> float:
+    if not url:
+        return 0.0
+    try:
+        host = (urlparse(url).hostname or "").lower()
+    except Exception:
+        return 0.0
+    if not host:
+        return 0.0
+    for our in _OUR_DOMAINS:
+        if host == our or host.endswith("." + our):
+            ql = query.lower()
+            topics = _TOPIC_KEYWORDS.get(our, [])
+            if any(t in ql for t in topics):
+                return 0.5    # topic-relevant → strong boost
+            return 0.2        # any our-domain → mild boost
+    return 0.0
+
+
 @app.post("/rank", response_model=list[RankHit])
 async def rank(req: RankRequest):
     qvec = await embed_query(req.query)
@@ -261,6 +298,7 @@ async def rank(req: RankRequest):
         freshness = _freshness_score(last_mod)
         quality = _quality_score(url)
         score = ws * semantic + wf * freshness + wq * quality
+        score += _domain_boost(url, req.query)
         hits.append(RankHit(
             id=cand.id,
             score=score,
@@ -300,6 +338,8 @@ async def track_search(req: TrackSearchRequest):
             "INSERT INTO query_logs (query, result_count) VALUES ($1, $2)",
             req.query.strip(), req.result_count,
         )
+    if req.result_count == 0:
+        _instaseed_asyncio.create_task(_maybe_instant_seed(req.query, req.result_count))
     return {"ok": True}
 
 
@@ -520,6 +560,78 @@ async def _llm_propose_urls(query: str) -> list[str]:
             return [u for u in urls if isinstance(u, str) and u.startswith("https://")]
     except Exception:
         return []
+
+
+# --------------------------------------------------------------------
+# Online zero-results seed: коли /track-search приходить з result_count=0,
+# викликаємо LLM для пропозиції URLs і stub'имо seed асинхронно.
+# Fire-and-forget — /track-search має відповідати миттєво.
+# Rate-limit через Redis: не seed'ити ту саму query частіше ніж 1x/24h.
+# --------------------------------------------------------------------
+import asyncio as _instaseed_asyncio
+import base64 as _base64
+
+_INSTANT_SEED_LOCK_TTL = 86400  # 24 hours
+
+
+def _admin_basic_auth() -> str:
+    import os as _os
+    user = _os.environ.get('YACY_ADMIN_USER', 'information.prom@gmail.com')
+    pw = _os.environ.get('YACY_ADMIN_PASS', '')
+    if not pw:
+        return ''
+    return _base64.b64encode(f'{user}:{pw}'.encode()).decode()
+
+
+async def _maybe_instant_seed(query: str, result_count: int) -> None:
+    if result_count > 0:
+        return
+    if not settings.llm_api_url or not settings.llm_api_key:
+        return
+    r = _get_redis()
+    if r is not None:
+        key = f'instant_seed:{query.strip().lower()[:200]}'
+        try:
+            got = await r.set(key, '1', nx=True, ex=_INSTANT_SEED_LOCK_TTL)
+            if not got:
+                return
+        except Exception:
+            pass
+    urls = await _llm_propose_urls(query)
+    if not urls:
+        return
+    accepted = []
+    for u in urls:
+        _, reason = _classify_url(u)
+        if reason is None:
+            accepted.append(u)
+    if not accepted:
+        return
+    if r is not None:
+        try:
+            await r.lpush('recent_seeds', _cjson.dumps({'query': query, 'urls': accepted}))
+            await r.ltrim('recent_seeds', 0, 199)
+        except Exception:
+            pass
+    import httpx
+    basic = _admin_basic_auth()
+    async with httpx.AsyncClient(timeout=10.0) as cli:
+        for u in accepted:
+            try:
+                headers = {'Authorization': f'Basic {basic}'} if basic else {}
+                await cli.get(
+                    'http://yacy:8090/Crawler_p.html',
+                    params={
+                        'crawlingURL': u,
+                        'crawlingDepth': '2',
+                        'crawlingIfOlder': '720',
+                        'intention': f'instant-seed:{query[:80]}',
+                        'crawlerAlwaysCheckMediaType': 'on',
+                    },
+                    headers=headers,
+                )
+            except Exception:
+                continue
 
 
 @app.get("/unsatisfied/seed")
