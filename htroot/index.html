@@ -1,11 +1,87 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uk">
 <head>
     #(forward)#::<meta http-equiv="REFRESH" content="0; url=#[target]#" />#(/forward)#
-    <title>VIR GOO — open, decentralized search</title>
+    <title>VIR GOO — приватний пошук без реклами і трекерів · український пошуковик</title>
     #%env/templates/yacy-public-meta.template%#
-    <link rel="alternate" type="application/rss+xml" title="Search for #[former]#" href="yacysearch.rss?query=#[former]#" />
-    <link rel="search" type="application/opensearchdescription+xml" title="YaCy '#[clientname]#'" href="opensearchdescription.xml" />
+    <meta name="description" content="VIR GOO — відкритий український пошуковик з приватним і анонімним пошуком без реклами, без трекерів і без збору персональних даних. Децентралізована альтернатива Google на базі YaCy." />
+    <meta name="keywords" content="пошук, анонімний пошук, приватний пошук, український пошуковик, пошукова система, пошук без реклами, децентралізований пошук, відкритий пошук, VIR GOO, YaCy" />
+    <meta name="robots" content="index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1" />
+    <meta name="google" content="notranslate" />
+    <meta name="theme-color" content="#2563eb" />
+    <meta name="author" content="VIR GROUP" />
+    <link rel="canonical" href="https://search.newsgroup.site/" />
+    <link rel="alternate" hreflang="uk" href="https://search.newsgroup.site/" />
+    <link rel="alternate" hreflang="x-default" href="https://search.newsgroup.site/" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="VIR GOO" />
+    <meta property="og:title" content="VIR GOO — приватний пошук без реклами і трекерів" />
+    <meta property="og:description" content="Український відкритий пошуковик. Анонімний пошук без реклами, без трекерів, без цензури. Децентралізована альтернатива Google." />
+    <meta property="og:url" content="https://search.newsgroup.site/" />
+    <meta property="og:image" content="https://search.newsgroup.site/env/grafics/vir-goo-og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="uk_UA" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="VIR GOO — приватний український пошуковик" />
+    <meta name="twitter:description" content="Анонімний пошук без реклами і трекерів. Децентралізована альтернатива Google на базі YaCy." />
+    <meta name="twitter:image" content="https://search.newsgroup.site/env/grafics/vir-goo-og.png" />
+
+    <link rel="alternate" type="application/rss+xml" title="Пошук: #[former]#" href="yacysearch.rss?query=#[former]#" />
+    <link rel="search" type="application/opensearchdescription+xml" title="VIR GOO — приватний пошук" href="opensearchdescription.xml" />
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://search.newsgroup.site/#website",
+      "url": "https://search.newsgroup.site/",
+      "name": "VIR GOO",
+      "alternateName": ["VIR GOO Search", "VirGoo", "ВІР ГУ"],
+      "description": "Відкритий український пошуковик з приватним і анонімним пошуком, без реклами та трекерів.",
+      "inLanguage": "uk",
+      "publisher": { "@id": "https://vir.group/#organization" },
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://search.newsgroup.site/yacysearch.html?query={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      }
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://vir.group/#organization",
+      "name": "VIR GROUP",
+      "url": "https://vir.group/",
+      "logo": "https://vir.group/wp-content/uploads/2026/03/logo.png",
+      "sameAs": [
+        "https://social.vir.group/@newsgroup",
+        "https://newsgroup.site/",
+        "https://github.com/VladlenVeronov/yacy_search_server"
+      ]
+    },
+    {
+      "@type": "SoftwareApplication",
+      "@id": "https://search.newsgroup.site/#software",
+      "name": "VIR GOO",
+      "applicationCategory": "SearchApplication",
+      "operatingSystem": "Web",
+      "url": "https://search.newsgroup.site/",
+      "description": "Відкритий пошуковик — форк YaCy без PageRank, з семантичним ранжуванням і чорним списком трекерів.",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "UAH" }
+    }
+  ]
+}
+    </script>
+
+    <script src="https://social.vir.group/embed/vir-launcher.js?v=3" defer></script>
 </head>
 <body id="index" class="min-h-screen bg-white text-gray-900 flex flex-col">
 
@@ -18,7 +94,8 @@
             <span class="block text-5xl sm:text-6xl font-light tracking-tight text-gray-900">
                 VIR <span class="text-blue-600 font-semibold">GOO</span>
             </span>
-            <span class="block mt-2 text-sm text-gray-500">відкритий · децентралізований · твій</span>
+            <span class="sr-only">Приватний і анонімний український пошуковик без реклами і трекерів</span>
+            <span class="block mt-2 text-sm text-gray-500">приватний пошук · без реклами · без трекерів</span>
         </h1>
 
         <form action="yacysearch.html" method="get" id="searchform" accept-charset="UTF-8">
@@ -42,8 +119,9 @@
 
             <div class="mt-5 flex justify-center">
                 <button id="Enter" name="Enter" type="submit"
+                        aria-label="Знайти"
                         class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md transition">
-                    Search
+                    Знайти
                 </button>
             </div>
 
@@ -96,11 +174,125 @@
         </form>
 
     </div>
+
+    <section class="w-full max-w-3xl mx-auto mt-16 px-2 text-gray-700">
+        <h2 class="text-2xl font-medium text-gray-900 mb-4">Український пошуковик без реклами і трекерів</h2>
+        <p class="leading-relaxed mb-4">
+            <strong>VIR GOO</strong> — це відкритий український пошуковик, який пропонує
+            <a href="/pryvatnyi-poshuk.html" class="text-blue-600 hover:underline">приватний пошук</a>,
+            <a href="/anonimnyi-poshuk.html" class="text-blue-600 hover:underline">анонімний пошук</a> і
+            <a href="/poshuk-bez-reklamy.html" class="text-blue-600 hover:underline">пошук без реклами</a>.
+            Ми не показуємо рекламних оголошень, не збираємо профіль користувача, не передаємо
+            запити третім сторонам і не використовуємо файли cookie для відстеження.
+        </p>
+        <p class="leading-relaxed mb-4">
+            На відміну від Google, Bing чи Yandex, VIR GOO не має бізнес-моделі, що потребує
+            зберігати історію ваших запитів. Індекс формується <strong>децентралізованим
+            краулером на базі YaCy</strong>, з семантичним ранжуванням і чорним списком
+            рекламно-трекерових доменів.
+        </p>
+
+        <h2 class="text-2xl font-medium text-gray-900 mt-10 mb-4">Що ви можете шукати</h2>
+        <ul class="grid sm:grid-cols-2 gap-2 list-disc list-inside mb-4">
+            <li>українські новини, статті, блоги</li>
+            <li>світові англомовні джерела</li>
+            <li>файли зображень і відео</li>
+            <li>наукові матеріали і документацію</li>
+            <li>історичні матеріали і архіви</li>
+            <li>власні сайти вашої компанії</li>
+        </ul>
+
+        <h2 class="text-2xl font-medium text-gray-900 mt-10 mb-4">Часті питання</h2>
+        <div class="space-y-4">
+            <div>
+                <h3 class="font-semibold text-gray-900">Чи справді це анонімний пошук?</h3>
+                <p class="text-sm leading-relaxed">Так. Ми не логуємо IP-адресу, не встановлюємо
+                    трекерових cookie і не передаємо запити рекламним мережам. Референс політика
+                    <code>origin-when-cross-origin</code> — цільові сайти отримують лише
+                    <code>search.newsgroup.site</code>, а не сам ваш запит.</p>
+            </div>
+            <div>
+                <h3 class="font-semibold text-gray-900">Чому пошуковик український?</h3>
+                <p class="text-sm leading-relaxed">Інтерфейс і команда — українські. Індекс
+                    охоплює домени в зонах .ua, .com.ua, .kyiv.ua і активно доіндексовує
+                    українськомовний контент. Семантичне ранжування працює як з українською,
+                    так і з англійською одночасно.</p>
+            </div>
+            <div>
+                <h3 class="font-semibold text-gray-900">Чи є це форк Google?</h3>
+                <p class="text-sm leading-relaxed">Ні. VIR GOO не використовує Google, Bing чи
+                    будь-який комерційний API. Це форк відкритого P2P-пошуковика
+                    <a href="https://yacy.net" class="text-blue-600 hover:underline">YaCy</a>
+                    з незалежним індексом.</p>
+            </div>
+            <div>
+                <h3 class="font-semibold text-gray-900">Як подати свій сайт до індексу?</h3>
+                <p class="text-sm leading-relaxed"><a href="Register.html?webmaster=1" class="text-blue-600 hover:underline">Реєструйтеся як вебмайстер</a>
+                    → <a href="CrawlRequest.html" class="text-blue-600 hover:underline">подайте
+                    URL</a>. Валідація автоматична, індексація — через кілька годин.
+                    Безкоштовно, без реклами, без черги «прем'ум».</p>
+            </div>
+            <div>
+                <h3 class="font-semibold text-gray-900">Чи можу я підняти свою ноду?</h3>
+                <p class="text-sm leading-relaxed">Так. Код відкритий, GPL-2.0. Детальніше
+                    у розділі <a href="About.html" class="text-blue-600 hover:underline">Про
+                    VIR GOO</a>.</p>
+            </div>
+        </div>
+
+        <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Чи справді це анонімний пошук?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Так. VIR GOO не логує IP-адресу, не встановлює трекерових cookie і не передає запити рекламним мережам. Референс політика origin-when-cross-origin — цільові сайти не отримують ваш запит."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Чому пошуковик український?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Інтерфейс і команда українські. Індекс охоплює домени .ua, .com.ua і активно доіндексує українськомовний контент. Семантичне ранжування працює і з українською, і з англійською."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Чи це форк Google?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Ні. VIR GOO не використовує Google, Bing чи інші комерційні API. Це форк відкритого P2P-пошуковика YaCy з незалежним індексом."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Як подати свій сайт до індексу?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Зареєструйтеся як вебмайстер і подайте URL через CrawlRequest. Валідація автоматична, індексація — через кілька годин. Безкоштовно."
+      }
+    }
+  ]
+}
+        </script>
+    </section>
 </main>
 
-<footer class="border-t border-gray-200 py-4">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-xs text-gray-500">
-        VIR GOO — відкритий децентралізований пошук · powered by YaCy
+<footer class="border-t border-gray-200 py-4 mt-16">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-wrap justify-between items-center gap-3 text-xs text-gray-500">
+        <span>VIR GOO — відкритий український пошуковик · powered by <a href="https://yacy.net" class="hover:text-blue-600" rel="external">YaCy</a></span>
+        <nav class="flex flex-wrap items-center gap-4" aria-label="Footer">
+            <a href="/About.html" class="hover:text-blue-600 transition">Про</a>
+            <a href="/pryvatnyi-poshuk.html" class="hover:text-blue-600 transition">Приватний пошук</a>
+            <a href="/anonimnyi-poshuk.html" class="hover:text-blue-600 transition">Анонімний пошук</a>
+            <a href="/poshuk-bez-reklamy.html" class="hover:text-blue-600 transition">Без реклами</a>
+            <a href="/ukrainskyi-poshukovyk.html" class="hover:text-blue-600 transition">Український пошуковик</a>
+        </nav>
     </div>
 </footer>
 

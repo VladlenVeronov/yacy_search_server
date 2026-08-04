@@ -1,71 +1,61 @@
-# robots.txt for #[clientname]#.yacy
+# robots.txt for search.newsgroup.site (VIR GOO)
 
 User-agent: *
+Allow: /
+Allow: /About.html
+Allow: /pryvatnyi-poshuk.html
+Allow: /anonimnyi-poshuk.html
+Allow: /poshuk-bez-reklamy.html
+Allow: /ukrainskyi-poshukovyk.html
+Allow: /Register.html
+Allow: /opensearchdescription.xml
+Allow: /sitemap.xml
+Allow: /env/
 
-Disallow: /*query=
+Disallow: /yacysearch.html
+Disallow: /yacysearch.rss
+Disallow: /yacysearch.atom
+Disallow: /yacysearch.json
+Disallow: /suggest.json
+Disallow: /suggest.xml
 Disallow: /proxy.html
-Disallow: /IndexBrowser_p.html
-
-#(all)#
-
-# dirs
-#{dirs}#
-Disallow: /#[dir]#
-#{/dirs}#
-
-
-# locked
-#{locked}#
-Disallow: /#[page]#
-#{/locked}#
-
-#(bookmarks)#::
-# bookmarks
-Disallow: /Bookmarks.html#(/bookmarks)#
-
-#(wiki)#::
-# wiki
-Disallow: /Wiki.html#(/wiki)#
-
-#(blog)#::
-# blog
-Disallow: /Blog.html
-Disallow: /Blog.rss
-Disallow: /Blog.xml#(/blog)#
-
-#(news)#::
-# news
-Disallow: /News.html#(/news)#
-
-#(status)#::
-# status
-Disallow: /Status.html#(/status)#
-
-#(network)#::
-# network
+Disallow: /*query=
+Disallow: /*_p.html
+Disallow: /*_p.xml
+Disallow: /*_p.json
+Disallow: /*_p.inc
+Disallow: /Bookmarks.html
+Disallow: /News.html
+Disallow: /Status.html
 Disallow: /Network.html
 Disallow: /Network.csv
-Disallow: /Network.xml#(/network)#
-
-#(homepage)#::
-# homepage
-Disallow: /www#(/homepage)#
-
-#(fileshare)#::
-# fileshare
-Disallow: /share#(/fileshare)#
-
-#(surftips)#::
-# surftips
-Disallow: /Surftips.html#(/surftips)#
-
-#(profile)#::
-# view profile
+Disallow: /Network.xml
 Disallow: /ViewProfile.html
 Disallow: /ViewProfile.vcf
-Disallow: /ViewProfile.xml#(/profile)#
+Disallow: /ViewProfile.xml
+Disallow: /Wiki.html
+Disallow: /Blog.html
+Disallow: /Blog.rss
+Disallow: /Blog.xml
+Disallow: /Surftips.html
+Disallow: /www
+Disallow: /share
 
-::
-# all
-Disallow: /
-#(/all)#
+# High-quality crawlers explicitly welcomed
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+User-agent: YandexBot
+Allow: /
+
+User-agent: IndexNowBot
+Allow: /
+
+Sitemap: https://search.newsgroup.site/sitemap.xml
+Host: search.newsgroup.site
