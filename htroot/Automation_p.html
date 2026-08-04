@@ -5,7 +5,6 @@
     
     #%env/templates/metas.template%#
 	<script type="text/javascript">
-    <!--
 	// The chrome browser is getting the wrong value if we try to get the value inside the script "var checkStatus=inputs.elements[0].checked;" - so now the value is a parameter
 	function checkAll (formToCheckAll, checkStatus) {
 	var inputs=document.getElementById(formToCheckAll);	
@@ -13,9 +12,7 @@
 	for (var i =0; i < inputs.elements.length; i++) {
 			inputs.elements[i].checked = checkStatus;
 		}
-    }
-    -->
-    </script>
+    }</script>
     <script type="text/javascript">
     function submitchange(from) {
     	document.getElementById("apilist").action = "Automation_p.html#" + from;
@@ -47,7 +44,7 @@
     </p>::#(/inline)#
           
 <div id="api">
-<a href="Tables_p.xml?table=api&count=100&search=" id="apilink"><img src="env/grafics/api.png" width="60" height="40" alt="API"/></a>
+<a href="Tables_p.xml?table=api&count=100&search=" id="apilink"><img src="env/grafics/api.png" alt="API"/></a>
 <span>The information that is presented on this page can also be retrieved as XML.
 Click the API icon to see the XML.
 To see a list of all APIs, please visit the <a href="https://wiki.yacy.net/index.php/Dev:API" target="_blank">API wiki page</a>.</span>
@@ -79,7 +76,7 @@ To see a list of all APIs, please visit the <a href="https://wiki.yacy.net/index
       <br/>
       <div style="clear:both;">
       <table style="border:0px; padding:2px; border-spacing:1px" role="grid">
-        <tr class="TableHeader" valign="bottom">
+        <tr class="TableHeader">
           <th class="sorttable_nosort"><input type="checkbox" id="allswitch" onclick="checkAll(this.form.id, this.checked);" /></th>
           <th #(sortedByType)#::aria-sort="#(asc)#descending::ascending#(/asc)#"#(/sortedByType)#>
           	<a class="sortTableLink" href="Automation_p.html?startRecord=#[startRecord]#&amp;maximumRecords=#[maximumRecords]#&amp;sort=#(nextSortTypeDesc)#::-#(/nextSortTypeDesc)#type&amp;inline=#(inline)#false::true#(/inline)#&amp;filter=#[filter]#&amp;query=#[query]#" target="_self" title="Sort by #(nextSortTypeDesc)#ascending::descending#(/nextSortTypeDesc)# types">Type</a>
@@ -116,8 +113,8 @@ To see a list of all APIs, please visit the <a href="https://wiki.yacy.net/index
         </tr>
         #{list}#
         <tr class="TableCell#(dark)#Light::Dark::Summary#(/dark)#" id="#[pk]#">
-          <td valign="top" align="left"><input type="checkbox" name="item_#[count]#" value="mark_#[pk]#" /></td>
-          <td valign="top">#[type]#
+          <td><input type="checkbox" name="item_#[count]#" value="mark_#[pk]#" /></td>
+          <td>#[type]#
           #(isCrawlerStart)#::<br/><br/>
           <a href="#[url]#" title="clone" target="_parent"><img src="env/grafics/doc.gif"><img src="env/grafics/right.gif"><img src="env/grafics/doc.gif"></a>::<br/><br/>
          
@@ -142,11 +139,11 @@ To see a list of all APIs, please visit the <a href="https://wiki.yacy.net/index
          <a href="#" title="clone" onclick="document.forms['#[pk]#'].submit(); return false;"><img src="env/grafics/doc.gif"><img src="env/grafics/right.gif"><img src="env/grafics/doc.gif"></a>
 
           #(/isCrawlerStart)#</td>
-          <td valign="top">#[comment]#</td>
-          <td valign="top">#[callcount]#</td>
-          <td valign="top">#[dateRecording]#</td>
-          <td valign="top">#[dateLastExec]#</td>
-          <td valign="top">#(editableDateNext)# #[dateNextExec]# 
+          <td>#[comment]#</td>
+          <td>#[callcount]#</td>
+          <td>#[dateRecording]#</td>
+          <td>#[dateLastExec]#</td>
+          <td>#(editableDateNext)# #[dateNextExec]# 
           	::
     		#(dateFormatError)#::<div class="alert alert-danger" role="alert">Malformed date "#[invalidDate]#".</div>#(/dateFormatError)#
     		#(dateBeforeNowError)#::<div class="alert alert-danger" role="alert">"#[invalidDate]#" is before the current date.</div>#(/dateBeforeNowError)#
@@ -154,7 +151,7 @@ To see a list of all APIs, please visit the <a href="https://wiki.yacy.net/index
           		maxlength="19" minlength="19" pattern="#[dateLastExecPattern]#" 
           		value="#[dateNextExec]#" size="19" title="yyyy/MM/dd HH:mm:ss"/>#(/editableDateNext)#
           </td>
-          <td valign="top">
+          <td>
           #(event)#
             <select name="event_select_#[pk]#" onchange='submitchange("#[pk]#")'>
               <option value="off" selected="selected">no event</option>
@@ -200,7 +197,7 @@ To see a list of all APIs, please visit the <a href="https://wiki.yacy.net/index
             </table>          
           #(/event)#
           </td>
-          <td valign="top">
+          <td>
           #(scheduler)#
             <select name="repeat_select_#[pk]#" onchange='submitchange("#[pk]#")'#(disabled)#:: disabled="disabled"#(/disabled)#>
               <option value="off" selected="selected">no repetition</option>
@@ -224,7 +221,7 @@ To see a list of all APIs, please visit the <a href="https://wiki.yacy.net/index
             </table>          
           #(/scheduler)#
           </td>
-          #(inline)#<td valign="top">#[url]#</td>::#(/inline)#
+          #(inline)#<td>#[url]#</td>::#(/inline)#
         </tr>
         #{/list}#
       </table>
@@ -262,7 +259,7 @@ To see a list of all APIs, please visit the <a href="https://wiki.yacy.net/index
       <fieldset>
       <legend><label for="table">Result of API execution</label></legend>
       <table class="sortable" style="border:0px; padding:2px; border-spacing:1px">
-        <tr class="TableHeader" valign="bottom">
+        <tr class="TableHeader">
           <td>Status</td>
           <td>URL</td>
         </tr>
@@ -283,10 +280,7 @@ To see a list of all APIs, please visit the <a href="https://wiki.yacy.net/index
     #(inline)##%env/templates/footer.template%#::#(/inline)#
     </div>
     <script type="text/javascript">
-    <!--
       parentPage = parent.document.getElementById('APITable');
-      if (parentPage != null) parentPage.height = document.getElementById('fullcontent').offsetHeight + 30;
-    -->
-    </script>
+      if (parentPage != null) parentPage.height = document.getElementById('fullcontent').offsetHeight + 30;</script>
   </body>
 </html>

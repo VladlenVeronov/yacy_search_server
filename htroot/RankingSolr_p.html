@@ -1,13 +1,12 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="uk">
   <head>
     <title>YaCy '#[clientname]#': Solr Ranking Configuration</title>
     #%env/templates/metas.template%#
   </head>
   <body id="RankingSolr_p">
     #%env/templates/header.template%#
-    #%env/templates/submenuRanking.template%#
-    <h2>Solr Ranking Configuration</h2>
+        <h2>Solr Ranking Configuration</h2>
     <p>These are ranking attributes for Solr. This ranking applies for internal and remote (P2P or shard) Solr access.</p>
 
     <form action="RankingSolr_p.html" method="get" enctype="multipart/form-data" accept-charset="UTF-8">
@@ -61,15 +60,15 @@
         #(boosthint)#::
         You can boost with vocabularies, use the field '#[vocabulariesfield]#' with values #[vocabulariesavailable]#. You can also boost on logarithmic occurrence counters of the fields #[vocabulariesvoclogcounts]#.<br/>
       #{facets}#
-      <table class="sortable" border="0" style="float:left">
+      <table class="sortable" style="float:left">
       <tr class="TableCellDark">
-        <td align="left" colspan="5" nowrap class="pending">#[facetname]#</td>
- 	    <td align="right" colspan="5" nowrap class="listingok">#</td>
+        <td colspan="5" nowrap class="pending">#[facetname]#</td>
+ 	    <td colspan="5" nowrap class="listingok">#</td>
       </tr>
       #{facet}#
       <tr class="TableCellLight">
-        <td align="left" colspan="5" nowrap class="pending">#[key]#</td>
- 	    <td align="right" colspan="5" nowrap class="listingok">#[count]#</td>
+        <td colspan="5" nowrap class="pending">#[key]#</td>
+ 	    <td colspan="5" nowrap class="listingok">#[count]#</td>
       </tr>
       #{/facet}#
       </table>&nbsp;&nbsp;

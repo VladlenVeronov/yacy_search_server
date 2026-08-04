@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="uk">
 <head>
 <title>YaCy '#[clientname]#': Web Structure</title>
 <link rel="stylesheet" media="screen" type="text/css" href="env/styles/colorpicker.css" />
@@ -31,7 +31,6 @@
 </head>
 <body id="WebStructure" style="margin:0px;">
 #%env/templates/header.template%# 
-#%env/templates/submenuWebStructure.template%#
 
     <script type="text/javascript" src="js/jquery.colorpicker.js"></script>
 	<script type="text/javascript">
@@ -51,7 +50,7 @@
       });
     </script>
 
-<div id="api"><a href="api/webstructure.xml?about=#[besthost]#"><img src="env/grafics/api.png" width="60" height="40" alt="API" /></a>
+<div id="api"><a href="api/webstructure.xml?about=#[besthost]#"><img src="env/grafics/api.png" alt="API" /></a>
 <span>
 The data that is visualized here can also be retrieved in a XML file, which lists the reference relation between the domains.
 With a GET-property 'about' you get only reference relations about the host that you give in the argument field for 'about'.
@@ -81,21 +80,21 @@ To see a list of all APIs, please visit the <a href="https://wiki.yacy.net/index
 	</dd>
 	<dt>depth</dt>
 	<dd>
-	  <a href="WatchWebStructure_p.html?host=#[host]#&amp;depth=#[depthd]#&amp;width=#[width]#&amp;height=#[height]#&amp;nodes=#[nodes]#&amp;time=#[time]#&amp;colortext=#[colortext]#&amp;colorback=#[colorback]#&amp;colordot0=#[colordot0]#&amp;colordota=#[colordota]#&amp;colorline=#[colorline]#&amp;colorlineend=#[colorlineend]#"><img src="env/grafics/minus.gif" width="11" height="11" alt="minus"/></a>
+	  <a href="WatchWebStructure_p.html?host=#[host]#&amp;depth=#[depthd]#&amp;width=#[width]#&amp;height=#[height]#&amp;nodes=#[nodes]#&amp;time=#[time]#&amp;colortext=#[colortext]#&amp;colorback=#[colorback]#&amp;colordot0=#[colordot0]#&amp;colordota=#[colordota]#&amp;colorline=#[colorline]#&amp;colorlineend=#[colorlineend]#"><img src="env/grafics/minus.gif" alt="minus"/></a>
 	  <input type="text" name="depth" value="#[depth]#" size="1" maxlength="1" />
-      <a href="WatchWebStructure_p.html?host=#[host]#&amp;depth=#[depthi]#&amp;width=#[width]#&amp;height=#[height]#&amp;nodes=#[nodes]#&amp;time=#[time]#&amp;colortext=#[colortext]#&amp;colorback=#[colorback]#&amp;colordot0=#[colordot0]#&amp;colordota=#[colordota]#&amp;colorline=#[colorline]#&amp;colorlineend=#[colorlineend]#"><img src="env/grafics/plus.gif" width="11" height="11" alt="plus" /></a>
+      <a href="WatchWebStructure_p.html?host=#[host]#&amp;depth=#[depthi]#&amp;width=#[width]#&amp;height=#[height]#&amp;nodes=#[nodes]#&amp;time=#[time]#&amp;colortext=#[colortext]#&amp;colorback=#[colorback]#&amp;colordot0=#[colordot0]#&amp;colordota=#[colordota]#&amp;colorline=#[colorline]#&amp;colorlineend=#[colorlineend]#"><img src="env/grafics/plus.gif" alt="plus" /></a>
 	</dd>
 	<dt>nodes</dt>
 	<dd>
-	  <a href="WatchWebStructure_p.html?host=#[host]#&amp;depth=#[depth]#&amp;width=#[width]#&amp;height=#[height]#&amp;nodes=#[nodesd]#&amp;time=#[time]#&amp;colortext=#[colortext]#&amp;colorback=#[colorback]#&amp;colordot0=#[colordot0]#&amp;colordota=#[colordota]#&amp;colorline=#[colorline]#&amp;colorlineend=#[colorlineend]#"><img src="env/grafics/minus.gif" width="11" height="11" alt="minus"/></a>
+	  <a href="WatchWebStructure_p.html?host=#[host]#&amp;depth=#[depth]#&amp;width=#[width]#&amp;height=#[height]#&amp;nodes=#[nodesd]#&amp;time=#[time]#&amp;colortext=#[colortext]#&amp;colorback=#[colorback]#&amp;colordot0=#[colordot0]#&amp;colordota=#[colordota]#&amp;colorline=#[colorline]#&amp;colorlineend=#[colorlineend]#"><img src="env/grafics/minus.gif" alt="minus"/></a>
 	  <input type="text" name="nodes" value="#[nodes]#" size="4" maxlength="4" />
-	  <a href="WatchWebStructure_p.html?host=#[host]#&amp;depth=#[depth]#&amp;width=#[width]#&amp;height=#[height]#&amp;nodes=#[nodesi]#&amp;time=#[time]#&amp;colortext=#[colortext]#&amp;colorback=#[colorback]#&amp;colordot0=#[colordot0]#&amp;colordota=#[colordota]#&amp;colorline=#[colorline]#&amp;colorlineend=#[colorlineend]#"><img src="env/grafics/plus.gif" width="11" height="11" alt="plus"/></a>
+	  <a href="WatchWebStructure_p.html?host=#[host]#&amp;depth=#[depth]#&amp;width=#[width]#&amp;height=#[height]#&amp;nodes=#[nodesi]#&amp;time=#[time]#&amp;colortext=#[colortext]#&amp;colorback=#[colorback]#&amp;colordot0=#[colordot0]#&amp;colordota=#[colordota]#&amp;colorline=#[colorline]#&amp;colorlineend=#[colorlineend]#"><img src="env/grafics/plus.gif" alt="plus"/></a>
 	</dd>
     <dt>time</dt>
 	<dd>
-	  <a href="WatchWebStructure_p.html?host=#[host]#&amp;depth=#[depth]#&amp;width=#[width]#&amp;height=#[height]#&amp;nodes=#[nodes]#&amp;time=#[timed]#&amp;colortext=#[colortext]#&amp;colorback=#[colorback]#&amp;colordot0=#[colordot0]#&amp;colordota=#[colordota]#&amp;colorline=#[colorline]#&amp;colorlineend=#[colorlineend]#"><img src="env/grafics/minus.gif" width="11" height="11" alt="minus"/></a>
+	  <a href="WatchWebStructure_p.html?host=#[host]#&amp;depth=#[depth]#&amp;width=#[width]#&amp;height=#[height]#&amp;nodes=#[nodes]#&amp;time=#[timed]#&amp;colortext=#[colortext]#&amp;colorback=#[colorback]#&amp;colordot0=#[colordot0]#&amp;colordota=#[colordota]#&amp;colorline=#[colorline]#&amp;colorlineend=#[colorlineend]#"><img src="env/grafics/minus.gif" alt="minus"/></a>
 	  <input type="text" name="time" value="#[time]#" size="4" maxlength="4" />
-	  <a href="WatchWebStructure_p.html?host=#[host]#&amp;depth=#[depth]#&amp;width=#[width]#&amp;height=#[height]#&amp;nodes=#[nodes]#&amp;time=#[timei]#&amp;colortext=#[colortext]#&amp;colorback=#[colorback]#&amp;colordot0=#[colordot0]#&amp;colordota=#[colordota]#&amp;colorline=#[colorline]#&amp;colorlineend=#[colorlineend]#"><img src="env/grafics/plus.gif" width="11" height="11" alt="plus"/></a>
+	  <a href="WatchWebStructure_p.html?host=#[host]#&amp;depth=#[depth]#&amp;width=#[width]#&amp;height=#[height]#&amp;nodes=#[nodes]#&amp;time=#[timei]#&amp;colortext=#[colortext]#&amp;colorback=#[colorback]#&amp;colordot0=#[colordot0]#&amp;colordota=#[colordota]#&amp;colorline=#[colorline]#&amp;colorlineend=#[colorlineend]#"><img src="env/grafics/plus.gif" alt="plus"/></a>
 	</dd>
     <dt>size</dt>
 	<dd><input type="text" name="width" value="#[width]#" size="5" maxlength="5" />&nbsp;x&nbsp;<input type="text" name="height" value="#[height]#" size="5" maxlength="5" /></dd>

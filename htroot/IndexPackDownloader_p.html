@@ -8,15 +8,14 @@
   </head>
   <body id="IndexControl">
     #%env/templates/header.template%#
-    #%env/templates/submenuIndexImport.template%#
-
+    
     <h2>YaCy Pack Downloader</h2>
 
 
     <fieldset><legend>Available Packs</legend>
         <table class="table table-striped" summary="Packs: Download Sources">
             <thead class="thead-dark">
-            <tr class="TableHeader"><th width="120">Source</th><th width="360">Repo ID</th><th width="720">File</th><th width="360">Process</th></tr>
+            <tr class="TableHeader"><th>Source</th><th>Repo ID</th><th>File</th><th>Process</th></tr>
             </thead>
             <tbody>
         #{packs-source}#

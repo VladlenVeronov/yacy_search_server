@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" >
+<!DOCTYPE html>
+<html lang="uk">
   <head>
     <title>YaCy '#[clientname]#': Translation Editor</title>
     #%env/templates/metas.template%#
@@ -8,8 +8,7 @@
   <body id="Translator">
 
     #%env/templates/header.template%#
-    #%env/templates/submenuConfig.template%#
-    <h2>Translation Editor</h2>
+        <h2>Translation Editor</h2>
 
     <p>Translate untranslated text of the user interface (current language). The modified translation file is stored in DATA/LOCALE directory.</p>
     <form id="Translation" method="post" action="Translator_p.html" enctype="multipart/form-data" accept-charset="UTF-8">
@@ -32,11 +31,11 @@
               <th style="border-bottom: solid gray;  border-bottom-width: 1px;">Translated Text ( #[targetlang]# )</th></tr>
             #{textlist}#
             <tr>
-              <td style="border-bottom: solid gray;  border-bottom-width: 1px;" valign="top">
+              <td style="border-bottom: solid gray;  border-bottom-width: 1px;">
                 <!--<input type="text" name="sourcetxt" id="sourcetxt#[tokenid]#" size="80" disabled="true" value="#[sourcetxt]#"/>-->
                 <label for="targettxt#[tokenid]#"  >#[sourcetxt]#</label>
               </td>
-              <td style="border-bottom: solid gray;  border-bottom-width: 1px;" valign="top" nowrap>
+              <td style="border-bottom: solid gray;  border-bottom-width: 1px;" nowrap>
                 <input type="text" name="targettxt#[tokenid]#" id="targettxt#[tokenid]#" size="80" value="#[targettxt]#" title="#[targettxt]#" #(filteruntranslated)#disabled::#(/filteruntranslated)#/>#(filteruntranslated)#<button name="editapproved" type="submit" value="#[tokenid]#" class="btn btn-sm"><span class="glyphicon glyphicon-pencil"/></button>::<button name="approve" type="submit" value="#[tokenid]#" class="btn btn-sm"><span class="glyphicon glyphicon-ok-sign" style="color: green"/></button>#(/filteruntranslated)#
               </td>
             </tr>

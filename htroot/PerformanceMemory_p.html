@@ -6,17 +6,15 @@
     <script type="text/javascript" src="js/html.js"></script>
   </head>
   <body id="PerformanceMemory">
-    <script type="text/javascript"><!--
+    <script type="text/javascript">
 	function reloadGraph() {
 	  if(document.forms["optionreloadGraph"].option.checked)
 	  	document.images["graph"].src="PerformanceGraph.png?nopeers=&time="+(new Date()).getTime();
 	  window.status="";
 	}
-	window.setInterval("reloadGraph()", 1000);
-	//--></script>
+	window.setInterval("reloadGraph()", 1000);</script>
     #%env/templates/header.template%#
-    #%env/templates/submenuComputation.template%#
-    <h2>Performance Settings for Memory</h2>
+        <h2>Performance Settings for Memory</h2>
     
     <p><img src="PerformanceGraph.png?nopeers=" id="graph" alt="PerformanceGraph"/></p>
     <form id="optionreloadGraph" method="get"><p>

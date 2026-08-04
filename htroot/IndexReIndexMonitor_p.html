@@ -7,8 +7,7 @@
 	</head>
     <body id="IndexReindexMonitor">
         #%env/templates/header.template%#
-        #%env/templates/submenuIndexControl.template%#
-      <div class="container-fluid">
+              <div class="container-fluid">
        <div class="row">
         <h2>Field Re-Indexing</h2>
         <p>In case that an index schema of the embedded/local index has changed, all documents with missing field entries can be indexed again with a reindex job.</p>
@@ -37,7 +36,7 @@
                 <tr><th>Field</th><th>count</th></tr>
                 #{fieldlist}#
                 <tr>
-                  <td>#[fieldname]#</td> <td align="right">#[fieldscore]#</td>
+                  <td>#[fieldname]#</td> <td>#[fieldscore]#</td>
                 </tr>
                 #{/fieldlist}#
               </table>

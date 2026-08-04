@@ -6,8 +6,7 @@
   </head>
   <body id="ConfigHTCache">
     #%env/templates/header.template%#
-    #%env/templates/submenuMaintenance.template%#
-    <h2>Hypertext Cache Configuration</h2>
+        <h2>Hypertext Cache Configuration</h2>
     <p>
       The HTCache stores content retrieved by the HTTP and FTP protocol. Documents from smb:// and file:// locations are not cached.
       The cache is a rotating cache: if it is full, then the oldest entries are deleted and new one can fill the space.
@@ -32,7 +31,7 @@
           </select></dd>
           <dt><label for="lockTimeout" aria-describedby="timeoutInfo">Concurrent access timeout</label>
           	<span class="info">
-        		<img src="env/grafics/i16.gif" width="16" height="16" alt="Concurrent access timeout info"/>
+        		<img src="env/grafics/i16.gif" alt="Concurrent access timeout info"/>
         		<span class="infobox" id="timeoutInfo">The maximum time to wait for acquiring a synchronization lock on concurrent get/store cache operations. 
         		Beyond this limit, the crawler or proxy falls back to regular remote resource loading.</span>
         	</span>

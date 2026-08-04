@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="uk">
   <head>
     <title>YaCy '#[clientname]#': News Monitor</title>
     #(table)#
@@ -14,8 +14,7 @@
   </head>
   <body id="News">
     #%env/templates/header.template%#
-    #%env/templates/submenuComputation.template%#
-    #(page)#
+        #(page)#
     <h2>Overview</h2>
     ::
     <h2>Incoming&nbsp;News</h2>
@@ -78,8 +77,8 @@
         <input type="submit" name="deletespecific" value="#(page)#::Process Selected News::Delete Selected News::Abort Publication of Selected News::Delete Selected News#(/page)#" />
         <input type="submit" name="deleteall" value="#(page)#::Process All News::Delete All News::Abort Publication of All News::Delete All News#(/page)#" />
       </fieldset>
-      <table border="0">
-        <tr class="TableHeader" valign="bottom">
+      <table>
+        <tr class="TableHeader">
           <td>&nbsp;</td>
           <td>Originator</td>
           <td>Created</td>
@@ -90,13 +89,13 @@
         </tr>
         #{list}#
         <tr class="TableCell#(dark)#Light::Dark::Summary#(/dark)#">
-          <td align="left"><input type="checkbox" name="del_#[id]#" /></td>
-          <td align="left">#[ori]#</td>
-          <td align="left">#[cre]#</td>
-          <td align="left">#[cat]#</td>
-          <td align="left">#[rec]#</td>
-          <td align="right">#[dis]#</td>
-          <td align="left">#[att]#</td>
+          <td><input type="checkbox" name="del_#[id]#" /></td>
+          <td>#[ori]#</td>
+          <td>#[cre]#</td>
+          <td>#[cat]#</td>
+          <td>#[rec]#</td>
+          <td>#[dis]#</td>
+          <td>#[att]#</td>
         </tr>
         #{/list}#
       </table>

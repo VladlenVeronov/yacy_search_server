@@ -1,17 +1,14 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="uk">
   <head>
     <meta charset="UTF-8" />
     <title>YaCy '#[clientname]#': Access Configuration</title>
     #%env/templates/metas.template%#
     <script type="text/javascript">
-      <!--
       function element_clicked(element){
         document.getElementById("key").value=element.id;
         document.getElementById("value").value=element.value;
-      }
-      -->
-    </script>
+      }</script>
     <!-- redirecting browser if port was changed -->
     #(reconnect)#::<meta http-equiv="refresh" content="5; url=http://#[host]#:#[port]#/ConfigBasic.html" />#(/reconnect)#
     <!-- redirecting browser if language was changed -->
@@ -19,8 +16,7 @@
   </head>
   <body id="ConfigBasic">
   #%env/templates/header.template%#
-    #%env/templates/submenuUseCaseAccount.template%#
-    <h2>Basic Configuration</h2>
+        <h2>Basic Configuration</h2>
     #(reconnect)#::
     <p><strong>Your port has changed. Please wait 10 seconds.</strong></p>
     #(/reconnect)#
@@ -38,7 +34,7 @@
       <input type="hidden" name="transactionToken" value="#[transactionToken]#"/>
       <ol>
         <li>
-          <img src="env/grafics/ok.png" height="16" width="16" alt="ok" />&nbsp;Select a language for the interface:<br />
+          <img src="env/grafics/ok.png" alt="ok" />&nbsp;Select a language for the interface:<br />
           <fieldset>
             <input type="radio" name="language" value="browser" id="lang_browser" onchange="this.form.submit()" #(lang_browser)#::checked="checked"#(/lang_browser)# /><label for="lang_browser" title="Use the browser preferred language if available">Browser</label>&nbsp;
             <input type="radio" name="language" value="default" id="lang_en" onchange="this.form.submit()" #(lang_en)#::checked="checked"#(/lang_en)# /><label for="lang_en" #(active_en)#::title="Click to generate translated pages"::class="label-success" title="Active : translated pages are available"#(/active_en)#>English</label>&nbsp;    
@@ -60,7 +56,7 @@
     #(setUseCase)#::
 
     <li>
-          <img src="env/grafics/ok.png" height="16" width="16" alt="ok" />&nbsp;Use Case: what do you want to do with YaCy:<br />
+          <img src="env/grafics/ok.png" alt="ok" />&nbsp;Use Case: what do you want to do with YaCy:<br />
           <fieldset>
           #(switchError)#::<div class="alert alert-danger" role="alert"><p>Can not leave from Intranet Indexing : one or more remote Solr instances are attached and may contain private documents indexed.</p> 
           <p>Please first delete all index entries (see the <a href="IndexControlURLs_p.html">URL Database Administration</a> page) or disconnect the remote Solr instance(s) from YaCy (see the <a href="IndexFederated_p.html">Index Sources &amp; Targets</a> page).</p></div>
@@ -70,7 +66,7 @@
           ::<div class="alert alert-warning" role="alert"><p>One or more remote Solr instances are attached.</p> 
           <p>Please be sure you want to expose the indexed documents in this new mode. You may want to disconnect or change the remote Solr instance(s) attached (see the <a href="IndexFederated_p.html">Index Sources &amp; Targets</a> page).</p></div>
           #(/switchWarning)#
-          <table border="0">
+          <table>
           <tr>
             <td style="width: 256px;"><input type="radio" name="usecase" value="freeworld" id="usecaseFreeworld" #(freeworldChecked)#::checked="checked"#(/freeworldChecked)# /><label for="usecaseFreeworld">Community-based web search</label></td>
               <td style="width: 256px;"><input type="radio" name="usecase" value="portal" id="usecasePortal" #(portalChecked)#::checked="checked"#(/portalChecked)# /><label for="usecasePortal">Search portal for your own web pages</label></td>
@@ -82,9 +78,9 @@
             <td><label for="usecaseIntranet"><img src="env/grafics/usecase_intranet.png" alt="Usecase Intranet" /></label></td>
           </tr>
           <tr>
-            <td valign="top"><label for="usecaseFreeworld">Join and support the global network 'freeworld', search the web with an uncensored user-owned search network</label></td>
-            <td valign="top"><label for="usecasePortal">Your YaCy installation behaves independently from other peers and you define your own web index by starting your own web crawl. This can be used to search your own web pages or to define a topic-oriented search portal.</label></td>
-            <td valign="top"><label for="usecaseIntranet">Create a search portal for your intranet or web pages or your (shared) file system. URLs may be used with http/https/ftp and a local domain name or IP, or with an URL of the form file:///&lt;path&gt; or smb://&lt;server&gt;/&lt;path&gt;<br/>            
+            <td><label for="usecaseFreeworld">Join and support the global network 'freeworld', search the web with an uncensored user-owned search network</label></td>
+            <td><label for="usecasePortal">Your YaCy installation behaves independently from other peers and you define your own web index by starting your own web crawl. This can be used to search your own web pages or to define a topic-oriented search portal.</label></td>
+            <td><label for="usecaseIntranet">Create a search portal for your intranet or web pages or your (shared) file system. URLs may be used with http/https/ftp and a local domain name or IP, or with an URL of the form file:///&lt;path&gt; or smb://&lt;server&gt;/&lt;path&gt;<br/>            
             </td>
           </tr>
           </table>
@@ -93,7 +89,7 @@
         #(/setUseCase)#
 
         <li>
-          #(statusName)#<img src="env/grafics/bad.png" height="16" width="16" alt="warning" />&nbsp;Your peer name has not been customized; please set your own peer name::<img src="env/grafics/ok.png" height="16" width="16" alt="ok" />&nbsp;You may change your peer name#(/statusName)#<br />
+          #(statusName)#<img src="env/grafics/bad.png" alt="warning" />&nbsp;Your peer name has not been customized; please set your own peer name::<img src="env/grafics/ok.png" alt="ok" />&nbsp;You may change your peer name#(/statusName)#<br />
           <fieldset>
             <dl>
               <dt><label for="peername">Peer Name: </label></dt>
@@ -105,7 +101,7 @@
         </li>
 
         <li>
-          #(statusPort)#<img src="env/grafics/bad.png" height="16" width="16" alt="warning" />&nbsp;Your peer cannot be reached from outside (which is not fatal, but would be good for the YaCy network); please open your firewall for this port and/or set a virtual server option in your router to allow connections on this port. Opening a router port is <i>not</i> a YaCy-specific task; you can see instruction videos everywhere in the internet, just search for <a href="http://www.youtube.com/results?search_query=Open+Ports+on+a+Router">Open Ports on a &lt;our-router-type&gt; Router</a> and add your router type as search term. However: if you fail to open a router port, you can nevertheless use YaCy with full functionality, the only function that is missing is on the side of the other YaCy users because they cannot see your peer.::<img src="env/grafics/ok.png" height="16" width="16" alt="ok" />&nbsp;Your peer can be reached by other peers#(/statusPort)#<br />
+          #(statusPort)#<img src="env/grafics/bad.png" alt="warning" />&nbsp;Your peer cannot be reached from outside (which is not fatal, but would be good for the YaCy network); please open your firewall for this port and/or set a virtual server option in your router to allow connections on this port. Opening a router port is <i>not</i> a YaCy-specific task; you can see instruction videos everywhere in the internet, just search for <a href="http://www.youtube.com/results?search_query=Open+Ports+on+a+Router">Open Ports on a &lt;our-router-type&gt; Router</a> and add your router type as search term. However: if you fail to open a router port, you can nevertheless use YaCy with full functionality, the only function that is missing is on the side of the other YaCy users because they cannot see your peer.::<img src="env/grafics/ok.png" alt="ok" />&nbsp;Your peer can be reached by other peers#(/statusPort)#<br />
           <fieldset>
             <dl>
               <dt><label for="port">Peer Port: </label></dt>
@@ -118,7 +114,7 @@
               </dt>
               <dd>
                 <input type="checkbox" name="enableUpnp" id="enableUpnp" #(enabled)#::checked="checked"#(/enabled)# />
-                #(success)#::<img src="env/grafics/bad.png" height="16" width="16" alt="warning" /> Configuration was not successful. This may take a moment.::<img src="env/grafics/ok.png" height="16" width="16" alt="ok" />#(/success)#
+                #(success)#::<img src="env/grafics/bad.png" alt="warning" /> Configuration was not successful. This may take a moment.::<img src="env/grafics/ok.png" alt="ok" />#(/success)#
               </dd>#(/upnp)#
              </dl>
            </fieldset>

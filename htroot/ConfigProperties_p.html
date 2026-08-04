@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="uk">
   <head>
     <title>YaCy '#[clientname]#': Advanced Config</title>
     #%env/templates/metas.template%#
@@ -7,7 +7,6 @@
     	.filtered { display:none; }
     //--> </style>
     <script type="text/javascript">
-      <!--
       function element_clicked(element){
     	var key = element.id.substring(1);
         document.getElementById("key").value = key;
@@ -38,14 +37,11 @@
 	  	document.getElementById("key").value="";
         document.getElementById("value").value="";
         filterList();
-	  }
-      //-->
-    </script>
+	  }</script>
   </head>
   <body id="ConfigAdvanced" onload="filterList()">
   #%env/templates/header.template%#
-  #%env/templates/submenuConfig.template%#
-
+  
   <h2>Advanced Config</h2>
   <p>
     Here are all configuration options from YaCy.

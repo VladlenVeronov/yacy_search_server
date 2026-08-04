@@ -6,19 +6,17 @@
   <script type="text/javascript" src="js/html.js"></script>
   </head>
   <body id="PerformanceQueues">
-    <script type="text/javascript"><!--
+    <script type="text/javascript">
     function reloadGraph() {
       if(document.forms["optionreloadGraph"].option.checked)
         document.images["graph"].src="PerformanceGraph.png?nopeers=&time="+(new Date()).getTime();
       window.status="";
     }
-    window.setInterval("reloadGraph()", 1000);
-    //--></script>
+    window.setInterval("reloadGraph()", 1000);</script>
     #%env/templates/header.template%#
-    #%env/templates/submenuMaintenance.template%#
-    <h2>Performance Settings</h2>
+        <h2>Performance Settings</h2>
 
-    <p><img src="PerformanceGraph.png?nopeers=" id="graph" alt="PerformanceGraph" width="825" height="300"/></p>
+    <p><img src="PerformanceGraph.png?nopeers=" id="graph" alt="PerformanceGraph" height="300"/></p>
     <form id="optionreloadGraph" action="" method="get"><p><input type="checkbox" name="option" id="autoreload"/> <label for="autoreload">refresh graph</label></p></form>
 
     <form action="Performance_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
@@ -61,7 +59,7 @@
                     <label for="diskFreeAutoregulate">Autoregulate</label>
                     <input name="diskFreeAutoregulate" id="diskFreeAutoregulate" type="checkbox" #(diskFreeAutoregulate)#::checked#(/diskFreeAutoregulate)# aria-describedby="autoregulateFreeInfo"/> when absolute minimum limit has been reached.
                       <div class="info" style="float:right">
-                          <img src="env/grafics/i16.gif" width="16" height="16" alt="Free space disk autoregulation info"/>
+                          <img src="env/grafics/i16.gif" alt="Free space disk autoregulation info"/>
                           <div class="infobox" style="right:0px;" id="autoregulateFreeInfo">
                             The autoregulation task performs the following sequence of operations, stopping once free space disk is over the steady-state value :
                             <ol>
@@ -94,7 +92,7 @@
                       <label for="diskUsedAutoregulate">Autoregulate</label>
                       <input name="diskUsedAutoregulate" id="diskUsedAutoregulate" type="checkbox" #(diskUsedAutoregulate)#::checked#(/diskUsedAutoregulate)# aria-describedby="autoregulateUsedInfo"> when absolute maximum limit has been reached.
                       <div class="info" style="float:right">
-                          <img src="env/grafics/i16.gif" width="16" height="16" alt="Used space disk autoregulation info"/>
+                          <img src="env/grafics/i16.gif" alt="Used space disk autoregulation info"/>
                           <div class="infobox" style="right:0px;" id="autoregulateUsedInfo">
                             The autoregulation task performs the following sequence of operations, stopping once used space disk is below the steady-state value:
                             <ol>
@@ -118,12 +116,12 @@
                 <div class="form-group">
                     Memory state : #(observerTrigger)#<span aria-describedby="properStateInfo">proper</span>
                     <span class="info">
-                        <img src="env/grafics/i16.gif" width="16" height="16" alt="Proper state info"/>
+                        <img src="env/grafics/i16.gif" alt="Proper state info"/>
                         <span class="infobox" id="properStateInfo">Enough memory is available for proper operation.</span>
                     </span>::
                     <strong aria-describedby="exhaustedStateInfo">exhausted</strong>
                     <span class="info">
-                        <img src="env/grafics/i16.gif" width="16" height="16" alt="Exhausted state info"/>
+                        <img src="env/grafics/i16.gif" alt="Exhausted state info"/>
                         <span class="infobox" id="exhaustedStateInfo">Within the last eleven minutes, at least four operations have tried to request memory that would have reduced free space within the minimum required.</span>
                     </span>
                     <input type="submit" class="btn btn-warning" name="resetObserver" value="Reset state" title="Manually reset to 'proper' state"/>
@@ -151,25 +149,25 @@
         (current delta is #[crawlPauseProxyCurrent]#/#[crawlPauseLocalsearchCurrent]#/#[crawlPauseRemotesearchCurrent]#
         seconds since last proxy/local-search/remote-search access.)
       </p>
-        <table border="0">
-          <tr class="TableHeader" valign="bottom">
+        <table>
+          <tr class="TableHeader">
             <td>Online Caution Case</td>
             <td>indexer delay (milliseconds) after case occurency</td>
           </tr>
           <tr class="TableCellDark">
             <td>Proxy:</td>
-            <td align="right"><input id="crawlPauseProxy" name="crawlPauseProxy" type="text" size="20" maxlength="100" value="#[crawlPauseProxy]#" /></td>
+            <td><input id="crawlPauseProxy" name="crawlPauseProxy" type="text" size="20" maxlength="100" value="#[crawlPauseProxy]#" /></td>
           </tr>
           <tr class="TableCellDark">
             <td>Local Search:</td>
-            <td align="right"><input id="crawlPauseLocalsearch" name="crawlPauseLocalsearch" type="text" size="20" maxlength="100" value="#[crawlPauseLocalsearch]#" /></td>
+            <td><input id="crawlPauseLocalsearch" name="crawlPauseLocalsearch" type="text" size="20" maxlength="100" value="#[crawlPauseLocalsearch]#" /></td>
           </tr>
           <tr class="TableCellDark">
             <td>Remote Search:</td>
-            <td align="right"><input id="crawlPauseRemotesearch" name="crawlPauseRemotesearch" type="text" size="20" maxlength="100" value="#[crawlPauseRemotesearch]#" /></td>
+            <td><input id="crawlPauseRemotesearch" name="crawlPauseRemotesearch" type="text" size="20" maxlength="100" value="#[crawlPauseRemotesearch]#" /></td>
           </tr>
           <tr class="TableCellLight">
-            <td align="left" colspan="2"><input type="submit" class="btn btn-sm btn-primary" name="onlineCautionSubmit" value="Enter New Parameters" />
+            <td colspan="2"><input type="submit" class="btn btn-sm btn-primary" name="onlineCautionSubmit" value="Enter New Parameters" />
             Changes take effect immediately</td>
           </tr>
         </table>

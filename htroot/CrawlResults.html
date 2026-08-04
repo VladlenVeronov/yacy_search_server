@@ -1,13 +1,12 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="uk">
   <head>
     <title>YaCy '#[clientname]#': Crawl Results</title>
     #%env/templates/metas.template%#
   </head>
   <body id="CrawlResults">
     #%env/templates/header.template%#
-    #%env/templates/submenuCrawlMonitor.template%#
-    
+        
     #(process)#
     <h2>Crawl Results Overview</h2>
     <p>These are monitoring pages for the different indexing queues.</p>
@@ -18,7 +17,7 @@
     since it shows crawl requests from other peers.
     </p>
     <p>Case (7) occurs if pack files are imported</p>
-    <p><img src="env/grafics/indexmonitor.png" width="600" height="308" alt="An illustration how yacy works" /></p>
+    <p><img src="env/grafics/indexmonitor.png" alt="An illustration how yacy works" /></p>
     <p>The image above illustrates the data flow initiated by web index acquisition.
     Some processes occur double to document the complex index migration structure.
     </p>
@@ -76,7 +75,7 @@
     <p><em>Statistics about #[domains]# domains in this stack:</em></p>
     <table >
       <tr class="TableHeader">
-   	<td align="center"></td>
+   	<td></td>
         <td><strong>Domain</strong></td>
         <td><strong>URLs</strong></td>
         <td>Blacklist to use 
@@ -92,7 +91,7 @@
       </tr>
       #{domains}#
       <tr class="TableCell#(dark)#Light::Dark#(/dark)#">
-        <td align="center">
+        <td>
           <form action="#[feedbackpage]#" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
             <div>
               <input type="hidden" name="process" value="#[tabletype]#" />
@@ -127,7 +126,7 @@
     </em></p>
     <table >
       <tr class="TableHeader">
-        <td align="center">
+        <td>
           <form action="#[feedbackpage]#" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
             <div>
               <input type="hidden" name="process" value="#[tabletype]#" />
@@ -147,7 +146,7 @@
       </tr>
       #{indexed}#
       <tr class="TableCell#(dark)#Light::Dark#(/dark)#">
-        <td align="center">
+        <td>
           <form action="#[feedbackpage]#" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
             <div>
               <input type="hidden" name="process" value="#[tabletype]#" />

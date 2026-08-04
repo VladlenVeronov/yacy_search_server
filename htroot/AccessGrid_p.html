@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="uk">
   <head>
     <title>YaCy '#[clientname]#': YaCy Network Access</title>
     #%env/templates/metas.template%#
@@ -10,7 +10,6 @@
     </style>
 
   <script type="text/javascript">
-  <!--
     imagestub = "AccessPicture_p.png?width=1280&height=720&colorback=FFFFFF&amp;colortext=AAAAAA&amp;colorgrid=333333&amp;colordot=33CC33&amp;colorline=555555&ct=5000&coronaangle=";
     imageanimindex = 0;
     imageloadindex = 0;
@@ -42,18 +41,15 @@
         }
         setTimeout("doanimation()", 100);
       }
-    }
-  -->
-  </script>
+    }</script>
   </head>
   <body id="Network">
     #%env/templates/header.template%#
-    #%env/templates/submenuAccessTracker.template%#
-    <h2>Server Access Grid</h2>
+        <h2>Server Access Grid</h2>
     <p>This images shows incoming connections to your YaCy peer and outgoing connections from your peer to other peers and web servers</p>
     <div class="left">
       <p>
-        <a href="AccessPicture_p.png?width=1280&amp;height=720&amp;colorback=FFFFFF&amp;colortext=AAAAAA&amp;colorgrid=333333&amp;colordot=33CC33&amp;colorline=555555"><img id="AccessPicture" src="AccessPicture_p.png?width=1280&amp;height=720&amp;bgcolor=FFFFFF&amp;coronaangle=0" alt="YaCy Access Grid" width="1280" height="720" /></a>
+        <a href="AccessPicture_p.png?width=1280&amp;height=720&amp;colorback=FFFFFF&amp;colortext=AAAAAA&amp;colorgrid=333333&amp;colordot=33CC33&amp;colorline=555555"><img id="AccessPicture" src="AccessPicture_p.png?width=1280&amp;height=720&amp;bgcolor=FFFFFF&amp;coronaangle=0" alt="YaCy Access Grid" /></a>
       </p>
     </div>
     

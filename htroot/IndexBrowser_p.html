@@ -61,8 +61,7 @@ function updatepage(str) {
   </head>
   <body id="IndexControl">
     #%env/templates/header.template%#
-    #%env/templates/submenuWebStructure.template%#
-    <h1>Index Browser</h1>
+        <h1>Index Browser</h1>
     <p>Browse the index of #[ucount]# documents. Enter a host or an URL for a file list or view a list of <a href="IndexBrowser_p.html?hosts=">all hosts</a>#(authorized)#::, <a href="IndexBrowser_p.html?hosts=crawling">only hosts with urls pending in the crawler</a> or <a href="IndexBrowser_p.html?hosts=error">only with load errors</a>#(/authorized)#.</p>
     <form action="IndexBrowser_p.html" id="searchform" method="get" role="search">
     <fieldset class="yacys">
@@ -87,7 +86,7 @@ function updatepage(str) {
       <ol style="list-style-type : none; padding-left: 0px">
        #{list}#
        <li style="float:left; padding:1px 5px 1px 5px;">
-        <div style="width:180px; text-align:left; float: left; white-space:nowrap; overflow:hidden;"><div><img src="env/grafics/#(type)#invisible.png::burn-e.gif::construction.gif#(/type)#" alt="#(type)#::Host has load error(s)::Pending in Crawler#(/type)#" title="#(type)#::Host has load error(s)::Pending in Crawler#(/type)#" style="float:left" width="12" height="8">&nbsp;<a href="IndexBrowser_p.html?path=#[host]#&facetcount=#[count]#">#[host]#</a></div></div>
+        <div style="width:180px; text-align:left; float: left; white-space:nowrap; overflow:hidden;"><div><img src="env/grafics/#(type)#invisible.png::burn-e.gif::construction.gif#(/type)#" alt="#(type)#::Host has load error(s)::Pending in Crawler#(/type)#" title="#(type)#::Host has load error(s)::Pending in Crawler#(/type)#" style="float:left">&nbsp;<a href="IndexBrowser_p.html?path=#[host]#&facetcount=#[count]#">#[host]#</a></div></div>
         <div style="width:120px; text-align:right; float: left; white-space:nowrap; overflow:hidden;"><span class="commit" aria-label="#[count]# valid">#[count]#</span>#(crawler)#::/<span class="pending" aria-label="#[pending]# pending">#[pending]#</span>#(/crawler)##(errors)#::/<span class="info" aria-label="#[exclcount]# excluded">#[exclcount]#</span>/<span class="error" aria-label="#[failcount]# failed">#[failcount]#</span>#(/errors)# URLs</div>
        </li>
        #{/list}#

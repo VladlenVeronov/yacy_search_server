@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="uk">
   <head>
   <title>YaCy '#[clientname]#': Performance of Concurrent Processes</title>
   #%env/templates/metas.template%#
@@ -8,12 +8,11 @@
   </head>
   <body id="PerformanceConcurrency">
   #%env/templates/header.template%#
-  #%env/templates/submenuComputation.template%#
-  <h2>Performance of Concurrent Processes</h2>
+    <h2>Performance of Concurrent Processes</h2>
   
       <fieldset><legend>serverProcessor Objects</legend>
-	    <table border="0">
-	      <tr class="TableHeader" valign="bottom">
+	    <table>
+	      <tr class="TableHeader">
 	        <td>Thread</td>
 	        <td>Queue Size<br />Current</td>
 	        <td>Queue Size<br />Maximum</td>
@@ -28,20 +27,20 @@
 	      </tr>
 	      #{table}#
 	      <tr #(class)#class="TableCellLight"::class="TableCellDark"::class="TableCellSummary"#(/class)#>
-	        <td align="left">#[threadname]#</td>
-	        <td align="right">#[queuesize]#</td>
-	        <td align="right">#[queuesizemax]#</td>
-	        <td align="right">#[executors]#</td>
-	        <td align="right">#[concurrency]#</td>
-	        <td align="right">#[childs]#</td>
-	        <td align="right">#[blockreadtime]#&nbsp;ms</td>
-	        <td align="right">#[blockreadpercent]#%</td>
-	        <td align="right">#[exectime]#&nbsp;ms</td>
-	        <td align="right">#[execpercent]#%</td>
-	        <td align="right">#[blockwritetime]#&nbsp;ms</td>
-	        <td align="right">#[blockwritepercent]#%</td>
-	        <td align="right">#[totalcycles]#</td>
-	        <td align="left">#[longdescr]#</td>
+	        <td>#[threadname]#</td>
+	        <td>#[queuesize]#</td>
+	        <td>#[queuesizemax]#</td>
+	        <td>#[executors]#</td>
+	        <td>#[concurrency]#</td>
+	        <td>#[childs]#</td>
+	        <td>#[blockreadtime]#&nbsp;ms</td>
+	        <td>#[blockreadpercent]#%</td>
+	        <td>#[exectime]#&nbsp;ms</td>
+	        <td>#[execpercent]#%</td>
+	        <td>#[blockwritetime]#&nbsp;ms</td>
+	        <td>#[blockwritepercent]#%</td>
+	        <td>#[totalcycles]#</td>
+	        <td>#[longdescr]#</td>
 	      </tr>
 	      #{/table}#
 	    </table>

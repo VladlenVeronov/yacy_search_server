@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="uk">
   <head>
     <title>YaCy '#[clientname]#': Table Viewer</title>
     #(showtable)#::
@@ -7,7 +7,6 @@
     #(/showtable)#
     #%env/templates/metas.template%#
     <script type="text/javascript">
-    <!--
     function setall(name, check){
         var selectForm = document.forms.namedItem(name);
         var count = selectForm.elements["num"].value;
@@ -20,16 +19,13 @@
         for(i = 0; i < count; i++) {
             selectForm.elements["item_" + i].checked = check;
         }
-    }
-    -->
-    </script>
+    }</script>
     <script type="text/javascript" src="js/sorttable.js"></script>
   </head>
   <body id="Tables">
 
     #%env/templates/header.template%#
-    #%env/templates/submenuConfig.template%#
-    
+        
 <script type="text/javascript">
 //<![CDATA[
 if (window.location.search.length > 1) {
@@ -69,8 +65,8 @@ document.write("<div id=\"api\"><a href=\"/Tables_p.xml" + window.location.searc
     <form action="Tables_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8" id="tablelisting" name="tablelisting">
       <fieldset>
       <legend>Table Editor: showing table '#[table]#'</legend>
-      <table class="sortable" border="0">
-        <tr class="TableHeader" valign="bottom">
+      <table class="sortable">
+        <tr class="TableHeader">
           <td><input type="checkbox" name="allswitch" onclick="setall(this.form.name, this.value)" /></td>
           <td>PK</td>
           #{columns}#
@@ -79,10 +75,10 @@ document.write("<div id=\"api\"><a href=\"/Tables_p.xml" + window.location.searc
         </tr>
         #{list}#
         <tr class="TableCell#(dark)#Light::Dark::Summary#(/dark)#">
-          <td align="left"><input type="checkbox" name="item_#[count]#" value="pk_#[pk]#" /></td>
+          <td><input type="checkbox" name="item_#[count]#" value="pk_#[pk]#" /></td>
           <td><a href="Tables_p.html?editrow=pk_#[pk]#&table=#[table]#">#[pk]#</a></td>
           #{columns}#
-          <td align="left">#[cell]#</td>
+          <td>#[cell]#</td>
           #{/columns}#
         </tr>
         #{/list}#

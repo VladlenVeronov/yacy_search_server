@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="uk">
   <head>
     <title>YaCy '#[clientname]#': Index Sharing</title>
     #%env/templates/metas.template%#
@@ -15,8 +15,8 @@
       The local index currently consists of (at least) #[wcount]# reverse word indexes and #[ucount]# URL references
     </p>
     <form action="IndexShare_p.html" method="get" accept-charset="UTF-8">
-      <table border="0" cellpadding="6" cellspacing="0">
-        <tr valign="top" bgcolor="#CCDDCC">
+      <table>
+        <tr>
         <td>Index:&nbsp;</td>
         <td>
         <input type="checkbox" name="distribute" value="" align="top" #(distributecheck)#::checked="checked" #(/distributecheck)#/>distribute&nbsp;<br />
@@ -35,11 +35,11 @@
         </tr>
       </table>
         
-      <table border="0" cellpadding="0" cellspacing="0">
-        <tr valign="top">
-          <td width="240"><center>#[dtable]#</center></td>
-          <td bgcolor="#889988" width="1px"></td>
-          <td width="240"><center>#[rtable]#</center></td>
+      <table>
+        <tr>
+          <td><center>#[dtable]#</center></td>
+          <td></td>
+          <td><center>#[rtable]#</center></td>
         </tr>
       </table>
     </form>

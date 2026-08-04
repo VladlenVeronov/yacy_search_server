@@ -8,15 +8,14 @@
   </head>
   <body id="IndexControl">
     #%env/templates/header.template%#
-    #%env/templates/submenuIndexImport.template%#
-
+    
     <h2>YaCy Pack Manager</h2>
 
 
     <fieldset><legend>Pack Folders</legend>
         <table class="table table-striped" summary="Packs: Hold List">
             <thead class="thead-dark">
-            <tr class="TableHeader"><th width="720">Packs: Hold List</th><th width="180">Size (KB)</th><th>Process</th></tr>
+            <tr class="TableHeader"><th>Packs: Hold List</th><th>Size (KB)</th><th>Process</th></tr>
             </thead>
             <tbody>
         #{packs-hold}#
@@ -27,7 +26,7 @@
 
         <table class="table table-striped" summary="Packs: Load List">
             <thead class="thead-dark">
-            <tr class="TableHeader"><th width="720">Packs: Load List</th><th width="180">Size (KB)</th><th>Process</th></tr>
+            <tr class="TableHeader"><th>Packs: Load List</th><th>Size (KB)</th><th>Process</th></tr>
             </thead>
             <tbody>
         #{packs-load}#
@@ -37,7 +36,7 @@
 
         <table class="table table-striped" summary="Packs: Loaded List">
             <thead class="thead-dark">
-            <tr class="TableHeader"><th width="720">Packs: Loaded List</th><th width="180">Size (KB)</th><th>Process</th></tr>
+            <tr class="TableHeader"><th>Packs: Loaded List</th><th>Size (KB)</th><th>Process</th></tr>
             </thead>
             <tbody>
         #{packs-loaded}#

@@ -8,8 +8,7 @@
   </head>
   <body id="IndexControl">
     #%env/templates/header.template%#
-    #%env/templates/submenuIndexImport.template%#
-
+    
     <h2>YaCy Pack Generator</h2>
     <p>The local index currently contains #[ucount]# documents, only #[ucount200]# exportable with status code 200 - the remaining are error documents.</p>
 
@@ -72,7 +71,7 @@
         <dd><input type="text" name="exportquery" value="*:*" size="20" maxlength="250"  class="form-control"/>&nbsp;*:* (default) is a catch-all; format: <field-name>:<solr-pattern>
         </dd>
         <dt class="TableCellDark">Export Format</dt>
-        <dd><span class="info" style="float:right"><img src="env/grafics/i16.gif" width="16" height="16" alt="info"/><span style="right:0px;">
+        <dd><span class="info" style="float:right"><img src="env/grafics/i16.gif" alt="info"/><span style="right:0px;">
             This JSON is an elasticsearch index dump format and can be bulk-imported to elasticsearch. Here is an example for opensearch, using docker:<br />
             Start docker container of opensearch:<br />
             <code>docker run --name opensearch -p 9200:9200 -d -e OPENSEARCH_JAVA_OPTS="-Xms2G -Xmx2G" -e discovery.type=single-node -e DISABLE_SECURITY_PLUGIN=true -v $(pwd)/opensearch_data:/usr/share/opensearch/data opensearchproject/opensearch:latest</code><br />
@@ -125,7 +124,7 @@
     #(/lurlexporterror)#
 
     <fieldset><legend>Pack List</legend>
-        <table border="0" summary="Pack List Archive">
+        <table summary="Pack List Archive">
             <tr class="TableHeader"><td>Pack</td><td>Process</td><td>Size (KB)</td></tr>
         #{packs}#
             <tr class="TableCell#(dark)#Light::Dark#(/dark)#"><td>#[file]#</td><td>#[type]#</td><td>#[size]#</td></tr>

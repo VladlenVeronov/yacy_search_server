@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="uk">
   <head>
     <title>YaCy '#[clientname]#': Blacklist Administration</title>
     #%env/templates/metas.template%#
@@ -17,8 +17,7 @@
   </head>
   <body id="Blacklist"#(disabled)##(edit)# onload="switchTargetBlacklist('');"::#(/edit)#::#(/disabled)#>
     #%env/templates/header.template%#
-    #%env/templates/submenuBlacklist.template%#
-  
+      
     <h2>Blacklist Administration</h2>
     <p>
       This function provides an URL filter to the proxy; any blacklisted URL is blocked
@@ -97,7 +96,7 @@
         <p>These are the domain name/path patterns in <strong><em>#[currentBlacklist]#</em></strong>:</p>
         <div>
           <input type="hidden" name="currentBlacklist" value="#[currentBlacklist]#" />
-          <table border="0">
+          <table>
             <tr class="TableHeader">
               <td></td>
               <td><strong>Blacklist Pattern</strong></td>

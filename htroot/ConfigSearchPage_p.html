@@ -11,7 +11,6 @@
 
 <body id="ConfigSearchPage" >
 #%env/templates/header.template%#
-#%env/templates/submenuDesign.template%#
 
   <h2>Search Result Page Layout Configuration</h2>
   <p>
@@ -131,7 +130,7 @@
                             <li><h3 id="locationTitle">Location</h3></li>  
                             #(search.navigation.location)#::
                             <li>
-                              <img src="env/grafics/earthsearch.png" style="width:100%" height="86" alt="earthsearchlogo" /><br/>
+                              <img src="env/grafics/earthsearch.png" style="width:100%" alt="earthsearchlogo" /><br/>
                               show search results on map
                             </li>#(/search.navigation.location)#                                
                           </ul></td>
@@ -264,7 +263,7 @@ var solr= $.getJSON("solr/collection1/select?q=*:*&start=0&rows=0&wt=json&facet=
 					</span>
 					<div class="searchresults">
                       <h4 class="linktitle">
-                        <img width="16" height="16" src="env/grafics/dfltfvcn.ico" class="favicon" alt="" title="Website favicon"/>
+                        <img src="env/grafics/dfltfvcn.ico" class="favicon" alt="" title="Website favicon"/>
                         <a href="yacysearch.html" target="LayouTest">Title of Result</a>
                       </h4>
                     <p class="snippet">
@@ -294,7 +293,7 @@ var solr= $.getJSON("solr/collection1/select?q=*:*&start=0&rows=0&wt=json&facet=
                           <td><span role="separator" aria-orientation="vertical">&nbsp;|&nbsp;</span><a id="picturesLink" href="yacysearch.html" target="LayouTest">Pictures</a></td>
                           <td><span role="separator" aria-orientation="vertical">&nbsp;|&nbsp;</span><a id="cacheLink" href="CacheResource_p.html" target="LayouTest">Cache</a></td>
                           <td><span role="separator" aria-orientation="vertical">&nbsp;|&nbsp;</span><a id="proxyLink" href="proxy.html" target="LayouTest">View via Proxy</a></td>
-                          <td><span role="separator" aria-orientation="vertical">&nbsp;|&nbsp;</span><a id="browseIndexLink" href="IndexBrowser_p.html" target="LayouTest"><img src="env/grafics/minitree.png" width="15" height="8" title="Browse index" alt="Browse index"/></a></td>
+                          <td><span role="separator" aria-orientation="vertical">&nbsp;|&nbsp;</span><a id="browseIndexLink" href="IndexBrowser_p.html" target="LayouTest"><img src="env/grafics/minitree.png" title="Browse index" alt="Browse index"/></a></td>
                           <td><span role="separator" aria-orientation="vertical">&nbsp;|&nbsp;</span><a id="snapshotsLink" href="yacysearch.html" target="LayouTest">JPG Snapshot</a></td>
                           #(search.result.show.ranking)#::<td><span role="separator" aria-orientation="vertical">&nbsp;|&nbsp;</span><span title="Raw ranking score value">Ranking: 1.12195955E9</span>#(/search.result.show.ranking)#
                         </tr>

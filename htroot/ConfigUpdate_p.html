@@ -6,8 +6,7 @@
   </head>
   <body style="margin:0px;">
     #%env/templates/header.template%#
-    #%env/templates/submenuMaintenance.template%#
-	<h2>System Update</h2>
+    	<h2>System Update</h2>
 	
 	#(deploys)#::Release will be installed. Please wait.#(/deploys)#
 	
@@ -20,7 +19,7 @@
       <dl>
       <dt>Current installed Release</dt>
       <dd>#[versionpp]#</dd>
-      <dt><br />Available Releases (<a href="https://github.com/yacy/yacy_search_server/commits/master" target="_blank">changelog</a> and <a href="https://github.com/yacy/yacy_search_server/commits/master.atom" target="_blank"><img width="16" height="16" src="env/grafics/rss.png"> RSS feed</a>)</dt>
+      <dt><br />Available Releases (<a href="https://github.com/yacy/yacy_search_server/commits/master" target="_blank">changelog</a> and <a href="https://github.com/yacy/yacy_search_server/commits/master.atom" target="_blank"><img src="env/grafics/rss.png"> RSS feed</a>)</dt>
       <dd><form action="ConfigUpdate_p.html" method="get" accept-charset="UTF-8"><p>
         &nbsp;<select name="releasedownload">
         #{availreleases}#

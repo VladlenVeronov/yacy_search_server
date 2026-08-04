@@ -1,13 +1,12 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="uk">
   <head>
     <title>YaCy '#[clientname]#': Parser Errors</title>
     #%env/templates/metas.template%#
   </head>
   <body id="IndexCreateIndexingQueue">
     #%env/templates/header.template%#
-    #%env/templates/submenuCrawlMonitor.template%#
-    <h2>Rejected URLs</h2>
+        <h2>Rejected URLs</h2>
     
     #(rejected)#
     ::
@@ -25,7 +24,7 @@
       </fieldset>
     </form>
     <p>There are #[num]# entries in the rejected-queue:</p>
-    <table border="0">
+    <table>
       <colgroup>
         <col width="60" span="2" />
         <col span="2" />

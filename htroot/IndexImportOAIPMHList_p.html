@@ -6,7 +6,6 @@
     #%env/templates/metas.template%#
     #(refresh)#::<meta http-equiv="REFRESH" content="6" />#(/refresh)#
 	<script type="text/javascript">
-    <!--
 	// The chrome browser is getting the wrong value if we try to get the value inside the script "var checkStatus=inputs.elements[0].checked;" - so now the value is a parameter
 	function checkAll (formToCheckAll, checkStatus) {
 	var inputs=document.getElementById(formToCheckAll);	
@@ -14,9 +13,7 @@
 	for (var i =0; i < inputs.elements.length; i++) {
 			inputs.elements[i].checked = checkStatus;
 		}
-    }
-    -->
-    </script>
+    }</script>
     <script type="text/javascript" src="js/sorttable.js"></script>
   </head>
   <body>
@@ -35,7 +32,7 @@
       </tr>
       #{table}#
       <tr class="TableCell#(dark)#Light::Dark#(/dark)#">
-        <td align="left"><input type="checkbox" name="item_#[count]#" value="mark_#[source]#" /></td>
+        <td><input type="checkbox" name="item_#[count]#" value="mark_#[source]#" /></td>
         <td>#[loadurl]#</td>
       </tr>
       #{/table}#

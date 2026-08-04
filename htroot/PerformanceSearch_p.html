@@ -1,19 +1,18 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="uk">
   <head>
   <title>YaCy '#[clientname]#': Performance Settings of Search Sequence</title>
   #%env/templates/metas.template%#
   </head>
   <body id="PerformanceSearch">
     #%env/templates/header.template%#
-    #%env/templates/submenuComputation.template%#
-    <h2>Search Sequence Timing</h2>
+        <h2>Search Sequence Timing</h2>
     
     <p>
       <strong>Timing results of latest search request:</strong>
     </p>
-    <table border="0">
-      <tr class="TableHeader" valign="bottom">
+    <table>
+      <tr class="TableHeader">
         <td>Query</td>
         <td>Event</td>
         <td>Comment</td>
@@ -23,7 +22,7 @@
         <td>Result-Count</td>
       </tr>
     #{table}#
-      <tr class="TableCellDark" valign="bottom">
+      <tr class="TableCellDark">
         <td>#[query]#</td>
         <td>#[event]#</td>
         <td>#[comment]#</td>
