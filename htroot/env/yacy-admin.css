@@ -1295,3 +1295,30 @@ body.yg-admin {
 .yg-main dl { display: grid; grid-template-columns: minmax(140px, auto) 1fr; gap: 4px 12px; margin: 0 0 12px; }
 .yg-main dl > dt { color: var(--yg-text-2); font-weight: 500; font-size: 13px; }
 .yg-main dl > dd { margin: 0; font-size: 13px; }
+
+
+/* --- hint icons (Status.html, others) --- */
+.yg-main dl.hint-list,
+.yg-main .yg-card dl { grid-template-columns: 32px 1fr; }
+.yg-main .hintIcon { display: flex; align-items: flex-start; justify-content: center; padding-top: 2px; }
+.yg-main .hint { color: var(--yg-text); font-size: 13px; line-height: 1.5; }
+.yg-hint-icon { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 6px; }
+.yg-hint-icon--warn { background: #fef3c7; color: #b45309; }
+.yg-hint-icon--ok   { background: #d1fae5; color: #047857; }
+.yg-hint-icon--info { background: #dbeafe; color: #1d4ed8; }
+
+/* PerformanceGraph.png / NetworkHistory.png — old PNG plots overflow container.
+   Force sensible max heights so they don't dominate the Status page. */
+.yg-main #graph,
+.yg-main img[src*="PerformanceGraph"],
+.yg-main img[src*="NetworkHistory"] {
+  max-height: 260px;
+  object-fit: contain;
+  background: #ffffff;
+}
+
+/* Legacy SubMenu (bootstrap-3 submenu shown alongside sidebar) —
+   hide across all admin pages, replaced by yg-nav sidebar. */
+.yg-main > .SubMenu,
+.yg-main .SubMenu,
+.SubMenu { display: none !important; }

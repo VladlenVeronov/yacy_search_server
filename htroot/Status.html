@@ -1,11 +1,10 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="uk">
   <head>
     #(forwardToConfigBasic)#::<meta http-equiv="REFRESH" content="0; url=ConfigBasic.html" />#(/forwardToConfigBasic)#
     <title>YaCy '#[clientname]#': Console Status</title>
     #%env/templates/metas.template%#
-    <script type="text/javascript">
-      <!--
+    <script>
       function loadBanner() {
         for (var i = 0; i < document.images.length; i++) {
           if (document.images[i].src.indexOf("Banner.png") > 0) {
@@ -22,19 +21,11 @@
         loaderBanner = window.setInterval("loadBanner()", 20000);
         window.setInterval("reloadGraph()", 8000);
       }
-      -->
     </script>
   </head>
   <body onload="init();">
 	#%env/templates/header.template%#
-    #%env/templates/submenuComputation.template%#
-    #(showPrivateTable)#
-    <div class="alert alert-info" style="margin-bottom:14px;">
-      <a href="Status.html?login=">Увійти як адмін, щоб побачити повний статус →</a>
-    </div>
-    ::
-    #(/showPrivateTable)#
-
+    
     <div class="yg-pagehead">
       <div>
         <h1>Статус системи</h1>
@@ -66,81 +57,68 @@
     <!-- urgent -->
 
     #(urgentSetPassword)#::
-    <dt class="hintIcon"><img src="env/grafics/bad.png" width="32" height="32" alt="bad" /></dt>
-    <dd class="hint"><strong>Your settings are _not_ protected!</strong>
-    Please open the <a href="ConfigAccounts_p.html">accounts configuration</a> page <strong>immediately</strong>
-    and set an administration password.
+    <dt class="hintIcon"><span class="yg-hint-icon yg-hint-icon--warn" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg></span></dt>
+    <dd class="hint"><strong>Налаштування не захищено!</strong> Негайно відкрийте <a href="ConfigAccounts_p.html">Налаштування облікових записів</a> і встановіть пароль адміністратора.
     </dd>
     #(/urgentSetPassword)#
 
     #(urgentStatusVirgin)#::
-    <dt class="hintIcon"><img src="env/grafics/bad.png" width="32" height="32" alt="bad"/></dt>
-    <dd class="hint">You have not published your peer seed yet. This happens automatically, just wait.
+    <dt class="hintIcon"><span class="yg-hint-icon yg-hint-icon--warn" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg></span></dt>
+    <dd class="hint">Peer seed ще не опубліковано. Це відбудеться автоматично, зачекайте.
     </dd>
     #(/urgentStatusVirgin)#
     
     #(hintStatusPrivate)#::
-    <dt class="hintIcon"><img src="env/grafics/bad.png" width="32" height="32" alt="idea"/></dt>
-    <dd class="hint">Your network configuration is in private mode. Your peer seed will not be published.
+    <dt class="hintIcon"><span class="yg-hint-icon yg-hint-icon--warn" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg></span></dt>
+    <dd class="hint">Мережева конфігурація у приватному режимі — peer seed не буде опубліковано.
     </dd>
     #(/hintStatusPrivate)#
    
     <!-- warnings -->
     
     #(warningUnrestrictedLocalAccess)#::
-    <dt class="hintIcon"><img src="env/grafics/bad.png" width="32" height="32" alt="bad"/></dt>
-    <dd class="hint">Access is unrestricted from localhost (this includes administration features). 
-    	Please check the <a href="ConfigAccounts_p.html">accounts configuration</a> page to ensure that the settings match the security level you need.</dd>
+    <dt class="hintIcon"><span class="yg-hint-icon yg-hint-icon--warn" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg></span></dt>
+    <dd class="hint">Доступ з localhost необмежений (включно з адмін-функціями). Перевірте <a href="ConfigAccounts_p.html">Облікові записи</a>, щоб налаштування відповідали потрібному рівню безпеки.</dd>
     #(/warningUnrestrictedLocalAccess)#
     
     #(warningGoOnline)#::
-    <dt class="hintIcon"><img src="env/grafics/bad.png" width="32" height="32" alt="bad"/></dt>
-    <dd class="hint">The peer must go online to get a peer address.
+    <dt class="hintIcon"><span class="yg-hint-icon yg-hint-icon--warn" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg></span></dt>
+    <dd class="hint">Peer має підключитись до мережі, щоб отримати адресу.
     </dd>
     #(/warningGoOnline)#
     
     #(warningStatusJunior)#::
-    <dt class="hintIcon"><img src="env/grafics/bad.png" width="32" height="32" alt="bad"/></dt>
-    <dd class="hint">You cannot be reached from outside.
-    A possible reason is that you are behind a firewall, NAT or Router.
-    But you can <a href="index.html">search the internet</a> using the other peers'
-    global index on your own search page.
-    We encourage you to open your firewall for the port you configured (usually: 8090),
-    or to set up a 'virtual server' in your router settings (often called DMZ).
-    Please be fair, contribute your own index to the global index.
+    <dt class="hintIcon"><span class="yg-hint-icon yg-hint-icon--warn" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg></span></dt>
+    <dd class="hint">Ваш вузол недоступний ззовні — імовірно за firewall, NAT або роутером. Пошук у інтернеті все одно працює через глобальний індекс інших peer-ів. Щоб брати участь у мережі — відкрийте порт (типово: 8090) або налаштуйте virtual server (DMZ).
     </dd>
     #(/warningStatusJunior)#
     
     #(warningDiskSpaceLow)#::
-    <dt class="hintIcon"><img src="env/grafics/bad.png" width="32" height="32" alt="bad"/></dt>
-    <dd class="hint">Free disk space is lower than #[minSpace]#. Crawling has been disabled. Please fix
-    it as soon as possible and restart YaCy.
+    <dt class="hintIcon"><span class="yg-hint-icon yg-hint-icon--warn" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg></span></dt>
+    <dd class="hint">Вільне місце на диску нижче #[minSpace]#. Скан вимкнено. Виправте якнайшвидше і перезапустіть YaCy.
     </dd>
     #(/warningDiskSpaceLow)#
     
     #(warningMemoryLow)#::
-    <dt class="hintIcon"><img src="env/grafics/bad.png" width="32" height="32" alt="bad"/></dt>
-    <dd class="hint">Free memory is lower than #[minSpace]#. DHT-in has been disabled. Please fix
-    it as soon as possible and restart YaCy.
+    <dt class="hintIcon"><span class="yg-hint-icon yg-hint-icon--warn" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg></span></dt>
+    <dd class="hint">Вільна пам'ять нижче #[minSpace]#. DHT-in вимкнено. Виправте якнайшвидше і перезапустіть YaCy.
     </dd>
     #(/warningMemoryLow)#
     
     #(warningCrawlPaused)#::
-    <dt class="hintIcon"><img src="env/grafics/bad.png" width="32" height="32" alt="bad"/></dt>
-    <dd class="hint">Crawling is paused! If the crawling was paused automatically, please check your disk space.
+    <dt class="hintIcon"><span class="yg-hint-icon yg-hint-icon--warn" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg></span></dt>
+    <dd class="hint">Скан на паузі! Якщо його призупинено автоматично — перевірте вільне місце на диску.
     </dd>
     #(/warningCrawlPaused)#
     
      <!-- hints -->
     
     #(hintVersionAvailable)#::
-    <dt class="hintIcon"><img src="env/grafics/idea.png" width="32" height="32" alt="idea"/></dt>
-    <dd class="hint">Latest public version is v#[latestVersion]#.
-      You can download a more recent version of YaCy. Click here to install this update and restart YaCy: 
+    <dt class="hintIcon"><span class="yg-hint-icon yg-hint-icon--info" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></span></dt>
+    <dd class="hint">Доступна нова версія YaCy v#[latestVersion]#. Натисніть, щоб встановити оновлення і перезапустити YaCy: 
       <form action="Status.html" method="get" class="PeerControl" accept-charset="UTF-8">
         <button type="submit" name="aquirerelease" class="btn btn-primary" value="Update YaCy">
-          <img src="env/grafics/lockclose.png" alt="lock icon"/>
-          Install YaCy v#[latestVersion]#
+          Встановити YaCy v#[latestVersion]#
         </button>
       </form>
     </dd>
@@ -156,54 +134,52 @@
     -->
     
     #(hintStatusSenior)#::
-    <dt class="hintIcon"><img src="env/grafics/good.png" width="32" height="32" alt="good"/></dt>
-    <dd class="hint">You are running a server in senior mode and you support the global internet index,
-    which you can also <a href="index.html">search yourself</a>.
+    <dt class="hintIcon"><span class="yg-hint-icon yg-hint-icon--ok" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></span></dt>
+    <dd class="hint">Вузол працює у senior-режимі і підтримує глобальний індекс — <a href="index.html">шукайте у ньому</a> самі.
     </dd>
     #(/hintStatusSenior)#
     
     #(hintStatusPrincipal)#::
-    <dt class="hintIcon"><img src="env/grafics/good.png" width="32" height="32" alt="good"/></dt>
-    <dd class="hint">You have a principal peer because you publish your seed-list to a public accessible server
-    where it can be retrieved using the URL <a href="#[seedURL]#">#[seedURL]#</a>.
+    <dt class="hintIcon"><span class="yg-hint-icon yg-hint-icon--ok" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></span></dt>
+    <dd class="hint">Ваш peer має статус principal — seed-list публікується на публічному сервері за URL <a href="#[seedURL]#">#[seedURL]#</a>.
     </dd>
     #(/hintStatusPrincipal)#
     
     #(hintCrawlStart)#::
-    <dt class="hintIcon"><img src="env/grafics/idea.png" width="32" height="32" alt="idea"/></dt>
-    <dd class="hint">Your Web Page Indexer is idle. You can start your own web crawl <a href="CrawlStartSite.html">here</a>.
+    <dt class="hintIcon"><span class="yg-hint-icon yg-hint-icon--info" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></span></dt>
+    <dd class="hint">Веб-індексатор простоює. Ви можете <a href="CrawlStartSite.html">запустити власний скан</a>.
     </dd>
     #(/hintCrawlStart)#
     
     #(hintCrawlMonitor)#::
-    <dt class="hintIcon"><img src="env/grafics/idea.png" width="32" height="32" alt="idea"/></dt>
-	<dd class="hint">Your Web Page Indexer is busy. You can <a href="Crawler_p.html">monitor your web crawl</a> here.
+    <dt class="hintIcon"><span class="yg-hint-icon yg-hint-icon--info" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></span></dt>
+	<dd class="hint">Веб-індексатор зайнятий. <a href="Crawler_p.html">Моніторинг скана</a>.
     </dd>
     #(/hintCrawlMonitor)#
     
     #(hintSupport)#::
-    <dt class="hintIcon"><img src="env/grafics/idea.png" width="32" height="32" alt="idea"/></dt>
-	<dd class="hint">If you need professional support, please write to <tt>support@yacy.net</tt><br>For community support, please visit our <a href="https://community.searchlab.eu" target="_blank">forum</a>.
+    <dt class="hintIcon"><span class="yg-hint-icon yg-hint-icon--info" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></span></dt>
+	<dd class="hint">Технічна підтримка: <a href="mailto:info@vir.group">info@vir.group</a>. Спільнота YaCy: <a href="https://community.searchlab.eu" target="_blank">community.searchlab.eu</a>.
     </dd>
     #(/hintSupport)#
     
     <!-- Social Networking -->
     <!--
-    <dt class="hintIcon"><img src="env/grafics/idea.png" width="32" height="32" alt="idea"/></dt>
+    <dt class="hintIcon"><span class="yg-hint-icon yg-hint-icon--info" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></span></dt>
     <dd class="hint"><a href="http://twitter.com/yacy_search"><img src="env/grafics/twitter_followme.png" alt="Follow YaCy on Twitter"/></a>
     </dd>
     -->
     
     <!-- templates
     #(hint)#::
-    <dt class="hintIcon"><img src="env/grafics/idea.png" width="32" height="32" alt="idea"/></dt>
+    <dt class="hintIcon"><span class="yg-hint-icon yg-hint-icon--info" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></span></dt>
     <dd class="hint">
     </dd>
     #(/hint)#
     
     
     #(hint)#::
-    <dt class="hintIcon"><img src="env/grafics/good.png" width="32" height="32" alt="good"/></dt>
+    <dt class="hintIcon"><span class="yg-hint-icon yg-hint-icon--ok" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></span></dt>
     <dd class="hint">
     </dd>
     #(/hint)#
@@ -215,7 +191,7 @@
     #(/hint)#
     
     #(hint)#::
-    <dt class="hintIcon"><img src="env/grafics/bad.png" width="32" height="32" alt="bad" /></dt>
+    <dt class="hintIcon"><span class="yg-hint-icon yg-hint-icon--warn" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg></span></dt>
     <dd class="hint">
     </dd>
     #(/hint)#
