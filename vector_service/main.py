@@ -27,6 +27,10 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="YACY Vector Service", version="0.1.0", lifespan=lifespan)
 Instrumentator().instrument(app).expose(app)
 
+# Code-RAG router (yacy-fork source semantic search).
+from code_rag import router as code_router
+app.include_router(code_router)
+
 import redis.asyncio as _redis
 import json as _cjson
 import os as _cos
