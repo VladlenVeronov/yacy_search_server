@@ -302,10 +302,6 @@ body.yg-admin {
 .yg-main .col-sm-3.sidebar,
 .yg-main .col-md-2.sidebar { display: none !important; }
 
-.yg-main h1 { font-size: 24px; font-weight: 600; margin: 0 0 8px; color: var(--yg-text); }
-.yg-main h2 { font-size: 18px; font-weight: 600; margin: 0 0 10px; color: var(--yg-text); }
-.yg-main h3 { font-size: 15px; font-weight: 600; margin: 0 0 8px; color: var(--yg-text); }
-
 .yg-card {
   background: var(--yg-surface);
   border: 1px solid var(--yg-border);
@@ -1258,3 +1254,44 @@ body.yg-admin {
   /* topbar — even tighter */
   .yg-topbar { padding: 0 8px; gap: 4px; }
 }
+
+/* --- 2026-08-04 global fixes for legacy admin pages --- */
+/* Legacy tables (Crawler_p, IndexBrowser_p, etc.) overflow container on
+   narrow columns. Wrap in horizontal scroll instead of clipping. */
+.yg-main table,
+.yg-main .table { max-width: 100%; }
+.yg-main fieldset table,
+.yg-main .content table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+/* Legacy fieldset+legend used as a section container — normalize spacing
+   so it doesn't nest deeper than the new .yg-card blocks around it. */
+.yg-main fieldset {
+  border: 1px solid var(--yg-border);
+  border-radius: var(--yg-radius);
+  padding: 16px 20px;
+  margin: 0 0 16px;
+  background: var(--yg-surface);
+}
+.yg-main fieldset legend {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--yg-text-2);
+  padding: 0 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* Neutralise deprecated inline float:right — turn into flex where possible.
+   Rule targets container that hosts a floated child; forces the child
+   to sit alongside instead of overlapping the following block. */
+.yg-main .form-group > [style*="float:right"],
+.yg-main div > [style*="float:right"] {
+  float: none !important;
+  margin-left: auto;
+}
+
+/* Legacy <dl>/<dt>/<dd> descriptions in old admin pages — keep them
+   readable at narrow widths without overflow. */
+.yg-main dl { display: grid; grid-template-columns: minmax(140px, auto) 1fr; gap: 4px 12px; margin: 0 0 12px; }
+.yg-main dl > dt { color: var(--yg-text-2); font-weight: 500; font-size: 13px; }
+.yg-main dl > dd { margin: 0; font-size: 13px; }
