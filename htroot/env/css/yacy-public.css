@@ -324,3 +324,24 @@ label.yacy-pill:has(input[type="radio"]:checked) {
     .yp-topbar__inner { padding: 0 8px; gap: 6px; }
     .yp-brand__word { font-size: 15px; }
 }
+
+/* Pagination fix — legacy #resNav float:left у base.css + browser default
+   ul {display:block, padding-left:40px, list-style:disc} перекривали Tailwind
+   flex. Форсимо horizontal layout. */
+#resNav { float: none !important; }
+ul#paginationButtons {
+  display: flex !important;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 24px 0 !important;
+}
+ul#paginationButtons li {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: inline-block;
+}

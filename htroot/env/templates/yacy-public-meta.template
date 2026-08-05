@@ -4,4 +4,4 @@
   <meta name="referrer" content="#[referrer.meta.policy]#" />
 
   <link rel="stylesheet" type="text/css" href="#[relativeBase]#env/css/tailwind.min.css" />
-  <link rel="stylesheet" type="text/css" href="#[relativeBase]#env/css/yacy-public.css?v=20260509c" />
+  <link rel="stylesheet" type="text/css" href="#[relativeBase]#env/css/yacy-public.css?v=20260805a" />
