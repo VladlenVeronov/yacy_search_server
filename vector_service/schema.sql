@@ -104,3 +104,15 @@ CREATE TABLE IF NOT EXISTS moderation_log (
 CREATE INDEX IF NOT EXISTS moderation_log_verdict_idx ON moderation_log (verdict);
 CREATE INDEX IF NOT EXISTS moderation_log_ts_idx      ON moderation_log (ts DESC);
 CREATE INDEX IF NOT EXISTS moderation_log_host_idx    ON moderation_log (host);
+
+-- Peer reputation: tracks which remote YaCy peers contribute useful search results.
+-- Fed by yacysearch.java /track-peer-hit calls after each remote search.
+--  (clicks/hits_served) is computed at query time.
+CREATE TABLE IF NOT EXISTS peer_reputation (
+    peer_hash   TEXT PRIMARY KEY,
+    peer_name   TEXT NOT NULL DEFAULT '',
+    hits_served BIGINT NOT NULL DEFAULT 0,
+    clicks      BIGINT NOT NULL DEFAULT 0,
+    last_seen   TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS peer_reputation_last_seen_idx ON peer_reputation (last_seen DESC);
