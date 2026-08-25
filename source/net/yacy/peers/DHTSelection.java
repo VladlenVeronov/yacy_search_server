@@ -198,26 +198,51 @@ public class DHTSelection {
      * @param verticalPosition the verical position, thats the number of the partition 0 <= verticalPosition < seedDB.scheme.verticalPartitions()
      * @return a list of seeds for the redundant positions
      */
+    /**
+     * Multi-signal quality proxy for DHT peer selection. Uses only fields
+     * already tracked in every Seed — no extra network calls.
+     *
+     *   wordCount  — index size; larger peers have more content to contribute.
+     *   ppm        — indexing speed (pages/min); active peers deliver fresher hits.
+     *   age        — soft stability bonus (log-scaled to dampen outliers).
+     *
+     * Score is relative — only its ordering matters, not the absolute value.
+     */
+    private static double peerQualityScore(final Seed seed) {
+        final double wc        = Math.log1p(seed.getWordCount());
+        final double ppmBonus  = seed.getPPM() > 0 ? 1.2 : 0.8;
+        final double ageFactor = Math.pow(Math.max(1.0, seed.getAge()), 0.2);
+        return wc * ppmBonus * ageFactor;
+    }
+
     private static ArrayList<Seed> selectVerticalDHTPositions(final SeedDB seedDB, final byte[] wordhash, final int minage, final int minWordCount, final int redundancy, int verticalPosition) {
-        // this method is called from the search target computation
-        ArrayList<Seed> seeds = new ArrayList<>(redundancy);
+        // Collect a wider candidate pool (up to 3x redundancy, max 24) so that
+        // quality sorting is meaningful — within the DHT-distance neighbourhood
+        // we prefer peers with larger indexes, active indexing speed, and age.
         final long dhtVerticalTarget = seedDB.scheme.verticalDHTPosition(wordhash, verticalPosition);
         final byte[] verticalhash = Distribution.positionToHash(dhtVerticalTarget);
-        final Iterator<Seed> dhtEnum = getAcceptRemoteIndexSeeds(seedDB, verticalhash, redundancy, false);
-        int c = Math.min(seedDB.sizeConnected(), redundancy);
-        int cc = 20; // in case that the network grows rapidly, we may jump to several additional peers but that must have a limit
-        while (dhtEnum.hasNext() && c > 0 && cc-- > 0) {
-            Seed seed = dhtEnum.next();
+        final int poolSize = Math.min(Math.max(redundancy * 3, redundancy + 4), 24);
+        final Iterator<Seed> dhtEnum = getAcceptRemoteIndexSeeds(seedDB, verticalhash, poolSize, false);
+        final ArrayList<Seed> pool = new ArrayList<>(poolSize);
+        int cc = poolSize + 10;
+        while (dhtEnum.hasNext() && pool.size() < poolSize && cc-- > 0) {
+            final Seed seed = dhtEnum.next();
             if (seed == null || seed.hash == null) continue;
-            if (!seed.getFlagAcceptRemoteIndex()) continue; // probably a robinson peer
-            if (seed.getAge() < minage) continue; // prevent bad results because of too strong network growth
-            if(seed.getWordCount() < minWordCount) {
-            	/* Even if the peer is not a robinson and has the required minimum age, it may have an empty or disabled RWI */
-            	continue;
-            }
-            if (RemoteSearch.log.isFine()) RemoteSearch.log.fine("selectPeers/DHTorder: " + seed.hash + ":" + seed.getName() + "/ score " + c);
+            if (!seed.getFlagAcceptRemoteIndex()) continue;
+            if (seed.getAge() < minage) continue;
+            if (seed.getWordCount() < minWordCount) continue;
+            pool.add(seed);
+        }
+        // Sort by quality score desc; return top `redundancy`.
+        pool.sort((a, b) -> Double.compare(peerQualityScore(b), peerQualityScore(a)));
+        final ArrayList<Seed> seeds = new ArrayList<>(redundancy);
+        for (int i = 0; i < Math.min(redundancy, pool.size()); i++) {
+            final Seed seed = pool.get(i);
+            if (RemoteSearch.log.isFine()) RemoteSearch.log.fine(
+                "selectPeers/DHTorder-quality: " + seed.hash + ":" + seed.getName()
+                + " wc=" + seed.getWordCount() + " ppm=" + seed.getPPM()
+                + " age=" + seed.getAge() + " score=" + String.format("%.3f", peerQualityScore(seed)));
             seeds.add(seed);
-            c--;
         }
         return seeds;
     }
