@@ -752,8 +752,7 @@ async def _llm_classify(url: str, title: Optional[str], description: Optional[st
             {"role": "user", "content": "\n".join(user_blob_lines)},
         ],
         "temperature": 0.0,
-        "max_tokens": 80,
-        "response_format": {"type": "json_object"},
+        "max_tokens": 120,
     }
     try:
         async with httpx.AsyncClient(timeout=settings.llm_timeout_s) as cli:
@@ -763,8 +762,11 @@ async def _llm_classify(url: str, title: Optional[str], description: Optional[st
                 json=payload,
             )
             r.raise_for_status()
-            content = r.json()["choices"][0]["message"]["content"]
-            obj = _json.loads(content)
+            raw = r.json()["choices"][0]["message"]["content"].strip()
+            # Extract JSON even if LLM wraps it in markdown or adds prose
+            import re as _re
+            m = _re.search(r'\{[^}]+\}', raw, _re.DOTALL)
+            obj = _json.loads(m.group(0)) if m else _json.loads(raw)
             cat = str(obj.get("category", "unsure")).strip().lower()
             reason = str(obj.get("reason", "")).strip()[:140]
             allowed = _BLOCK_CATEGORIES | {"clean", "unsure"}
