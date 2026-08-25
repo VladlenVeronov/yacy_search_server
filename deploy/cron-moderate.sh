@@ -13,7 +13,13 @@ set +a
 
 echo "[$(ts)] moderate-batch start"
 
-HTTP=$(docker exec yacy-vector-service curl -sS   -o /tmp/moderate-result.json   -w '%{http_code}'   -m 600   -X POST   -H "Authorization: Bearer ${ADMIN_TOKEN}"   -H 'Content-Type: application/json'   -d '{"batch_size": 40}'   'http://localhost:8001/admin/moderate-batch' || echo '000')
+HTTP=$(docker exec yacy-vector-service curl -sS \
+  -o /tmp/moderate-result.json \
+  -w "%{http_code}" \
+  -m 600 \
+  -X POST \
+  -H "Authorization: Bearer ${ADMIN_TOKEN}" \
+  'http://localhost:8001/admin/moderate-batch?batch_size=40' || echo "000")
 
 case "$HTTP" in
   503) echo "[$(ts)] LLM not configured; skip"; exit 0 ;;
@@ -26,14 +32,11 @@ PROCESSED=$(python3 -c "import json; d=json.load(open('/tmp/moderate-result.json
 
 echo "[$(ts)] processed=$PROCESSED deleted=$DELETED"
 
-if [ "$DELETED" -gt 0 ]; then
-  python3 -c "
-import json
-d=json.load(open('/tmp/moderate-result.json'))
-for r in d.get('results',[]):
-    if r.get('action') == 'deleted':
-        print(f'  BLOCKED {r[\"verdict\"]}: {r[\"url\"]}')
+[ "$DELETED" -gt 0 ] && cat /tmp/moderate-result.json | python3 -c "
+import json,sys
+for r in json.load(sys.stdin).get('results',[]):
+    if r.get('action')=='deleted':
+        print('  BLOCKED',r['verdict'],':',r['url'])
 " 2>/dev/null || true
-fi
 
 echo "[$(ts)] moderate-batch done"
