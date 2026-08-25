@@ -955,3 +955,65 @@ async def moderation_stats(authorization: Optional[str] = Header(default=None)):
         'unmoderated': unmoderated,
         'verdicts': [dict(r) for r in verdict_rows],
     }
+
+
+# ---------------------------------------------------------------------------
+# Peer reputation: tracks which remote YaCy peers contribute useful results.
+# Fed by yacysearch.java after each remote search. Used for future
+# DHTSelection weighting (beyond the Seed-metric quality score already added
+# to DHTSelection.java).
+# ---------------------------------------------------------------------------
+
+
+class PeerHitRequest(BaseModel):
+    peer_hash: str = Field(..., min_length=1, max_length=20)
+    peer_name: str = Field(default="", max_length=80)
+    hits: int = Field(default=1, ge=0, le=10000)
+    clicks: int = Field(default=0, ge=0, le=10000)
+
+
+class PeerReputation(BaseModel):
+    peer_hash: str
+    peer_name: str
+    hits_served: int
+    clicks: int
+    useful_ratio: float   # clicks / hits_served, 0 if hits_served == 0
+    last_seen: datetime
+
+
+@app.post('/track-peer-hit')
+async def track_peer_hit(req: PeerHitRequest):
+    """Record that a remote peer contributed `hits` results (and optionally `clicks`) to a search."""
+    async with pool().acquire() as con:
+        await con.execute(
+            """
+            INSERT INTO peer_reputation (peer_hash, peer_name, hits_served, clicks, last_seen)
+            VALUES ($1, $2, $3, $4, now())
+            ON CONFLICT (peer_hash) DO UPDATE
+                SET peer_name   = EXCLUDED.peer_name,
+                    hits_served = peer_reputation.hits_served + EXCLUDED.hits_served,
+                    clicks      = peer_reputation.clicks      + EXCLUDED.clicks,
+                    last_seen   = now()
+            """,
+            req.peer_hash, req.peer_name, req.hits, req.clicks,
+        )
+    return {"ok": True}
+
+
+@app.get('/peer-reputation', response_model=list[PeerReputation])
+async def peer_reputation_list(limit: int = 100):
+    """Return peer reputation records sorted by useful_ratio desc."""
+    async with pool().acquire() as con:
+        rows = await con.fetch(
+            """
+            SELECT peer_hash, peer_name, hits_served, clicks, last_seen,
+                   CASE WHEN hits_served > 0
+                        THEN ROUND(clicks::numeric / hits_served, 4)
+                        ELSE 0 END AS useful_ratio
+              FROM peer_reputation
+             ORDER BY useful_ratio DESC, hits_served DESC
+             LIMIT $1
+            """,
+            limit,
+        )
+    return [PeerReputation(**dict(r)) for r in rows]
