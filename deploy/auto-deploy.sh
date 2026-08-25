@@ -10,7 +10,7 @@ set -euo pipefail
 
 STACK_DIR="${STACK_DIR:-/home/vir/stacks/yacy}"
 FORK_DIR="${STACK_DIR}/yacy-fork"
-BRANCH="${BRANCH:-feature/remove-third-party-links}"
+BRANCH="${BRANCH:-master}"
 LOG="${STACK_DIR}/deploy/auto-deploy.log"
 LAST_SHA_FILE="${STACK_DIR}/deploy/.last-sha"
 
