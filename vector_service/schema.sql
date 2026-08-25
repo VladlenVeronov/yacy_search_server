@@ -90,3 +90,17 @@ DROP TABLE IF EXISTS cabinet_users;
 -- in Phase 3 so authenticated YaCy users (digest auth + WEBMASTER_RIGHT)
 -- own them. Drop the pgvector copy on existing deployments.
 DROP TABLE IF EXISTS webmaster_submissions;
+
+-- Content moderation log: every URL the moderator bot has classified.
+-- Blocked pages are deleted from ; this table keeps the audit trail
+-- so we don't re-classify already-processed URLs.
+CREATE TABLE IF NOT EXISTS moderation_log (
+    url       text PRIMARY KEY,
+    host      text,
+    verdict   text NOT NULL,
+    reason    text,
+    ts        timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS moderation_log_verdict_idx ON moderation_log (verdict);
+CREATE INDEX IF NOT EXISTS moderation_log_ts_idx      ON moderation_log (ts DESC);
+CREATE INDEX IF NOT EXISTS moderation_log_host_idx    ON moderation_log (host);
