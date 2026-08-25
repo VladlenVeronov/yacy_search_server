@@ -63,7 +63,7 @@
 - [x] VECTORS: Python мікросервіс (FastAPI) — `vector_service/` на порту 8001. Endpoints `/health`, `/index`, `/search`, `/doc/{id}`, `/rank`, `/track-search`, `/track-click`, `/unsatisfied[/seed]`, `/services`. Модель `intfloat/multilingual-e5-base` (768d, multilingual, локально). Cross-lingual перевірено
 - [x] VECTORS: Sync-скрипт `docs/yacy-project/scripts/sync_pages.py` під cron `cron-sync-pages.sh` (`5 * * * *`). Cursor-mark по `load_date_dt`. Працює на проді
 - [x] RANKING: hybrid scoring 60/25/15 (semantic / freshness / quality) у `/rank`. Default OFF на проді (Solr boostfunction `recip(ms(NOW,load_date_dt),3.16e-11,1,1)` справляється з freshness без додаткового ранкера)
-- [~] RANKING: Domain quality score — `_quality_score()` поки рахує лише HTTPS (1.0 vs 0.3). Speed/ads сигнали відкладено — не блокує
+- [x] RANKING: Domain quality score — TLD table + depth penalty (2026-08-25) — `_quality_score()` поки рахує лише HTTPS (1.0 vs 0.3). Speed/ads сигнали відкладено — не блокує
 - [x] RANKING: PageRank/backlinks zero-out — `coeff_authority = 0` + `coeff_citation = 0` у `RankingProfile`
 - [x] SEARCH: Підтримка довгих запитів — `QueryGoal.LONG_QUERY_THRESHOLD = 5`. ≥5 термів → query без AND + edismax `mm=50%` (`QueryParams.solrQuery`). 1-4 терми лишаються strict-AND для точності. Excludes завжди MUST-NOT через `-` префікс. Tests: `QueryGoalTest.testShortQueryUsesAnd` + `testLongQueryDropsAnd`
 - [x] SEARCH: Автодоповнення пошуку — `suggest.json` API + native fetch dropdown на index.html та yacysearch.html (заміна jQuery typeahead)
@@ -97,10 +97,11 @@
 
 - [x] NETWORK: Аудит P2P — `docs/yacy-project/P2P-AUDIT.md`. Виявлено: outbound DHT не фільтрував blacklist (виправлено)
 - [x] NETWORK: Фільтр якості шерингу — `Dispatcher.filterDhtBlacklisted()` дропає WordReferences blacklisted hosts перед split + transmit
-- [x] NETWORK: Чорний список контенту для шерингу — `list.black` (401 entries) активний на DHT type. Hot-cache + Solr URL lookup
+- [x] NETWORK: Чорний список контенту для шерингу
+- [x] CONTENT MODERATION: POST /admin/moderate-batch (LLM classify 40/run, cron 4h) + moderation_log + cron-moderate.sh (2026-08-25) — `list.black` (401 entries) активний на DHT type. Hot-cache + Solr URL lookup
 - [-] NETWORK: API для підключення нових вузлів — used vanilla YaCy seed-list bootstrap (нічого свого не додаємо). Документовано як працює
 - [x] NETWORK: Документація для операторів — `docs/yacy-project/HOWTO-NODE-OPERATOR.md` (5-min install, sharing posture, cron, troubleshooting)
-- [ ] NETWORK: Механіка репутації вузла — defer (потребує per-peer hit-source tracking, infra heavy). Записано як deferred TODO у P2P-AUDIT.md §4
+- [~] NETWORK: Механіка репутації вузла — defer (потребує per-peer hit-source tracking, infra heavy). Записано як deferred TODO у P2P-AUDIT.md §4
 - [x] PROMO: README — `README-VIR-GOO.md` оновлено під поточний стан (drop dead Authentik/cabinet refs, додати DHT filter + freshness recip + native UserDB)
 - [x] PROMO: HN/Reddit/PH — `PROMO.md` готовий: Show HN title, body, r/privacy / r/degoogle / r/selfhosted версії, Twitter thread, PH tagline
 - [x] PROMO: Webmaster onboarding — `docs/yacy-project/HOWTO-WEBMASTER.md` (5-min flow + troubleshooting + source pointers)
