@@ -160,6 +160,11 @@ public class RemoteSearch extends Thread {
         return this.targetPeer;
     }
 
+    /** Returns the number of URLs this peer contributed (-1 if not yet complete). */
+    public int getURLCount() {
+        return this.urls;
+    }
+
     /**
      * Select YaCy peers using DHT rules and start new threads requesting remotely RWI or Solr index on them.
      * @param event the origin search event. Must not be null.
