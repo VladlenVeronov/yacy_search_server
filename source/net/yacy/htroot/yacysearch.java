@@ -97,6 +97,7 @@ import net.yacy.search.query.SearchEvent;
 import net.yacy.search.query.SearchEventCache;
 import net.yacy.search.query.SearchEventType;
 import net.yacy.search.ranking.RankingProfile;
+import net.yacy.search.ranking.PeerReputationClient;
 import net.yacy.server.serverObjects;
 import net.yacy.server.serverSwitch;
 import net.yacy.server.servletProperties;
@@ -989,6 +990,19 @@ public class yacysearch {
             prop.put("num-results_globalresults_remoteResourceSize", Formatter.number(theSearch.remote_rwi_stored.get() + theSearch.remote_solr_stored.get(), true));
             prop.put("num-results_globalresults_remoteIndexCount", Formatter.number(theSearch.remote_rwi_available.get() + theSearch.remote_solr_available.get(), true));
             prop.put("num-results_globalresults_remotePeerCount", Formatter.number(theSearch.remote_rwi_peerCount.get() + theSearch.remote_solr_peerCount.get(), true));
+
+            // Async peer-reputation reporting: tell vector_service which remote peers
+            // contributed to this search so the peer_reputation table stays fresh.
+            if (theSearch.primarySearchThreadsL != null) {
+                for (final net.yacy.peers.RemoteSearch rs : theSearch.primarySearchThreadsL) {
+                    final net.yacy.peers.Seed peer = rs.target();
+                    if (peer == null || peer.hash == null) continue;
+                    final int contributed = rs.getURLCount(); // -1 = no answer
+                    if (contributed > 0) {
+                        PeerReputationClient.trackAsync(peer.hash, peer.getName(), contributed);
+                    }
+                }
+            }
 
             if (theSearch.getResultCount() == 0 && querystring.length() > 0) {
                 ConcurrentLog.info(
