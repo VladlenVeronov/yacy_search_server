@@ -1,30 +1,34 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="uk">
   <head>
     <title>YaCy '#[clientname]#': User Editor</title>
     #%env/templates/metas.template%#
   </head>
 <body>
     #%env/templates/header.template%#
-    #%env/templates/submenuUseCaseAccount.template%#
-    <h2>User Account Editor</h2>
-    
-    <!-- Page 1: Results -->
+
+    <div class="yg-pagehead">
+      <div>
+        <h1>Редагувати користувача</h1>
+        <p><a href="ConfigAccountList_p.html">← до списку користувачів</a></p>
+      </div>
+    </div>
+
     #(text)#
     ::
-    <p>User created: #[username]#</p>
+    <div class="alert alert-success">Користувача <strong>#[username]#</strong> створено.</div>
     ::
-    <p>User changed: #[username]#</p>
+    <div class="alert alert-success">Користувача <strong>#[username]#</strong> оновлено.</div>
     #(/text)#
     #(error)#
     ::
-    <p class="error">Generic error.</p>
+    <div class="alert alert-danger">Загальна помилка.</div>
     ::
-    <p class="error">Passwords do not match.</p>
+    <div class="alert alert-danger">Паролі не співпадають.</div>
     ::
-    <p class="error">Username too short. Username must be &gt;= 4 Characters.</p>
+    <div class="alert alert-danger">Логін надто короткий — мінімум 4 символи.</div>
     ::
-    <p class="error">Username already used (not allowed).</p>
+    <div class="alert alert-danger">Логін уже використовується.</div>
     #(/error)#
 
     <form action="ConfigUser_p.html" method="post" accept-charset="UTF-8">

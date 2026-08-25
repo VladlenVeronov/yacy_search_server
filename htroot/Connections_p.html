@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="uk">
   <head>
     <title>YaCy '#[clientname]#': Server Connection Tracking</title>
     #%env/templates/metas.template%#
@@ -7,13 +7,12 @@
   </head>
   <body id="Connections">
     #%env/templates/header.template%#
-    #%env/templates/submenuAccessTracker.template%#
-    <script type="text/javascript" src="js/sorttable.js"></script>
+        <script type="text/javascript" src="js/sorttable.js"></script>
     <h2>Server Connection Tracking</h2>
     <h3>Incoming Connections</h3>
     <p>Showing #[numActiveRunning]# active connections from a max. of #[numMax]# allowed incoming connections.</p>
-    <table class="sortable" border="0">
-      <tr class="TableHeader" valign="bottom">
+    <table class="sortable">
+      <tr class="TableHeader">
         <td>Protocol</td>
         <td>Duration</td>
         <td>Source IP[:Port]</td>
@@ -33,8 +32,8 @@
 
 	<h3>Outgoing Connections</h3>
 	<p>Showing #[clientActive]# pooled outgoing connections used as:</p>
-    <table class="sortable" border="0">
-      <tr class="TableHeader" valign="bottom">
+    <table class="sortable">
+      <tr class="TableHeader">
         <td>Protocol</td>
         <td>Duration</td>
         <td>Up-Bytes</td>

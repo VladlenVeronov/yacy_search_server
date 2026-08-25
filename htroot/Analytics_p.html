@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Аналітика — VIR GOO Admin</title>
+    #%env/templates/metas.template%#
+    <link rel="stylesheet" type="text/css" href="env/css/tailwind.min.css" />
+</head>
+<body>
+
+#%env/templates/header.template%#
+
+<div class="yg-pagehead">
+  <div>
+    <h1>Аналітика пошуку</h1>
+    <p>Пошуки та кліки за останній тиждень + стан компонентів</p>
+  </div>
+</div>
+
+<div class="yg-grid yg-grid--3" style="margin-bottom: 20px;">
+  <div class="yg-stat">
+    <div class="yg-stat__label">Vector service</div>
+    <div class="yg-stat__value" id="vec-health" style="font-size: 16px; font-family: ui-monospace, Menlo, Consolas, monospace;">—</div>
+    <div class="yg-stat__sub">embeddings + pgvector</div>
+  </div>
+  <div class="yg-stat">
+    <div class="yg-stat__label">Незадоволені запити (7 днів)</div>
+    <div class="yg-stat__value" id="unsat-count">—</div>
+    <div class="yg-stat__sub">zero-click кандидати на скан</div>
+  </div>
+  <div class="yg-stat">
+    <div class="yg-stat__label">Bot validator</div>
+    <div class="yg-stat__value" style="font-size: 14px; font-weight: 500;">
+      <a href="CrawlRequests_p.html" style="color: var(--yg-accent);">Запустити перевірку →</a>
+    </div>
+    <div class="yg-stat__sub">substring → HEAD → LLM zero-shot</div>
+  </div>
+</div>
+
+<div class="yg-card">
+  <div class="yg-card__head">
+    <div>
+      <h2>Топ запитів без кліків</h2>
+      <p style="margin: 2px 0 0; font-size: 12px; color: var(--yg-muted);">
+        Запити, на які користувачі не клікнули жоден результат — прямі кандидати на краул.
+      </p>
+    </div>
+  </div>
+  <div style="overflow-x: auto;">
+    <table class="min-w-full divide-y divide-gray-200" style="width: 100%; font-size: 13px; border-collapse: collapse;">
+      <thead style="background: var(--yg-bg);">
+        <tr>
+          <th style="padding: 10px 12px; text-align: left; font-weight: 600; color: var(--yg-text-2); border-bottom: 1px solid var(--yg-border);">Запит</th>
+          <th style="padding: 10px 12px; text-align: right; font-weight: 600; color: var(--yg-text-2); border-bottom: 1px solid var(--yg-border); width: 120px;">Пошуків</th>
+        </tr>
+      </thead>
+      <tbody id="unsat-tbody">
+        <tr><td colspan="2" style="padding: 14px; text-align: center; color: var(--yg-muted);">завантаження…</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+(function () {
+  function esc(s){ return String(s).replace(/[<>&"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c])); }
+
+  fetch('/api/vector/health').then(r=>r.json()).then(d=>{
+    document.getElementById('vec-health').textContent =
+      (d && d.ok ? '✓ ' : '✗ ') + (d && d.model || 'down');
+  }).catch(()=> document.getElementById('vec-health').textContent = '✗ unreachable');
+
+  fetch('/api/vector/unsatisfied?hours=168&limit=100').then(r=>r.json()).then(rows=>{
+    document.getElementById('unsat-count').textContent = Array.isArray(rows) ? rows.length : 0;
+    var tb = document.getElementById('unsat-tbody');
+    if (!Array.isArray(rows) || rows.length === 0) {
+      tb.innerHTML = '<tr><td colspan="2" style="padding: 14px; text-align: center; color: var(--yg-muted);">Немає невдалих запитів</td></tr>';
+      return;
+    }
+    tb.innerHTML = rows.map(r =>
+      '<tr style="border-bottom: 1px solid var(--yg-border-soft);">' +
+      '<td style="padding: 10px 12px; font-family: ui-monospace, Menlo, Consolas, monospace;">' + esc(r.query || '') + '</td>' +
+      '<td style="padding: 10px 12px; text-align: right;">' + (r.searches || 0) + '</td></tr>'
+    ).join('');
+  }).catch(()=>{
+    document.getElementById('unsat-tbody').innerHTML =
+      '<tr><td colspan="2" style="padding: 14px; text-align: center; color: var(--yg-danger);">vector_service недоступний</td></tr>';
+  });
+})();
+</script>
+
+#%env/templates/footer.template%#
+
+</body>
+</html>

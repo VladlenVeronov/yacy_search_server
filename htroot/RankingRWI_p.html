@@ -35,8 +35,7 @@
   </head>
   <body id="RankingRWI_p">
     #%env/templates/header.template%#
-    #%env/templates/submenuRanking.template%#
-    <h2>RWI Ranking Configuration</h2>
+        <h2>RWI Ranking Configuration</h2>
     <p>The document ranking influences the order of the search result entities.
     A ranking is computed using a number of attributes from the documents that match with the search word.
     The attributes are first normalized over all search results and then the normalized attribute is multiplied with the ranking coefficient computed from this list.
@@ -46,7 +45,7 @@
       <fieldset>
         <legend>Pre-Ranking</legend>
         <dl>#{attrPre}# 
-          <dt style="width:260px"><label id="label_#[nameorg]#" for="select_#[nameorg]#">#[name]#</label>&nbsp;<span class="info" style="float:right"><img src="env/grafics/i16.gif" width="16" height="16" alt="info"/><span id="info_#[nameorg]#">#[info]#</span></span></dt>
+          <dt style="width:260px"><label id="label_#[nameorg]#" for="select_#[nameorg]#">#[name]#</label>&nbsp;<span class="info" style="float:right"><img src="env/grafics/i16.gif" alt="info"/><span id="info_#[nameorg]#">#[info]#</span></span></dt>
           <dd style="width:360px; float:left; display:inline;" id="#[nameorg]#">
             <select id="select_#[nameorg]#" aria-describedby="info_#[nameorg]#" style="float:left; display:inline;" name="#[nameorg]#" onchange="handleSelectChange(event)">#{select}# 
 				<option value="#[value]#" #(checked)#:: selected="selected"#(/checked)#>#[value]#</option>#{/select}#
@@ -63,7 +62,7 @@
       <fieldset>
         <legend>Post-Ranking</legend>
         <dl>#{attrPost}# 
-          <dt style="width:260px"><label id="label_#[nameorg]#" for="select_#[nameorg]#">#[name]#</label>&nbsp;<span class="info" style="float:right"><img src="env/grafics/i16.gif" width="16" height="16" alt="info"/><span id="info_#[nameorg]#">#[info]#</span></span></dt>
+          <dt style="width:260px"><label id="label_#[nameorg]#" for="select_#[nameorg]#">#[name]#</label>&nbsp;<span class="info" style="float:right"><img src="env/grafics/i16.gif" alt="info"/><span id="info_#[nameorg]#">#[info]#</span></span></dt>
           <dd style="width:360px" id="#[nameorg]#">            
           	<select id="select_#[nameorg]#" aria-describedby="info_#[nameorg]#" style="float:left; display:inline;" name="#[nameorg]#" onchange="handleSelectChange(event)">#{select}# 
 				<option value="#[value]#" #(checked)#:: selected="selected"#(/checked)#>#[value]#</option>#{/select}#

@@ -163,6 +163,10 @@ public class index {
 
         handleTopNavBarLoginSection(header, sb, prop, authenticatedUserName);
 
+        // For yacy-public-header.template: 0=anon (show Register+Login), 1=user (show Cabinet).
+        prop.put("publicLoggedIn", authenticated ? 1 : 0);
+        if (authenticatedUserName != null) prop.putHTML("publicLoggedIn_userName", authenticatedUserName);
+
         // online caution timing
         sb.localSearchLastAccess = System.currentTimeMillis();
 

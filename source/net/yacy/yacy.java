@@ -348,10 +348,12 @@ public final class yacy {
                         } catch (final IOException e) {
                             //Error
                         } finally {
-                            try {
-                                br.close();
-                            } catch(final IOException ioe) {
-                                ConcurrentLog.warn("STARTUP", "Could not close " + tmplang + " version file");
+                            if (br != null) {
+                                try {
+                                    br.close();
+                                } catch(final IOException ioe) {
+                                    ConcurrentLog.warn("STARTUP", "Could not close " + tmplang + " version file");
+                                }
                             }
                         }
 

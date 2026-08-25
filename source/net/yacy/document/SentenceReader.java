@@ -34,6 +34,13 @@ import java.util.List;
  */
 public class SentenceReader implements Iterator<StringBuilder>, Iterable<StringBuilder> {
 
+    /** Hard cap for a single sentence buffer. Without this cap a degenerate input
+     *  (minified code, OCR garbage, a multi-MB string with no sentence-ending
+     *  punctuation) makes the inner loop swallow the whole text into one
+     *  StringBuilder and OOM the heap. 100k chars is far above any real sentence
+     *  but well below default heap sizes. */
+    private static final int MAX_SENTENCE_LENGTH = 100_000;
+
     /** Holds the next element */
     private StringBuilder buffer;
 
@@ -97,6 +104,7 @@ public class SentenceReader implements Iterator<StringBuilder>, Iterable<StringB
             if (lc == ' ' && c == ' ') continue; // ignore double spaces
             s.append(c);
             if (punctuation(lc) && invisible(c)) break;
+            if (s.length() >= MAX_SENTENCE_LENGTH) break; // force-break on degenerate input — see field doc
             lc = c;
         }
 

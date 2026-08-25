@@ -1196,7 +1196,10 @@ search.ranking.solr.collection.boostname.tmpa.0=Default Profile
 search.ranking.solr.collection.boostfields.tmpa.0=url_paths_sxt^3.0,synonyms_sxt^0.5,title^5.0,text_t^1.0,host_s^6.0,h1_txt^5.0,url_file_name_tokens_t^4.0,h2_txt^3.0,keywords^2.0,description_txt^1.5,author^1.0
 search.ranking.solr.collection.filterquery.tmpa.0=
 search.ranking.solr.collection.boostquery.tmpa.0=crawldepth_i:0^0.8\ncrawldepth_i:1^0.4
-search.ranking.solr.collection.boostfunction.tmpb.0=
+# Multiplicative recency boost: ~3-year half-life (today ×1.0, 3y ×0.5, 10y ×0.24).
+# Lighter than the /date profile (1-year half-life) — relevance still wins for strong matches,
+# but among similarly-relevant pages the fresher one ranks higher.
+search.ranking.solr.collection.boostfunction.tmpb.0=recip(ms(NOW,last_modified),1e-11,1,1)
 search.ranking.solr.collection.boostname.tmpa.1=Date Profile: sort by date in descending order for a '/date' usage
 search.ranking.solr.collection.boostfields.tmpa.1=url_paths_sxt^0.1,title^0.1,text_t^0.1
 search.ranking.solr.collection.filterquery.tmpa.1=
@@ -1451,3 +1454,12 @@ ai.shield.limit-all = false
 ai.shield.all.per-minute = 16
 ai.shield.all.per-hour = 240
 ai.shield.all.per-day = 480
+
+# Hybrid semantic re-ranking via the external Python vector_service.
+# Each value is overridden by the corresponding env var if set:
+#   VECTOR_RANK_ENABLED, VECTOR_RANK_URL, VECTOR_RANK_TIMEOUT_MS
+# This indirection keeps the same code working on Mac (localhost) and on
+# the production server (internal service URL) — only the env changes.
+vector_rank.enabled = false
+vector_rank.url = http://127.0.0.1:8001/rank
+vector_rank.timeout_ms = 1500

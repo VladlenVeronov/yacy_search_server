@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="uk">
   <head>
     <title>YaCy '#[clientname]#': Solr Schema Editor</title>
     #%env/templates/metas.template%#
@@ -7,11 +7,10 @@
   <body id="IndexSchema_p">
 
     #%env/templates/header.template%#
-    #%env/templates/submenuIndexControl.template%#
-    
+        
 <div id="api">
 <a href="api/schema.xml?core=#[core]#">
-<img src="env/grafics/api.png" width="60" height="40" alt="API" /></a>
+<img src="env/grafics/api.png" alt="API" /></a>
 <span>The solr schema can also be retrieved as xml here. Click the API icon to see the xml. Just copy this xml to solr/conf/schema.xml to configure solr.</span>
 </div>	
     <h2>Solr Schema Editor</h2>
@@ -31,10 +30,10 @@
     <fieldset>
       <input type="hidden" name="core" value="#[core]#" />
       <div>
-      <table class="sortable" border="0">
-      <tr class="TableHeader" valign="bottom">
+      <table class="sortable">
+      <tr class="TableHeader">
         <td>Active</td>
-        <td>Attribute</td>
+        <td>Атрибут</td>
         <td>Custom Solr Field Name</td>
         <td>Comment <div style="float: right" class="btn-group btn-group-xs">
            <button type="submit" class="btn btn-default #(activeonly)#::active#(/activeonly)#" name="filter" value="active">show active</button>
@@ -44,10 +43,10 @@
       </tr>
       #{schema}#
       <tr class="TableCell#(dark)#Light::Dark::Summary#(/dark)#">
-        <td align="center"><input type="checkbox" id="schema_#[key]#" name="schema_#[key]#" value="checked" #(checked)#::checked="checked"#(/checked)# #(required)#::required="required"#(/required)#/></td>
-        <td align="left"><label for="schema_#[key]#" #(required)#::title="Required for proper operation"#(/required)#>#(required)#::<strong>#(/required)##[key]##(required)#::</strong>#(/required)#</label></td>
-        <td align="left"><input type="text" name="schema_solrfieldname_#[key]#" value="#[solrfieldname]#"/></td>
-        <td align="left">#[comment]#</td>
+        <td><input type="checkbox" id="schema_#[key]#" name="schema_#[key]#" value="checked" #(checked)#::checked="checked"#(/checked)# #(required)#::required="required"#(/required)#/></td>
+        <td><label for="schema_#[key]#" #(required)#::title="Required for proper operation"#(/required)#>#(required)#::<strong>#(/required)##[key]##(required)#::</strong>#(/required)#</label></td>
+        <td><input type="text" name="schema_solrfieldname_#[key]#" value="#[solrfieldname]#"/></td>
+        <td>#[comment]#</td>
       </tr>
       #{/schema}#
       </table>

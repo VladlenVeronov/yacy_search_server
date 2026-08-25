@@ -16,29 +16,28 @@
 <body id="Crawler" onload="initCrawler();">
 
 #%env/templates/header.template%#
-#%env/templates/submenuCrawlMonitor.template%#
 
 <div id="api">
-<a href="api/status_p.xml" id="apilink"><img src="env/grafics/api.png" width="60" height="40" alt="API"/></a>
+<a href="api/status_p.xml" id="apilink"><img src="env/grafics/api.png" alt="API"/></a>
 <span>Click on this API button to see an XML with information about the crawler status</span>
 </div>
 
 <h2>Crawler</h2>
 <noscript><p>(Please enable JavaScript to automatically update this page!)</p></noscript>
 <fieldset id="queues" style="width:210px;float:left;">
-<legend>Queues</legend>
-      <table border="0" class="watchCrawler">
+<legend>Черги</legend>
+      <table class="watchCrawler">
           <thead>
           <tr class="TableHeader"> 
-            <th width="120">Queue<br/>&nbsp;</th>
-            <th width="60">Size<br/>&nbsp;</th>
-            <th width="30"><span class="glyphicon glyphicon-wrench"></span></th>
+            <th>Queue<br/>&nbsp;</th>
+            <th>Size<br/>&nbsp;</th>
+            <th><span class="glyphicon glyphicon-wrench"></span></th>
           </tr>
         </thead>
         <tbody>
           <tr class="TableCellLight"> 
-            <td align="left"><a href="IndexCreateQueues_p.html?stack=LOCAL">Local Crawler</a></td>
-            <td align="right"><span id="localcrawlerqueuesize">#[localCrawlSize]#</span></td>
+            <td><a href="IndexCreateQueues_p.html?stack=LOCAL">Local Crawler</a></td>
+            <td><span id="localcrawlerqueuesize">#[localCrawlSize]#</span></td>
             <td>
               <a href="" id="localcrawlerstateA">
                 <img src="" alt="" style="width:12px; height:12px;" id="localcrawlerstateIMG" />
@@ -46,8 +45,8 @@
             </td>
           </tr>
           <tr class="TableCellLight"> 
-            <td align="left">Limit Crawler</td>
-            <td align="right"><span id="limitcrawlerqueuesize">#[limitCrawlSize]#</span></td>
+            <td>Limit Crawler</td>
+            <td><span id="limitcrawlerqueuesize">#[limitCrawlSize]#</span></td>
             <td>
               <a href="" title="" id="limitcrawlerstateA">
                 <img src="" alt="" style="width:12px; height:12px;" id="limitcrawlerstateIMG" />
@@ -55,8 +54,8 @@
             </td>
           </tr>
           <tr class="TableCellLight"> 
-            <td align="left"><a href="IndexCreateQueues_p.html?stack=REMOTE">Remote Crawler</a></td>
-            <td align="right"><span id="remotecrawlerqueuesize">#[remoteCrawlSize]#</span></td>
+            <td><a href="IndexCreateQueues_p.html?stack=REMOTE">Remote Crawler</a></td>
+            <td><span id="remotecrawlerqueuesize">#[remoteCrawlSize]#</span></td>
             <td>
               <a href="" title="" id="remotecrawlerstateA">
                 <img src="" alt="" style="width:12px; height:12px;" id="remotecrawlerstateIMG" />
@@ -64,8 +63,8 @@
             </td>
           </tr>
           <tr class="TableCellLight"> 
-            <td align="left"><a href="IndexCreateQueues_p.html?stack=NOLOAD">No-Load Crawler</a></td>
-            <td align="right"><span id="noloadcrawlerqueuesize">#[noloadCrawlSize]#</span></td>
+            <td><a href="IndexCreateQueues_p.html?stack=NOLOAD">No-Load Crawler</a></td>
+            <td><span id="noloadcrawlerqueuesize">#[noloadCrawlSize]#</span></td>
             <td>
               <a href="" title="" id="noloadcrawlerstateA">
                 <img src="" alt="" style="width:12px; height:12px;" id="noloadcrawlerstateIMG" />
@@ -73,8 +72,8 @@
             </td>
           </tr>
           <tr class="TableCellLight"> 
-            <td align="left"><a href="IndexCreateLoaderQueue_p.html">Loader</a> (<a href="PerformanceQueues_p.html#ThreadPoolSettings"><span id="loaderqueuemax">#[loaderMax]#</span></a>)</td>
-            <td align="right"><span id="loaderqueuesize">#[loaderSize]#</span></td>
+            <td><a href="IndexCreateLoaderQueue_p.html">Завантажувач</a> (<a href="PerformanceQueues_p.html#ThreadPoolSettings"><span id="loaderqueuemax">#[loaderMax]#</span></a>)</td>
+            <td><span id="loaderqueuesize">#[loaderSize]#</span></td>
             <td>&nbsp;</td>
           </tr>
         </tbody>
@@ -88,34 +87,34 @@
 </fieldset>
 <fieldset id="indexsize" style="width:240px;float:left;">
 <legend>Index Size</legend>
-      <table border="0" class="watchCrawler">
+      <table class="watchCrawler">
           <thead>
           <tr class="TableHeader"> 
-            <th width="130">Database<br/>&nbsp;</th>
-            <th width="50">Entries<br/>&nbsp;</th>
-            <th width="40">Seg-<br/>ments</th>
+            <th>Database<br/>&nbsp;</th>
+            <th>Entries<br/>&nbsp;</th>
+            <th>Seg-<br/>ments</th>
           </tr>
         </thead>
         <tbody>
           <tr class="TableCellLight"> 
-            <td align="left">Documents<br/><a href="#[urlpublictextSolrURL]#">solr search api</a></td>
-            <td align="right"><span id="urlpublictextSize">#[urlpublictextSize]#</span></td>
-            <td align="right"><span id="urlpublictextSegmentCount">#[urlpublictextSegmentCount]#</span></td>
+            <td>Documents<br/><a href="#[urlpublictextSolrURL]#">solr search api</a></td>
+            <td><span id="urlpublictextSize">#[urlpublictextSize]#</span></td>
+            <td><span id="urlpublictextSegmentCount">#[urlpublictextSegmentCount]#</span></td>
           </tr>
           <tr class="TableCellLight"> 
-            <td align="left">Webgraph Edges<br/><a href="#[webgraphSolrURL]#">solr search api</a></td>
-            <td align="right"><span id="webgraphSize">#[webgraphSize]#</span></td>
-            <td align="right"><span id="webgraphSegmentCount">#[webgraphSegmentCount]#</span></td>
+            <td>Webgraph Edges<br/><a href="#[webgraphSolrURL]#">solr search api</a></td>
+            <td><span id="webgraphSize">#[webgraphSize]#</span></td>
+            <td><span id="webgraphSegmentCount">#[webgraphSegmentCount]#</span></td>
           </tr>
           <tr class="TableCellLight"> 
-            <td align="left">Citations<br/>(reverse link index)</td>
-            <td align="right"><span id="citationSize">#[citationSize]#</span></td>
-            <td align="right"><span id="citationSegmentCount">#[citationSegmentCount]#</span></td>
+            <td>Citations<br/>(reverse link index)</td>
+            <td><span id="citationSize">#[citationSize]#</span></td>
+            <td><span id="citationSegmentCount">#[citationSegmentCount]#</span></td>
           </tr>
           <tr class="TableCellLight"> 
-            <td align="left">RWIs<br/>(P2P Chunks)</td>
-            <td align="right"><span id="rwipublictextSize">#[rwipublictextSize]#</span></td>
-            <td align="right"><span id="rwipublictextSegmentCount">#[rwipublictextSegmentCount]#</span></td>
+            <td>RWIs<br/>(P2P Chunks)</td>
+            <td><span id="rwipublictextSize">#[rwipublictextSize]#</span></td>
+            <td><span id="rwipublictextSegmentCount">#[rwipublictextSegmentCount]#</span></td>
           </tr>
         </tbody>
       </table>
@@ -123,17 +122,17 @@
 <fieldset id="progress" style="width:530px;float:left;">
 <legend>Progress</legend>
       <form action="Crawler_p.html" method="get" enctype="multipart/form-data" accept-charset="UTF-8">
-      <table border="0" class="watchCrawler">
+      <table class="watchCrawler">
           <thead>
           <tr class="TableHeader"> 
-            <th width="160">Indicator<br/>&nbsp;</th>
-            <th width="300" colspan="4">Level<br/>&nbsp;</th>
+            <th>Indicator<br/>&nbsp;</th>
+            <th colspan="4">Level<br/>&nbsp;</th>
           </tr>
         </thead>
         <tbody>
           <tr class="TableCellLight"> 
-            <td align="left">Speed / PPM<br/>(Pages Per Minute)</td>
-            <td align="left" colspan="4">
+            <td>Speed / PPM<br/>(Pages Per Minute)</td>
+            <td colspan="4">
             <input id="customPPM" name="customPPM" type="number" min="10" max="60000" style="width:5em" value="#[customPPMdefault]#" /><label for="customPPM"><abbr title="Pages Per Minute">PPM</abbr></label>
             <input id="latencyFactor" name="latencyFactor" type="number" min="0.1" max="3.0" step="0.1" style="width:3.5em" value="#[latencyFactorDefault]#" />
             <label for="latencyFactor"><abbr title="Latency Factor">LF</abbr></label>
@@ -144,33 +143,33 @@
             </td>
           </tr>
           <tr class="TableCellLight"> 
-            <td align="left">Crawler PPM</td>
-            <td align="left" width="60"><span id="ppmNum">&nbsp;&nbsp;&nbsp;</span></td>
-            <td align="left" width="260px" colspan="3">
+            <td>Crawler PPM</td>
+            <td><span id="ppmNum">&nbsp;&nbsp;&nbsp;</span></td>
+            <td colspan="3">
                 <progress id="ppmbar" max="60000" value="0" style="width:94%;"/>
             </td>
           </tr>
           <tr class="TableCellLight"> 
-            <td align="left" valign="top" rowspan="2">Postprocessing Progress <span id="postprocessing_speed">&nbsp;</span><br/><span id="postprocessing_status">&nbsp;&nbsp;&nbsp;</span></td>
-            <td align="left" width="40"><span id="postprocessing_remainingTimeMinutes">0</span>:<span id="postprocessing_remainingTimeSeconds">0</span></td>
-            <td align="left" width="260px" colspan="3">
+            <td rowspan="2">Postprocessing Progress <span id="postprocessing_speed">&nbsp;</span><br/><span id="postprocessing_status">&nbsp;&nbsp;&nbsp;</span></td>
+            <td><span id="postprocessing_remainingTimeMinutes">0</span>:<span id="postprocessing_remainingTimeSeconds">0</span></td>
+            <td colspan="3">
                 <span id="postprocessing_bar"><progress id="postprocessingBar" max="100" value="0" style="width:94%;"/></span>
             </td>
           </tr>
           <tr class="TableCellLight">
-            <td align="left">pending:</td>
-            <td align="left">collection=<span id="postprocessing_collection">&nbsp;</span></td>
-            <td align="left">webgraph=<span id="postprocessing_webgraph">&nbsp;</span></td>
+            <td>pending:</td>
+            <td>collection=<span id="postprocessing_collection">&nbsp;</span></td>
+            <td>webgraph=<span id="postprocessing_webgraph">&nbsp;</span></td>
             <td>&nbsp;</td>
           </tr>
           <tr class="TableCellLight">
-            <td align="left">Traffic (Crawler)</td>
-            <td align="left" colspan="2"><span id="trafficCrawler">&nbsp;&nbsp;&nbsp;</span> MB</td>
+            <td>Traffic (Crawler)</td>
+            <td colspan="2"><span id="trafficCrawler">&nbsp;&nbsp;&nbsp;</span> MB</td>
             <td colspan="2">&nbsp;</td>
           </tr>
           <tr class="TableCellLight">
-            <td align="left">Load</td>
-            <td align="left" colspan="2"><span id="load">&nbsp;&nbsp;&nbsp;</span></td>
+            <td>Load</td>
+            <td colspan="2"><span id="load">&nbsp;&nbsp;&nbsp;</span></td>
             <td colspan="2">&nbsp;</td>
           </tr>
         </tbody>
@@ -248,9 +247,9 @@ window.setInterval("setTableSize()", 1000);
 #(crawlProfilesShow)#::
 <fieldset>
     <legend id="runningCrawlsLegend">Running Crawls (#[count]#)</legend> 
-<table width="96%">
+<table>
 <tr><td>
-  <table border="0" summary="A list of crawl profiles and their current settings." id="crawlProfiles">
+  <table summary="A list of crawl profiles and their current settings." id="crawlProfiles">
     <colgroup>
         <col width="16" />
         <col width="140"/>
@@ -314,7 +313,7 @@ window.setInterval("setTableSize()", 1000);
   <img id="WebPicture" src="env/grafics/invisible.png"/>
   </div>
 #(/linkstructure)#
-<h3>Crawled Pages</h3>
+<h3>Проскановані сторінки</h3>
 <p id="crawllist"></p>
 </fieldset>
 #(/crawlProfilesShow)#

@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" >
+<!DOCTYPE html>
+<html lang="uk">
   <head>
     <title>YaCy '#[clientname]#': Network Scanner Monitor</title>
     #%env/templates/metas.template%#
@@ -17,8 +17,8 @@
 	</p>
 	<form id="servertable" action="CrawlStartScanner_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8" ><fieldset>
 	  <legend><label for="servertable">Available server within the given IP range</label></legend>
-      <table class="sortable" border="0">
-        <tr class="TableHeader" valign="bottom">
+      <table class="sortable">
+        <tr class="TableHeader">
           #(edit)#::
           <th class="sorttable_nosort">
           <input type="checkbox" name="allswitch" onclick="checkAll(this.form.id, this.checked);" />
@@ -33,7 +33,7 @@
         #{list}#
         <tr class="TableCellLight">
           #(edit)#::
-          <td align="left"><input type="checkbox" name="item_#[count]#" value="mark_#[pk]#" #(preselected)#::checked="checked"#(/preselected)# /></td>
+          <td><input type="checkbox" name="item_#[count]#" value="mark_#[pk]#" #(preselected)#::checked="checked"#(/preselected)# /></td>
           #(/edit)#
           <td>#[protocol]#</td>
           <td><a href="#[url]#">#[ip]#</a></td>

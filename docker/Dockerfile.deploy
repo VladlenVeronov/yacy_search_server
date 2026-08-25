@@ -1,0 +1,9 @@
+# Overlay deploy: rebuild only the file-tier (htroot, locales, templates, defaults)
+# on top of the working yacy-fork:local image, skipping the ant compile step.
+# Use when only HTML/CSS/lng/template/defaults files have changed.
+FROM yacy-fork:local AS deploy
+USER root
+COPY --chown=yacy:yacy htroot/ /opt/yacy_search_server/htroot/
+COPY --chown=yacy:yacy locales/ /opt/yacy_search_server/locales/
+COPY --chown=yacy:yacy defaults/ /opt/yacy_search_server/defaults/
+USER yacy

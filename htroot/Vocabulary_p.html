@@ -61,11 +61,10 @@ function updatepage(str) {
   <body id="Vocabulary_p">
 
     #%env/templates/header.template%#
-    #%env/templates/submenuSemantic.template%#
-    
+        
 #(edit)#::
 <div id="api">
-<a href="Vocabulary_p.xml" id="apilink"><img src="env/grafics/api.png" width="60" height="40" alt="API"/></a>
+<a href="Vocabulary_p.xml" id="apilink"><img src="env/grafics/api.png" alt="API"/></a>
 <script type="text/javascript">
 //<![CDATA[
 document.getElementById('apilink').setAttribute('href', 'Vocabulary_p.xml?' + window.location.search.substring(1));
@@ -303,7 +302,7 @@ To see a list of all APIs, please visit the <a href="https://wiki.yacy.net/index
       <thead>
       	<tr class="TableHeader">
         	<th>Modify</th>
-        	<th>Delete</th>
+        	<th>Видалити</th>
         	<th>Literal</th>
         	<th>Synonyms</th>
         	<th>Object Link</th>

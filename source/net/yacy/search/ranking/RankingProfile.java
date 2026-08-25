@@ -95,7 +95,7 @@ public class RankingProfile {
         this.coeff_app_dc_description = 10;
         this.coeff_app_dc_subject     = 2;
         this.coeff_app_dc_title       = 14;
-        this.coeff_authority          = 5;
+        this.coeff_authority          = 0; // disabled: backlink-popularity ranking (PLAN.md Phase 2)
         this.coeff_cathasapp          = (mediatype == ContentDomain.APP) ? 15 : 0;
         this.coeff_cathasaudio        = (mediatype == ContentDomain.AUDIO) ? 15 : 0;
         this.coeff_cathasimage        = (mediatype == ContentDomain.IMAGE) ? 15 : 0;
@@ -121,7 +121,7 @@ public class RankingProfile {
         this.coeff_urlcompintoplist   = 2;
         this.coeff_descrcompintoplist = 2;
         this.coeff_prefer             = 0;
-        this.coeff_citation           = 10;
+        this.coeff_citation           = 0; // disabled: PageRank-style boost (PLAN.md Phase 2)
     }
 
     public RankingProfile(final String prefix, String profile) {

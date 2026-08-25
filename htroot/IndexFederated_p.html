@@ -1,13 +1,12 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="uk">
   <head>
     <title>YaCy '#[clientname]#': Index Sources &amp; Targets</title>
     #%env/templates/metas.template%#
   </head>
   <body id="IndexFederated_p">
     #%env/templates/header.template%#
-    #%env/templates/submenuIndexControl.template%#
-    <h2>Index Sources &amp; Targets</h2>
+        <h2>Index Sources &amp; Targets</h2>
     <p>
       YaCy supports multiple index storage locations.
       As an internal indexing database a deep-embedded multi-core Solr is used and it is possible to attach also a remote Solr.
@@ -46,15 +45,15 @@
         <dt class="TableCellDark">&nbsp;</dt>
         <dd>Solr Hosts<br/>
       <div>
-      <table class="sortable" border="0">
-      <tr class="TableHeader" valign="bottom">
+      <table class="sortable">
+      <tr class="TableHeader">
         <td><strong>Solr Host Administration Interface</strong><br/></td>
         <td><strong>Index Size</strong></td>
       </tr>
       #{list}#
       <tr class="TableCell#(dark)#Light::Dark::Summary#(/dark)#">
         <td><a href="#[url]#" target="_blank">#[url]#</a></td>
-        <td align="right">#[size]#</td>
+        <td>#[size]#</td>
       </tr>
       #{/list}#
       </table>

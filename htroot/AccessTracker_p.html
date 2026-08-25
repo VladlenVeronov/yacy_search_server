@@ -1,17 +1,16 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" >
+<!DOCTYPE html>
+<html lang="uk">
   <head>
     <title>YaCy '#[clientname]#': Access Tracker</title>
     #%env/templates/metas.template%#
   </head>
   <body id="AccessTracker">
     #%env/templates/header.template%#
-    #%env/templates/submenuAccessTracker.template%#
-    <script type="text/javascript" src="js/sorttable.js"></script>
+        <script type="text/javascript" src="js/sorttable.js"></script>
     #(page)#
     <h2>Server Access Overview</h2>
     <p>This is a list of #[num]# requests to the local http server within the last hour.</p>
-    <table border="0">
+    <table>
       <tr class="TableHeader">
         <td rowspan="2">Host</td>
         <td colspan="4">Access Count During</td>
@@ -33,7 +32,7 @@
       #{/list}#
     </table>
     <p>The following hosts are registered as source for brute-force requests to protected pages</p>
-    <table class="sortable" border="0">
+    <table class="sortable">
       <tr class="TableHeader">
         <td>Host</td>
         <td>Access Times</td>
@@ -49,7 +48,7 @@
     <h2>Server Access Details</h2>
     <p>This is a list of requests (max. 1000) to the local http server within the last hour.</p>
     <p>Showing #[num]# requests.</p>
-    <table class="sortable" border="0">
+    <table class="sortable">
       <tr class="TableHeader">
         <td>Host</td>
         <td>Date</td>
@@ -67,7 +66,7 @@
     <h2>Local Search Log</h2>
     <p>This is a list of searches that had been requested from this' peer search interface</p>
     <p>Showing #[num]# entries from a total of #[total]# requests.</p>
-    <table class="sortable" border="0">
+    <table class="sortable">
     <thead>
       <tr class="TableHeader">
         <td>Requesting Host</td>
@@ -127,7 +126,7 @@
     <h2>Local Search Host Tracker</h2>
     <p>This is a list of searches that had been requested from this' peer search interface</p>
     <p>Showing #[num]# entries from a total of #[total]# requests.</p>
-    <table class="sortable" border="0">
+    <table class="sortable">
     <thead>
       <tr class="TableHeader">
         <td>Requesting Host</td>
@@ -159,7 +158,7 @@
     <h2>Remote Search Log</h2>
     <p>This is a list of searches that had been requested from remote peer search interface</p>
     <p>Showing #[num]# entries from a total of #[total]# requests.</p>
-    <table class="sortable" border="0">
+    <table class="sortable">
     <thead>
       <tr class="TableHeader">
         <td>Requesting Host</td>
@@ -212,7 +211,7 @@
     <h2>Remote Search Host Tracker</h2>
     <p>This is a list of searches that had been requested from remote peer search interface</p>
     <p>Showing #[num]# entries from a total of #[total]# requests.</p>
-    <table class="sortable" border="0">
+    <table class="sortable">
     <thead>
       <tr class="TableHeader">
         <td>Requesting Host</td>

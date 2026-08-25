@@ -4,7 +4,6 @@
     <title>YaCy '#[clientname]#': Network Configuration</title>
     #%env/templates/metas.template%#
     <script type="text/javascript">
-    <!--
       function CheckForRobinson() {
          var dist = document.getElementById("ConfigForm").indexDistribute.checked;
          var recv = document.getElementById("ConfigForm").indexReceive.checked;
@@ -32,14 +31,11 @@
             document.getElementById("ConfigForm").indexReceive.checked = true;
             document.getElementById("ConfigForm").indexReceiveSearch[0].checked = true;
          }
-      }
-    //-->
-    </script>
+      }</script>
   </head>
   <body id="ConfigNetwork">
     #%env/templates/header.template%#
-    #%env/templates/submenuUseCaseAccount.template%#
-    <h2>Network Configuration</h2>
+        <h2>Мережева конфігурація</h2>
     #(commit)#
         ::<div class="commit">Accepted Changes.</div>
         ::<div class="error">Inapplicable Setting Combination:</div>

@@ -1,5 +1,5 @@
-<div class="rightbar">
-<fieldset style="width: 320px;">
+<div class="yg-card" style="margin-top:16px;">
+<fieldset>
   <legend>System Status</legend>
   <dl>
 

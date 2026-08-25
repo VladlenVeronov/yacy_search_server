@@ -1,10 +1,9 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="uk">
   <head>
     <title>YaCy '#[clientname]#': Shared Blacklist</title>
     #%env/templates/metas.template%#
     <script type="text/javascript">
-    <!--
     function selectall(name){
         var selectForm = document.forms.namedItem(name);
         var count = selectForm.elements["num"].value;
@@ -25,14 +24,11 @@
                 selectForm.elements["item" + i].checked = false;
             }
         }
-    }
-    -->
-    </script>
+    }</script>
   </head>
   <body marginheight="0" marginwidth="0" leftmargin="0" topmargin="0">
     #%env/templates/header.template%#
-    #%env/templates/submenuBlacklist.template%#
-    <br />
+        <br />
     <br />
     <h2>Add Items to Blacklist</h2>
     <p class="info">#(status)#
@@ -79,9 +75,9 @@
           </td>
         </tr>
       </table>
-      <table border="0">
+      <table>
         <tr class="TableHeader">
-		  <th class="small" width="100%" align="left">Blacklist item</th>
+		  <th class="small">Blacklist item</th>
 		  <th class="small">&nbsp;</th>
         </tr>#{urllist}#
         <tr class="TableCell#(dark)#Light::Dark#(/dark)#"  class="small">

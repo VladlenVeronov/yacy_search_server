@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" >
+<!DOCTYPE html>
+<html lang="uk">
   <head>
     <title>YaCy '#[clientname]#': Index Deletion</title>
     #%env/templates/metas.template%#
@@ -7,8 +7,7 @@
   <body id="IndexDeletion">
   
     #%env/templates/header.template%#
-    #%env/templates/submenuIndexControl.template%#
-    <h2>Index Deletion</h2>
+        <h2>Index Deletion</h2>
     <p>The search index contains #[doccount]# documents. You can delete them here.
     Deletions are made concurrently which can cause that recently deleted documents are not yet reflected in the document count.</p>
     <p>Index deletion will not immediately reduce the storage size on disk because entries are only marked as deleted in a first step.

@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="uk">
   <head>
     <title>YaCy '#[clientname]#': YaCy Search Network</title>
     #%env/templates/metas.template%#
@@ -31,7 +31,7 @@
     </div>
     #(/menu)#
     
-<div id="api"><a href="Network.xml" id="apilink"><img src="env/grafics/api.png" width="60" height="40" alt="API"/></a>
+<div id="api"><a href="Network.xml" id="apilink"><img src="env/grafics/api.png" alt="API"/></a>
 <span>The information that is presented on this page can also be retrieved as XML.
 Click the API icon to see the XML.
 To see a list of all APIs, please visit the <a href="https://wiki.yacy.net/index.php/Dev:API" target="_blank">API wiki page</a>.</span>
@@ -43,7 +43,6 @@ document.getElementById("apilink").setAttribute("href", "Network.xml?" + window.
     #(page)#
     <h2>YaCy Search Network '#[networkName]#'</h2>
   <script type="text/javascript">
-  <!--
     imagestub = "NetworkPicture.png?width=1280&height=900&bgcolor=FFFFFF&ct=15000&coronaangle=";
     imageanimindex = 0;
     imageloadindex = 0;
@@ -75,9 +74,7 @@ document.getElementById("apilink").setAttribute("href", "Network.xml?" + window.
         }
         setTimeout("doanimation()", 100);
       }
-    }
-  -->
-  </script>
+    }</script>
     ::
     <h2>Active Principal and Senior Peers in '#[networkName]#' Network</h2>
     ::
@@ -105,11 +102,11 @@ document.getElementById("apilink").setAttribute("href", "Network.xml?" + window.
         <input type="submit" name="search" class="btn btn-default" value="Search" />
       </fieldset>
     </form>
-    <table class="sortable" border="0">
-      <tr class="TableHeader" valign="bottom">
+    <table class="sortable">
+      <tr class="TableHeader">
         <td><strong>Hash</strong></td>
         <td><strong>Name</strong><br/></td>
-        <td width="34"><strong>Info</strong></td>
+        <td><strong>Info</strong></td>
         <td><strong>Release</strong></td>
         <td><strong>Age</strong></td>
         <td><strong>#Seeds</strong></td>
@@ -121,7 +118,7 @@ document.getElementById("apilink").setAttribute("href", "Network.xml?" + window.
         <td style="width:70px;"><strong>Uptime</strong></td>
         <td><strong>Links</strong></td>
         <td><strong>RWIs</strong></td>
-        <td><strong>URLs<br/>for<br/>Remote<br/>Crawl</strong></td>
+        <td><strong>URLs<br/>for<br/>Віддалені<br/>Crawl</strong></td>
         <td><strong>Sent DHT<br/>Word Chunks</strong></td>
         <td><strong>Sent<br/>URLs</strong></td>
         <td><strong>Received DHT<br/>Word Chunks</strong></td>
@@ -133,36 +130,36 @@ document.getElementById("apilink").setAttribute("href", "Network.xml?" + window.
       #{list}#
       <tr class="TableCell#(dark)#Light::Dark::Summary#(/dark)#">
         <td ><code>#[hash]#</code></td>
-        <td #(special)#::class="TableCellActive"#(/special)#>#[shortname]##(ssl)#::<a href="https://#[ip]#:#[portssl]#/Network.html?page=1" class="forceNoExternalIcon" target="_blank"><img src="env/grafics/lockclose.png" width="11" height="15" title="https supported" alt="https supported" /></a>#(/ssl)#</td>
+        <td #(special)#::class="TableCellActive"#(/special)#>#[shortname]##(ssl)#::<a href="https://#[ip]#:#[portssl]#/Network.html?page=1" class="forceNoExternalIcon" target="_blank"><img src="env/grafics/lockclose.png" title="https supported" alt="https supported" /></a>#(/ssl)#</td>
         <td nowrap>
-          #(type)##(direct)#<img src="env/grafics/JuniorPassive.gif" width="11" height="11" title="Type: Junior | Contact: passive" alt="Junior passive" />::<img src="env/grafics/JuniorDirect.gif" width="11" height="11" title="Type: Junior | Contact: direct" alt="Junior direct" />::<img src="env/grafics/JuniorOffline.gif" width="11" height="11" title="Type: Junior | Contact: offline" alt="Junior offline" />#(/direct)#::#(direct)#<img src="env/grafics/SeniorPassive.gif" width="11" height="11" title="Type: Senior | Contact: passive" alt="senior passive" />::<img src="env/grafics/SeniorDirect.gif" width="11" height="11" title="Type: Senior | Contact: direct" alt="Senior direct" />::<img src="env/grafics/SeniorOffline.gif" width="11" height="11" title="Type: Senior | Contact: offline" alt="Senior offline" />#(/direct)#::<a href="#[url]#" class="forceNoExternalIcon">#(direct)#<img src="env/grafics/PrincipalPassive.gif" width="11" height="11" title="Type: Principal | Contact: passive | Seed download: possible" alt="Principal passive" />::<img src="env/grafics/PrincipalDirect.gif" width="11" height="11" title="Type: Principal | Contact: direct | Seed download: possible" alt="Principal active" />::<img src="env/grafics/PrincipalOffline.gif" width="11" height="11" title="Type: Principal | Contact: offline | Seed download: ?" alt="Principal offline" />#(/direct)#</a>#(/type)##(acceptcrawl)#<img src="env/grafics/CrawlNo.gif" width="11" height="11" title="Accept Crawl: no" alt="no crawl" />::<img src="env/grafics/CrawlYes.gif" width="11" height="11" title="Accept Crawl: yes" alt="crawl possible" />::<img src="env/grafics/CrawlYesOffline.gif" width="11" height="11" title="Accept Crawl: yes" alt="crawl possible" />#(/acceptcrawl)##(dhtreceive)#<img src="env/grafics/DHTReceiveNo.gif" width="11" height="11" title="DHT Receive: no; #[peertags]#" alt="no DHT receive" />::<img src="env/grafics/DHTReceiveYes.gif" width="11" height="11" title="DHT Receive: yes" alt="DHT receive enabled" />::<img src="env/grafics/DHTReceiveYesOffline.gif" width="11" height="11" title="DHT Receive: yes" alt="DHT receive enabled" />#(/dhtreceive)##{ips}#<a href="#(c)#http://#(ipv6)#::[#(/ipv6)##[ip]##(ipv6)#::]#(/ipv6)#:#[port]#/Network.html?page=1::Network.html?page=4&amp;peerHash=#[hash]#&amp;peerIP=#[ip]#&amp;peerPort=#[port]#&amp;addPeer=add+Peer#(/c)#"#(c)#:: target="_blank"#(/c)#class="forceNoExternalIcon"><img src="env/grafics/#(nodestate)#NodeDisqualified::NodeQualified#(/nodestate)##(c)##(ipv6)#IPv4::IPv6#(/ipv6)#::#(ipv6)#IPv4::IPv6#(/ipv6)##(/c)#.gif" width="11" height="11" title="#(c)##(ipv6)#IPv4::IPv6#(/ipv6)#::#(ipv6)#IPv4::IPv6#(/ipv6)##(/c)# #(nodestate)#Peer::Node Peer#(/nodestate)#" /></a>#{/ips}#</td>
-        <td align="right">#[version]#</td>
-        <td align="right">#[age]#</td>
-        <td align="right">#[seeds]#</td>
-        <td align="right">#[connects]#</td>
-        <td align="right">#[ppm]#</td>
-        <td align="right">#[qph]#</td>
-        <td align="right">#[lastSeen]#</td>
-        <td align="right">#[utc]#</td>
-        <td align="right" nowrap>#[uptime]#</td>
-        <td align="right">#[LCount]#</td>
-        <td align="right">#[ICount]#</td>
-        <td align="right">#[RCount]#</td>
-        <td align="right">#[sI]#</td>
-        <td align="right">#[sU]#</td>
-        <td align="right">#[rI]#</td>
-        <td align="right">#[rU]#</td>
-        <td align="right">#[location]#</td>
-        #(c)#::<td align="right">#[userAgent]#</td>#(/c)#
+          #(type)##(direct)#<img src="env/grafics/JuniorPassive.gif" title="Type: Junior | Contact: passive" alt="Junior passive" />::<img src="env/grafics/JuniorDirect.gif" title="Type: Junior | Contact: direct" alt="Junior direct" />::<img src="env/grafics/JuniorOffline.gif" title="Type: Junior | Contact: offline" alt="Junior offline" />#(/direct)#::#(direct)#<img src="env/grafics/SeniorPassive.gif" title="Type: Senior | Contact: passive" alt="senior passive" />::<img src="env/grafics/SeniorDirect.gif" title="Type: Senior | Contact: direct" alt="Senior direct" />::<img src="env/grafics/SeniorOffline.gif" title="Type: Senior | Contact: offline" alt="Senior offline" />#(/direct)#::<a href="#[url]#" class="forceNoExternalIcon">#(direct)#<img src="env/grafics/PrincipalPassive.gif" title="Type: Principal | Contact: passive | Seed download: possible" alt="Principal passive" />::<img src="env/grafics/PrincipalDirect.gif" title="Type: Principal | Contact: direct | Seed download: possible" alt="Principal active" />::<img src="env/grafics/PrincipalOffline.gif" title="Type: Principal | Contact: offline | Seed download: ?" alt="Principal offline" />#(/direct)#</a>#(/type)##(acceptcrawl)#<img src="env/grafics/CrawlNo.gif" title="Accept Crawl: no" alt="no crawl" />::<img src="env/grafics/CrawlYes.gif" title="Accept Crawl: yes" alt="crawl possible" />::<img src="env/grafics/CrawlYesOffline.gif" title="Accept Crawl: yes" alt="crawl possible" />#(/acceptcrawl)##(dhtreceive)#<img src="env/grafics/DHTReceiveNo.gif" title="DHT Receive: no; #[peertags]#" alt="no DHT receive" />::<img src="env/grafics/DHTReceiveYes.gif" title="DHT Receive: yes" alt="DHT receive enabled" />::<img src="env/grafics/DHTReceiveYesOffline.gif" title="DHT Receive: yes" alt="DHT receive enabled" />#(/dhtreceive)##{ips}#<a href="#(c)#http://#(ipv6)#::[#(/ipv6)##[ip]##(ipv6)#::]#(/ipv6)#:#[port]#/Network.html?page=1::Network.html?page=4&amp;peerHash=#[hash]#&amp;peerIP=#[ip]#&amp;peerPort=#[port]#&amp;addPeer=add+Peer#(/c)#"#(c)#:: target="_blank"#(/c)#class="forceNoExternalIcon"><img src="env/grafics/#(nodestate)#NodeDisqualified::NodeQualified#(/nodestate)##(c)##(ipv6)#IPv4::IPv6#(/ipv6)#::#(ipv6)#IPv4::IPv6#(/ipv6)##(/c)#.gif" title="#(c)##(ipv6)#IPv4::IPv6#(/ipv6)#::#(ipv6)#IPv4::IPv6#(/ipv6)##(/c)# #(nodestate)#Peer::Node Peer#(/nodestate)#" /></a>#{/ips}#</td>
+        <td>#[version]#</td>
+        <td>#[age]#</td>
+        <td>#[seeds]#</td>
+        <td>#[connects]#</td>
+        <td>#[ppm]#</td>
+        <td>#[qph]#</td>
+        <td>#[lastSeen]#</td>
+        <td>#[utc]#</td>
+        <td nowrap>#[uptime]#</td>
+        <td>#[LCount]#</td>
+        <td>#[ICount]#</td>
+        <td>#[RCount]#</td>
+        <td>#[sI]#</td>
+        <td>#[sU]#</td>
+        <td>#[rI]#</td>
+        <td>#[rU]#</td>
+        <td>#[location]#</td>
+        #(c)#::<td>#[userAgent]#</td>#(/c)#
         <td><nobr>
           <a href="MessageSend_p.html?hash=#[hash]#" title="Send message to peer #[fullname]#">m</a>&nbsp;
           <a href="ViewProfile.html?hash=#[hash]#&amp;display=1" title="View profile of peer #[fullname]#">p</a>&nbsp;
           <a href="goto_p.html?hash=#[hash]#&path=/Wiki.html" title="Read and edit wiki on peer #[fullname]#">w</a>&nbsp;
           <a href="goto_p.html?hash=#[hash]#&path=/Blog.html" title="Browse blog of peer #[fullname]#">b</a>&nbsp;
-          #(updatedProfile)#::<a href="ViewProfile.html?hash=#[hash]#&amp;display=1"><img src="env/grafics/profile.gif" width="54" height="11" alt="Profile updated" /></a>#(/updatedProfile)#
-          #(updatedWiki)#::<a href="http://#[address]#/Wiki.html?page=#[page]#" title="#[page]#"><img src="env/grafics/wiki.gif" width="54" height="11" alt="Wiki updated" /></a>#(/updatedWiki)#
-          #(updatedBlog)#::<a href="http://#[address]#/Blog.html?page=#[page]#" title="#[subject]#"><img src="env/grafics/blog.gif" width="54" height="11" alt="Blog updated" /></a>#(/updatedBlog)#
-          #(isCrawling)#::<a href="#[page]#"><img src="env/grafics/crawl.gif" width="54" height="11" alt="Crawl" /></a>#(/isCrawling)#
+          #(updatedProfile)#::<a href="ViewProfile.html?hash=#[hash]#&amp;display=1"><img src="env/grafics/profile.gif" alt="Profile updated" /></a>#(/updatedProfile)#
+          #(updatedWiki)#::<a href="http://#[address]#/Wiki.html?page=#[page]#" title="#[page]#"><img src="env/grafics/wiki.gif" alt="Wiki updated" /></a>#(/updatedWiki)#
+          #(updatedBlog)#::<a href="http://#[address]#/Blog.html?page=#[page]#" title="#[subject]#"><img src="env/grafics/blog.gif" alt="Blog updated" /></a>#(/updatedBlog)#
+          #(isCrawling)#::<a href="#[page]#"><img src="env/grafics/crawl.gif" alt="Crawl" /></a>#(/isCrawling)#
         </nobr></td>
       </tr>
       #{/list}#
@@ -172,13 +169,13 @@ document.getElementById("apilink").setAttribute("href", "Network.xml?" + window.
     </p>
     ::
     <div class="left">
-    <table border="0" width="1280">
+    <table>
       <tr class="TableHeader">
-        <td rowspan="5" class="TableHeader" width="10%">Network</td>
-        <td colspan="#(active-switch)#2::3::4::5::6#(/active-switch)#" width="22%">Online Peers</td>
-        <td rowspan="2" width="22%">Number of<br/>Documents</td>
-        <td rowspan="2" width="22%">Indexing Speed:<br/>Pages Per Minute (PPM)</td>
-        <td rowspan="2" width="22%">Query Frequency:<br/>Queries Per Hour (QPH)</td>
+        <td rowspan="5" class="TableHeader">Network</td>
+        <td colspan="#(active-switch)#2::3::4::5::6#(/active-switch)#">Online Peers</td>
+        <td rowspan="2">Number of<br/>Documents</td>
+        <td rowspan="2">Indexing Speed:<br/>Pages Per Minute (PPM)</td>
+        <td rowspan="2">Query Frequency:<br/>Queries Per Hour (QPH)</td>
       </tr>
       <tr class="TableHeader">
         #(active-switch)#::
@@ -191,44 +188,44 @@ document.getElementById("apilink").setAttribute("href", "Network.xml?" + window.
       </tr>
       <tr class="TableCellLight">
         #(active-switch)#::
-        <td align="right" rowspan="3">#[last-hour]#</td>::
-        <td align="right" rowspan="3">#[last-day]#</td><td align="right" rowspan="3">#[last-hour]#</td>::
-        <td align="right" rowspan="3">#[last-week]#</td><td align="right" rowspan="3">#[last-day]#</td><td align="right" rowspan="3">#[last-hour]#</td>::
-        <td align="right" rowspan="3">#[last-month]#</td><td align="right" rowspan="3">#[last-week]#</td><td align="right" rowspan="3">#[last-day]#</td><td align="right" rowspan="3">#[last-hour]#</td>
+        <td rowspan="3">#[last-hour]#</td>::
+        <td rowspan="3">#[last-day]#</td><td rowspan="3">#[last-hour]#</td>::
+        <td rowspan="3">#[last-week]#</td><td rowspan="3">#[last-day]#</td><td rowspan="3">#[last-hour]#</td>::
+        <td rowspan="3">#[last-month]#</td><td rowspan="3">#[last-week]#</td><td rowspan="3">#[last-day]#</td><td rowspan="3">#[last-hour]#</td>
         #(/active-switch)#
-        <td align="left">Active Senior</td>
-        <td align="right">#[active-count]#</td>
-        <td align="right">#[active-links]#</td>
-        <td align="right" rowspan="3">#[gppm]#</td>
-        <td align="right" rowspan="3">#[gqph]#</td>
+        <td>Active Senior</td>
+        <td>#[active-count]#</td>
+        <td>#[active-links]#</td>
+        <td rowspan="3">#[gppm]#</td>
+        <td rowspan="3">#[gqph]#</td>
       </tr>
       <tr class="TableCellLight">
-        <td align="left">Passive Senior</td>
-        <td align="right">#[passive-count]#</td>
-        <td align="right">#[passive-links]#</td>
+        <td>Passive Senior</td>
+        <td>#[passive-count]#</td>
+        <td>#[passive-links]#</td>
       </tr>
       <tr class="TableCellLight">
-        <td align="left">Junior (fragment)</td>
-        <td align="right">#[potential-count]#</td>
-        <td align="right">#[potential-links]#</td>
+        <td>Junior (fragment)</td>
+        <td>#[potential-count]#</td>
+        <td>#[potential-links]#</td>
       </tr>
       <tr class="TableCellSummary">
-        <td align="left" colspan="#(active-switch)#3::4::5::6::7#(/active-switch)#">This Peer</td>
-        <td align="right">#[my-LCount]#</td>
-        <td align="right">#[my-ppm]#</td>
-        <td align="right">#[my-qph]#</td>
+        <td colspan="#(active-switch)#3::4::5::6::7#(/active-switch)#">This Peer</td>
+        <td>#[my-LCount]#</td>
+        <td>#[my-ppm]#</td>
+        <td>#[my-qph]#</td>
       </tr>
     </table>
     </div>
 
     <div class="left">
       <p>
-        <a href="NetworkPicture.png?width=1280&amp;height=900&amp;bgcolor=FFFFFF"><img id="NetworkPicture" src="NetworkPicture.png?width=1280&amp;height=900&amp;bgcolor=FFFFFF&amp;coronaangle=0" alt="The YaCy Network" width="1280" height="900" /></a>
+        <a href="NetworkPicture.png?width=1280&amp;height=900&amp;bgcolor=FFFFFF"><img id="NetworkPicture" src="NetworkPicture.png?width=1280&amp;height=900&amp;bgcolor=FFFFFF&amp;coronaangle=0" alt="The YaCy Network" /></a>
       </p>
     </div>
     <div class="left">
     Your Peer:
-    <table border="0" width="600">
+    <table>
       <tr class="TableHeader">
         <td>Name</td>
         <td>Info</td>
@@ -249,29 +246,29 @@ document.getElementById("apilink").setAttribute("href", "Network.xml?" + window.
         <td>QPH<br/>(remote)</td>
       </tr>
       <tr class="TableCellLight">
-        <td>#[my-name]##(my-ssl)#::<img src="env/grafics/lockclose.png" width="11" height="15" title="https supported" alt="https supported" />#(/my-ssl)#</td>
-        <td nowrap>#(my-info)#<img src="env/grafics/Virgin.gif" width="11" height="11" title="Type: Virgin" alt="Virgin" />::<img src="env/grafics/JuniorDirect.gif" width="11" height="11" title="Type: Junior" alt="Junior" />::<img src="env/grafics/SeniorDirect.gif" width="11" height="11" title="Type: Senior" alt="Senior" />::<img src="env/grafics/PrincipalDirect.gif" width="11" height="11" title="Type: Principal" alt="Principal" />#(/my-info)##(my-acceptcrawl)#<img src="env/grafics/CrawlNo.gif" width="11" height="11" title="Accept Crawl: no" alt="no crawl" />::<img src="env/grafics/CrawlYes.gif" width="11" height="11" title="Accept Crawl: yes" alt="Crawl enabled" />#(/my-acceptcrawl)##(my-dhtreceive)#<img src="env/grafics/DHTReceiveNo.gif" width="11" height="11" title="DHT Receive: no" alt="no DHT receive" />::<img src="env/grafics/DHTReceiveYes.gif" width="11" height="11" title="DHT Receive: yes" alt="DHT Receive enabled" />#(/my-dhtreceive)##{ips}#<a href="#(c)#http://#(ipv6)#::[#(/ipv6)##[ip]##(ipv6)#::]#(/ipv6)#:#[port]#/Network.html?page=1::Network.html?page=4&amp;peerHash=#[hash]#&amp;peerIP=#[ip]#&amp;peerPort=#[port]#&amp;addPeer=add+Peer#(/c)#"#(c)#:: target="_blank"#(/c)#class="forceNoExternalIcon"><img src="env/grafics/#(nodestate)#NodeDisqualified::NodeQualified#(/nodestate)##(c)##(ipv6)#IPv4::IPv6#(/ipv6)#::#(ipv6)#IPv4::IPv6#(/ipv6)##(/c)#.gif" width="11" height="11" title="#(c)##(ipv6)#IPv4::IPv6#(/ipv6)#::#(ipv6)#IPv4::IPv6#(/ipv6)##(/c)# #(nodestate)#Peer::Node Peer#(/nodestate)#" /></a>#{/ips}#</td>
-        <td align="right">#[my-version]#</td>
-        <td align="right">#[my-utc]#</td>
-        <td align="right">#[my-uptime]#</td>
-        <td align="right">#[my-LCount]#</td>
-        <td align="right">#[my-ICount]#</td>
-        <td align="right">#[my-RCount]#</td>
-        <td align="right">#[my-sI]#</td>
-        <td align="right">#[my-sU]#</td>
-        <td align="right">#[my-rI]#</td>
-        <td align="right">#[my-rU]#</td>
-        <td align="right">#[my-seeds]#</td>
-        <td align="right">#[my-connects]#</td>
-        <td align="right">#[my-ppm]#</td>
-        <td align="right">#[my-qph-publocal]#</td>
-        <td align="right">#[my-qph-pubremote]#</td>
+        <td>#[my-name]##(my-ssl)#::<img src="env/grafics/lockclose.png" title="https supported" alt="https supported" />#(/my-ssl)#</td>
+        <td nowrap>#(my-info)#<img src="env/grafics/Virgin.gif" title="Type: Virgin" alt="Virgin" />::<img src="env/grafics/JuniorDirect.gif" title="Type: Junior" alt="Junior" />::<img src="env/grafics/SeniorDirect.gif" title="Type: Senior" alt="Senior" />::<img src="env/grafics/PrincipalDirect.gif" title="Type: Principal" alt="Principal" />#(/my-info)##(my-acceptcrawl)#<img src="env/grafics/CrawlNo.gif" title="Accept Crawl: no" alt="no crawl" />::<img src="env/grafics/CrawlYes.gif" title="Accept Crawl: yes" alt="Crawl enabled" />#(/my-acceptcrawl)##(my-dhtreceive)#<img src="env/grafics/DHTReceiveNo.gif" title="DHT Receive: no" alt="no DHT receive" />::<img src="env/grafics/DHTReceiveYes.gif" title="DHT Receive: yes" alt="DHT Receive enabled" />#(/my-dhtreceive)##{ips}#<a href="#(c)#http://#(ipv6)#::[#(/ipv6)##[ip]##(ipv6)#::]#(/ipv6)#:#[port]#/Network.html?page=1::Network.html?page=4&amp;peerHash=#[hash]#&amp;peerIP=#[ip]#&amp;peerPort=#[port]#&amp;addPeer=add+Peer#(/c)#"#(c)#:: target="_blank"#(/c)#class="forceNoExternalIcon"><img src="env/grafics/#(nodestate)#NodeDisqualified::NodeQualified#(/nodestate)##(c)##(ipv6)#IPv4::IPv6#(/ipv6)#::#(ipv6)#IPv4::IPv6#(/ipv6)##(/c)#.gif" title="#(c)##(ipv6)#IPv4::IPv6#(/ipv6)#::#(ipv6)#IPv4::IPv6#(/ipv6)##(/c)# #(nodestate)#Peer::Node Peer#(/nodestate)#" /></a>#{/ips}#</td>
+        <td>#[my-version]#</td>
+        <td>#[my-utc]#</td>
+        <td>#[my-uptime]#</td>
+        <td>#[my-LCount]#</td>
+        <td>#[my-ICount]#</td>
+        <td>#[my-RCount]#</td>
+        <td>#[my-sI]#</td>
+        <td>#[my-sU]#</td>
+        <td>#[my-rI]#</td>
+        <td>#[my-rU]#</td>
+        <td>#[my-seeds]#</td>
+        <td>#[my-connects]#</td>
+        <td>#[my-ppm]#</td>
+        <td>#[my-qph-publocal]#</td>
+        <td>#[my-qph-pubremote]#</td>
       </tr>
     </table>
     </div>
 
 	<div class="left">
-    <table border="0">
+    <table>
             <tr>
                     <td style="background-color:#668877">&nbsp;</td>
                     <td>dark green font</td>

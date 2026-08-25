@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="uk">
   <head>
     <title>YaCy '#[clientname]#': '#[queuename]#' Crawl Queue</title>
     #%env/templates/metas.template%#
@@ -9,11 +9,10 @@
     <div id="fullcontent">
     #(embed)#
     #%env/templates/header.template%#
-    #%env/templates/submenuCrawlMonitor.template%#
-    <h2>'#[queuename]#' Crawl Queue</h2>
+        <h2>'#[queuename]#' Crawl Queue</h2>
     ::#(/embed)#
 <div id="api">
-<a href="api/latency_p.xml" id="apilink"><img src="env/grafics/api.png" width="60" height="40" alt="API"/></a>
+<a href="api/latency_p.xml" id="apilink"><img src="env/grafics/api.png" alt="API"/></a>
 <span>Click on this API button to see an XML with information about the crawler latency and other statistics.</span>
 </div>
     
@@ -38,7 +37,7 @@
       </fieldset>
     </form>
     ::#(/embed)#
-    <table border="0">
+    <table>
       <colgroup>
         <col width="5" />
         <col width="10" />
@@ -96,10 +95,7 @@
     ::#(/embed)#
     </div>
     <script type="text/javascript">
-    <!--
       parentPage = parent.document.getElementById('QueuesTable');
-      if (parentPage != null) parentPage.height = document.getElementById('fullcontent').offsetHeight + 30;
-    -->
-    </script>
+      if (parentPage != null) parentPage.height = document.getElementById('fullcontent').offsetHeight + 30;</script>
   </body>
 </html>

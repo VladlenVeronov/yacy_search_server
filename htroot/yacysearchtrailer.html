@@ -1,325 +1,238 @@
 <script>
   if (document.getElementById("progressbar") != null && document.getElementById("progressbar").getAttribute('class') != "progress-bar progress-bar-success") {
-	  document.getElementById("progressbar").setAttribute('style',"width:100%");
-      document.getElementById("progressbar").setAttribute('style',"transition:transform 0s;-webkit-transition:-webkit-transform 0s;");
-	  document.getElementById("progressbar").setAttribute('class',"progress-bar progress-bar-success");
-	  window.setTimeout(fadeOutBar, 500);
+    document.getElementById("progressbar").setAttribute('style',"width:100%");
+    document.getElementById("progressbar").setAttribute('style',"transition:transform 0s;-webkit-transition:-webkit-transform 0s;");
+    document.getElementById("progressbar").setAttribute('class',"progress-bar progress-bar-success");
+    window.setTimeout(fadeOutBar, 500);
   }
-</script>  
+</script>
+
+<style>
+  .yacy-side-card { background: white; border: 1px solid #e5e7eb; border-radius: 0.5rem; padding: 0.75rem 1rem; margin-bottom: 0.75rem; }
+  .yacy-side-card h3 { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: #6b7280; margin: 0 0 0.5rem; display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
+  .yacy-side-card ul.menugroup { list-style: none; padding: 0; margin: 0; }
+  .yacy-side-card li.facet { padding: 2px 0; font-size: 0.875rem; line-height: 1.3; }
+  .yacy-side-card li.facet a { display: flex; align-items: center; gap: 0.4rem; color: #374151; text-decoration: none; padding: 4px 6px; border-radius: 4px; }
+  .yacy-side-card li.facet a:hover { background: #f3f4f6; color: #1d4ed8; }
+  .yacy-side-card li.facet input[type="checkbox"] { accent-color: #2563eb; }
+  .yacy-toggle-group { display: inline-flex; gap: 0.25rem; flex-wrap: wrap; }
+  .yacy-toggle-btn { padding: 0.35rem 0.75rem; border: 1px solid #e5e7eb; background: white; color: #374151; border-radius: 0.375rem; font-size: 0.8125rem; cursor: pointer; transition: background 0.15s, color 0.15s, border-color 0.15s; }
+  .yacy-toggle-btn:hover { background: #f3f4f6; }
+  .yacy-toggle-btn.active { background: #1d4ed8; color: white; border-color: #1d4ed8; }
+  .yacy-toggle-btn.privacy { background: #10b981; color: white; border-color: #10b981; }
+  .yacy-tagcloud { line-height: 1.6; }
+  .yacy-tagcloud a { color: #2563eb; text-decoration: none; margin-right: 0.4em; }
+  .yacy-tagcloud a:hover { text-decoration: underline; }
+  .yacy-side-chevron { transition: transform 0.2s; font-size: 0.75rem; }
+  .yacy-side-chevron.up { transform: rotate(180deg); }
+</style>
 
 #(resource-switches)#::
-<form
-  action="yacysearch.html" method="get" accept-charset="UTF-8" id="resource-switch-form"
-  data-trigger="hover" data-placement="right" data-container="body"
-  title="#(global)#Your search is done using only your own peer, locally.::Your search is done using peers in the YaCy P2P network.#(/global)#"
-  data-content="#(global)#You can switch to 'Peer-to-Peer Mode' which will cause that your search is done using the other peers in the YaCy network.::You can switch to 'Stealth Mode' which will switch off P2P, giving you full privacy. Expect less results then, because then only your own search index is used.#(/global)#"
-  onsubmit="document.getElementById('resourceSwitchFormQuery').value = document.getElementById('search').value;">
-    <input type="hidden" id="resourceSwitchFormQuery" name="query" value="#[former]#"/>
-    #(authSearch)#::
-  	<input type="hidden" name="auth" value=""/>
-  	#(/authSearch)#
-  	<input type="hidden" name="contentdom" value="#[contentdom]#" />
-    <input type="hidden" name="strictContentDom" value="#[strictContentDom]#" />
-    <input type="hidden" name="former" value="#[former]#" />
-    <input type="hidden" name="maximumRecords" value="#[maximumRecords]#" />
-    <input type="hidden" name="maximumRecords" value="#[maximumRecords]#" />
-    <input type="hidden" name="startRecord" value="#[startRecord]#" />
-    <input type="hidden" name="verify" value="#[search.verify]#" />
-    <input type="hidden" name="nav" value="#[search.navigation]#" />
-    <input type="hidden" name="prefermaskfilter" value="#[prefermaskfilter]#" />
-    <input type="hidden" name="depth" value="#[depth]#" />
-    <input type="hidden" name="constraint" value="#[constraint]#" />
-    <input type="hidden" name="meanCount" value="#[meanCount]#" />
-    <input id="contentDomTimezoneOffset" type="hidden" name="timezoneOffset" value=""><script>document.getElementById("contentDomTimezoneOffset").value = new Date().getTimezoneOffset();</script>
-	<div class="btn-group btn-group-justified hidden-sm hidden-md">
-		<div class="btn-group">
-			<button type="#(global)#submit::button#(/global)#" name="resource" value="global"
-				class="btn btn-lg #(global)#btn-default::btn-warning#(/global)#">Peer-to-Peer</button>
-		</div>
-		<div class="btn-group">
-			<button type="#(global)#button::submit#(/global)#" name="resource" value="local" 
-				class="btn btn-lg #(global)#btn-success::btn-default#(/global)#">#(global)#Stealth Mode::Privacy#(/global)#</button>
-		</div>
-	</div>
-	<div class="btn-group btn-group-justified hidden-lg">
-		<div class="btn-group">
-			<button type="#(global)#submit::button#(/global)#" name="resource" value="global"
-				class="btn btn-xs #(global)#btn-default::btn-warning#(/global)#">Peer-to-Peer</button>
-		</div>
-		<div class="btn-group">
-			<button type="#(global)#button::submit#(/global)#" name="resource" value="local" 
-				class="btn btn-xs #(global)#btn-success::btn-default#(/global)#">#(global)#Stealth&nbsp;Mode::Privacy#(/global)#</button>
-		</div>
-	</div>
+<form action="yacysearch.html" method="get" accept-charset="UTF-8" id="resource-switch-form"
+      title="#(global)#Your search uses your peer only.::Your search uses peers in the YaCy P2P network.#(/global)#"
+      onsubmit="document.getElementById('resourceSwitchFormQuery').value = document.getElementById('search').value;">
+  <input type="hidden" id="resourceSwitchFormQuery" name="query" value="#[former]#"/>
+  #(authSearch)#::<input type="hidden" name="auth" value=""/>#(/authSearch)#
+  <input type="hidden" name="contentdom" value="#[contentdom]#" />
+  <input type="hidden" name="strictContentDom" value="#[strictContentDom]#" />
+  <input type="hidden" name="former" value="#[former]#" />
+  <input type="hidden" name="maximumRecords" value="#[maximumRecords]#" />
+  <input type="hidden" name="startRecord" value="#[startRecord]#" />
+  <input type="hidden" name="verify" value="#[search.verify]#" />
+  <input type="hidden" name="nav" value="#[search.navigation]#" />
+  <input type="hidden" name="prefermaskfilter" value="#[prefermaskfilter]#" />
+  <input type="hidden" name="depth" value="#[depth]#" />
+  <input type="hidden" name="constraint" value="#[constraint]#" />
+  <input type="hidden" name="meanCount" value="#[meanCount]#" />
+  <div class="yacy-side-card">
+    <h3>Mode</h3>
+    <div class="yacy-toggle-group">
+      <button type="#(global)#submit::button#(/global)#" name="resource" value="global"
+              class="yacy-toggle-btn #(global)#::active#(/global)#">Peer-to-Peer</button>
+      <button type="#(global)#button::submit#(/global)#" name="resource" value="local"
+              class="yacy-toggle-btn #(global)#privacy::#(/global)#">#(global)#Stealth::Privacy#(/global)#</button>
+    </div>
+  </div>
 </form>
-<script>
-$('#resource-switch-form').popover()
-</script>
 #(/resource-switches)#
 
 #(ranking-switches)#::
-<p class="navbutton"></p>
 <form action="yacysearch.html" method="get" accept-charset="UTF-8" name="rankingSwitchForm">
-    #(authSearch)#::
-  	<input type="hidden" name="auth" value=""/>
-  	#(/authSearch)#
-    <input type="hidden" name="contentdom" value="#[contentdom]#" />
-    <input type="hidden" name="strictContentDom" value="#[strictContentDom]#" />
-    <input type="hidden" name="former" value="#[former]#" />
-    <input type="hidden" name="maximumRecords" value="#[maximumRecords]#" />
-    <input type="hidden" name="startRecord" value="#[startRecord]#" />
-    <input type="hidden" name="verify" value="#[search.verify]#" />
-    <input type="hidden" name="resource" value="#[resource]#" />
-    <input type="hidden" name="nav" value="#[search.navigation]#" />
-    <input type="hidden" name="prefermaskfilter" value="#[prefermaskfilter]#" />
-    <input type="hidden" name="depth" value="#[depth]#" />
-    <input type="hidden" name="constraint" value="#[constraint]#" />
-    <input type="hidden" name="meanCount" value="#[meanCount]#" />
-    <input id="contentDomTimezoneOffset" type="hidden" name="timezoneOffset" value=""><script>document.getElementById("contentDomTimezoneOffset").value = new Date().getTimezoneOffset();</script>
-	<div id="rankingButtons" class="btn-group btn-group-justified" data-nav-generation="#[nav-generation]#">
-  		<!-- data-nav-generation attribute helps the browser know whether the search navigators have to be refreshed -->
-  		<div class="btn-group btn-group-xs">
-	  		<button type="#(contextRanking)#submit::button#(/contextRanking)#" class="btn btn-default#(contextRanking)#:: active#(/contextRanking)#" 
-	  			title="Use the default ranking profile (customizable), ordering results by score."
-	  			#(contextRanking)#name="query" value="#[formerWithoutDate]#" onclick="this.value=document.getElementById('search').value.replace(' /date','');"::#(/contextRanking)#>Context Ranking</button>
-  		</div>
-  		<div class="btn-group btn-group-xs">
-  			<button type=#(dateRanking)#submit::button#(/dateRanking)# class="btn btn-default#(dateRanking)#:: active#(/dateRanking)#"
-  			  	title="Use the 'Date' ranking profile, ordering results by default on each document last modification date."
-  				#(dateRanking)#name="query" value="#[former]# /date" onclick="this.value=document.getElementById('search').value + ' /date';"::#(/dateRanking)#>Sort by Date</button>
-	  	</div>
-	</div>
+  #(authSearch)#::<input type="hidden" name="auth" value=""/>#(/authSearch)#
+  <input type="hidden" name="contentdom" value="#[contentdom]#" />
+  <input type="hidden" name="strictContentDom" value="#[strictContentDom]#" />
+  <input type="hidden" name="former" value="#[former]#" />
+  <input type="hidden" name="maximumRecords" value="#[maximumRecords]#" />
+  <input type="hidden" name="startRecord" value="#[startRecord]#" />
+  <input type="hidden" name="verify" value="#[search.verify]#" />
+  <input type="hidden" name="resource" value="#[resource]#" />
+  <input type="hidden" name="nav" value="#[search.navigation]#" />
+  <input type="hidden" name="prefermaskfilter" value="#[prefermaskfilter]#" />
+  <input type="hidden" name="depth" value="#[depth]#" />
+  <input type="hidden" name="constraint" value="#[constraint]#" />
+  <input type="hidden" name="meanCount" value="#[meanCount]#" />
+  <div class="yacy-side-card" data-nav-generation="#[nav-generation]#" id="rankingButtons">
+    <h3>Sort</h3>
+    <div class="yacy-toggle-group">
+      <button type="#(contextRanking)#submit::button#(/contextRanking)#"
+              class="yacy-toggle-btn #(contextRanking)#::active#(/contextRanking)#"
+              title="Default ranking — by relevance"
+              #(contextRanking)#name="query" value="#[formerWithoutDate]#" onclick="this.value=document.getElementById('search').value.replace(' /date','');"::#(/contextRanking)#>Relevance</button>
+      <button type="#(dateRanking)#submit::button#(/dateRanking)#"
+              class="yacy-toggle-btn #(dateRanking)#::active#(/dateRanking)#"
+              title="Sort by document last modification date"
+              #(dateRanking)#name="query" value="#[former]# /date" onclick="this.value=document.getElementById('search').value + ' /date';"::#(/dateRanking)#>Date</button>
+    </div>
+  </div>
 </form>
 #(/ranking-switches)#
 
-#(searchdomswitches)#::<p class="navbutton"></p>
+#(searchdomswitches)#::
 <form action="yacysearch.html" method="get" accept-charset="UTF-8" name="contentdomSwitchForm"
-	onsubmit="document.getElementById('contentdomSwitchFormQuery').value = document.getElementById('search').value;">
-    <input type="hidden" id="contentdomSwitchFormQuery" name="query" value="#[former]#"/>
-    #(authSearch)#::
-  	<input type="hidden" name="auth" value=""/>
-  	#(/authSearch)#
-    <input type="hidden" name="strictContentDom" value="#[strictContentDom]#" />
-    <input type="hidden" name="former" value="#[former]#" />
-    <input type="hidden" name="maximumRecords" value="#[maximumRecords]#" />
-    <input type="hidden" name="startRecord" value="#[startRecord]#" />
-    <input type="hidden" name="verify" value="#[search.verify]#" />
-    <input type="hidden" name="resource" value="#[resource]#" />
-    <input type="hidden" name="nav" value="#[search.navigation]#" />
-    <input type="hidden" name="prefermaskfilter" value="#[prefermaskfilter]#" />
-    <input type="hidden" name="depth" value="#[depth]#" />
-    <input type="hidden" name="constraint" value="#[constraint]#" />
-    <input type="hidden" name="meanCount" value="#[meanCount]#" />
-    <input id="contentDomTimezoneOffset" type="hidden" name="timezoneOffset" value=""><script>document.getElementById("contentDomTimezoneOffset").value = new Date().getTimezoneOffset();</script>
-	<div class="btn-group btn-group-justified">
-		#(searchtext)#::<div class="btn-group btn-group-xs">
-				<button type="submit" name="contentdom" value="text" 
-					class="btn btn-default#(check)#:: active#(/check)#"
-					onclick="this.form.maximumRecords.value = '10';">Documents</button>
-			</div>
-		#(/searchtext)#
-		#(searchimage)#::<div class="btn-group btn-group-xs">
-					<button type="submit" name="contentdom" value="image" 
- 						class="btn btn-default#(check)#:: active#(/check)#"
-						onclick="this.form.maximumRecords.value = '20';">Images</button>
-				</div>
-		#(/searchimage)#
-		#(searchaudio)#::<div class="btn-group btn-group-xs">
-				<button type="submit" name="contentdom" value="audio" 
- 					class="btn btn-default#(check)#:: active#(/check)#"
-					onclick="this.form.maximumRecords.value = '10';">Audio</button>
-			</div>
-		#(/searchaudio)#
-		#(searchvideo)#::<div class="btn-group btn-group-xs">
-				<button type="submit" name="contentdom" value="video" 
-					class="btn btn-default#(check)#:: active#(/check)#"
-					onclick="this.form.maximumRecords.value = '10';">Video</button>
-			</div>
-		#(/searchvideo)#
-		#(searchapp)#::<div class="btn-group btn-group-xs">
-				<button type="submit" name="contentdom" value="app" 
-					class="btn btn-default#(check)#:: active#(/check)#"
-					onclick="this.form.maximumRecords.value = '10';">Apps</button>
-			</div>
-		#(/searchapp)#
-	</div>
+      onsubmit="document.getElementById('contentdomSwitchFormQuery').value = document.getElementById('search').value;">
+  <input type="hidden" id="contentdomSwitchFormQuery" name="query" value="#[former]#"/>
+  #(authSearch)#::<input type="hidden" name="auth" value=""/>#(/authSearch)#
+  <input type="hidden" name="strictContentDom" value="#[strictContentDom]#" />
+  <input type="hidden" name="former" value="#[former]#" />
+  <input type="hidden" name="maximumRecords" value="#[maximumRecords]#" />
+  <input type="hidden" name="startRecord" value="#[startRecord]#" />
+  <input type="hidden" name="verify" value="#[search.verify]#" />
+  <input type="hidden" name="resource" value="#[resource]#" />
+  <input type="hidden" name="nav" value="#[search.navigation]#" />
+  <input type="hidden" name="prefermaskfilter" value="#[prefermaskfilter]#" />
+  <input type="hidden" name="depth" value="#[depth]#" />
+  <input type="hidden" name="constraint" value="#[constraint]#" />
+  <input type="hidden" name="meanCount" value="#[meanCount]#" />
+  <div class="yacy-side-card">
+    <h3>Type</h3>
+    <div class="yacy-toggle-group">
+      #(searchtext)#::<button type="submit" name="contentdom" value="text" class="yacy-toggle-btn #(check)#::active#(/check)#" onclick="this.form.maximumRecords.value = '10';">Documents</button>#(/searchtext)#
+      #(searchimage)#::<button type="submit" name="contentdom" value="image" class="yacy-toggle-btn #(check)#::active#(/check)#" onclick="this.form.maximumRecords.value = '20';">Images</button>#(/searchimage)#
+      #(searchaudio)#::<button type="submit" name="contentdom" value="audio" class="yacy-toggle-btn #(check)#::active#(/check)#" onclick="this.form.maximumRecords.value = '10';">Audio</button>#(/searchaudio)#
+      #(searchvideo)#::<button type="submit" name="contentdom" value="video" class="yacy-toggle-btn #(check)#::active#(/check)#" onclick="this.form.maximumRecords.value = '10';">Video</button>#(/searchvideo)#
+      #(searchapp)#::<button type="submit" name="contentdom" value="app" class="yacy-toggle-btn #(check)#::active#(/check)#" onclick="this.form.maximumRecords.value = '10';">Apps</button>#(/searchapp)#
+    </div>
+  </div>
 </form>
 #(strictContentDomSwitch)#::
 <form action="yacysearch.html" method="get" accept-charset="UTF-8" name="strictContentdomSwitchForm"
-	onsubmit="document.getElementById('strictContentdomSwitchFormQuery').value = document.getElementById('search').value;">
-    <input type="hidden" id="strictContentdomSwitchFormQuery" name="query" value="#[former]#"/>
-    #(authSearch)#::
-  	<input type="hidden" name="auth" value=""/>
-  	#(/authSearch)#
-    <input type="hidden" name="contentdom" value="#[contentdom]#" />
-    <input type="hidden" name="former" value="#[former]#" />
-    <input type="hidden" name="maximumRecords" value="#[maximumRecords]#" />
-    <input type="hidden" name="startRecord" value="#[startRecord]#" />
-    <input type="hidden" name="verify" value="#[search.verify]#" />
-    <input type="hidden" name="resource" value="#[resource]#" />
-    <input type="hidden" name="nav" value="#[search.navigation]#" />
-    <input type="hidden" name="prefermaskfilter" value="#[prefermaskfilter]#" />
-    <input type="hidden" name="depth" value="#[depth]#" />
-    <input type="hidden" name="constraint" value="#[constraint]#" />
-    <input type="hidden" name="meanCount" value="#[meanCount]#" />
-    <input id="contentDomTimezoneOffset" type="hidden" name="timezoneOffset" value=""><script>document.getElementById("contentDomTimezoneOffset").value = new Date().getTimezoneOffset();</script>
-	<div class="btn-group btn-group-justified">
-  		<div class="btn-group btn-group-xs">
-  			<button type="#(strictContentDom)#button::submit#(/strictContentDom)#" name="strictContentDom" value="false" 
-  				title="Extend media search results to pages including such medias (provides generally more results, but eventually less relevant)" 
-  				class="btn btn-default#(strictContentDom)# active::#(/strictContentDom)#">Extended</button>
-  		</div>
-  		<div class="btn-group btn-group-xs">
-  			<button type="#(strictContentDom)#submit::button#(/strictContentDom)#" name="strictContentDom" value="true" 
-  				title="Strictly limit media search results to indexed documents matching exactly the desired content domain." 
-  				class="btn btn-default#(strictContentDom)#:: active#(/strictContentDom)#">Strict</button>
-  		</div>
-	</div>
+      onsubmit="document.getElementById('strictContentdomSwitchFormQuery').value = document.getElementById('search').value;">
+  <input type="hidden" id="strictContentdomSwitchFormQuery" name="query" value="#[former]#"/>
+  #(authSearch)#::<input type="hidden" name="auth" value=""/>#(/authSearch)#
+  <input type="hidden" name="contentdom" value="#[contentdom]#" />
+  <input type="hidden" name="former" value="#[former]#" />
+  <input type="hidden" name="maximumRecords" value="#[maximumRecords]#" />
+  <input type="hidden" name="startRecord" value="#[startRecord]#" />
+  <input type="hidden" name="verify" value="#[search.verify]#" />
+  <input type="hidden" name="resource" value="#[resource]#" />
+  <input type="hidden" name="nav" value="#[search.navigation]#" />
+  <input type="hidden" name="prefermaskfilter" value="#[prefermaskfilter]#" />
+  <input type="hidden" name="depth" value="#[depth]#" />
+  <input type="hidden" name="constraint" value="#[constraint]#" />
+  <input type="hidden" name="meanCount" value="#[meanCount]#" />
+  <div class="yacy-side-card">
+    <h3>Match</h3>
+    <div class="yacy-toggle-group">
+      <button type="#(strictContentDom)#button::submit#(/strictContentDom)#" name="strictContentDom" value="false"
+              title="Extend media search to pages including such media"
+              class="yacy-toggle-btn #(strictContentDom)#active::#(/strictContentDom)#">Extended</button>
+      <button type="#(strictContentDom)#submit::button#(/strictContentDom)#" name="strictContentDom" value="true"
+              title="Strictly limit to indexed documents matching exactly the desired content domain"
+              class="yacy-toggle-btn #(strictContentDom)#::active#(/strictContentDom)#">Strict</button>
+    </div>
+  </div>
 </form>
 #(/strictContentDomSwitch)#
 #(/searchdomswitches)#
 
 #(nav-protocols)#::
-<p class="navbutton"></p>
-<div id="nav-protocols" class="btn-group btn-group-justified">
-#{element}#
-  <div id="nav-protocols-#[name]#" class="btn-group btn-group-xs"><button type="button" class="btn btn-default#(on)#:: active#(/on)#"#(onclick)# onclick="window.location.href='#[url]#';"::#(/onclick)#>#[name]# (#[count]#)</button></div>
-#{/element}#
+<div class="yacy-side-card" id="nav-protocols">
+  <h3>Protocol</h3>
+  <div class="yacy-toggle-group">
+    #{element}#
+    <button type="button" class="yacy-toggle-btn #(on)#::active#(/on)#"
+            #(onclick)# onclick="window.location.href='#[url]#';"::#(/onclick)#>#[name]# (#[count]#)</button>
+    #{/element}#
+  </div>
 </div>
 #(/nav-protocols)#
 
-#(nav-topics)#<p>&nbsp;</p>::
-<div id="tagcloud" style="text-align:justify">#{element}#
-<a href="#[url]#" style="text-decoration:none;font-size:#[size]#px;">#[name]#</a>
-#{/element}#</div>
+#(nav-topics)#::
+<div class="yacy-side-card">
+  <h3>Topics</h3>
+  <div id="tagcloud" class="yacy-tagcloud">
+    #{element}#
+    <a href="#[url]#" style="font-size:#[size]#px;">#[name]#</a>
+    #{/element}#
+  </div>
+</div>
 #(/nav-topics)#
 
 #(cat-location)#::
-<ul id="cat-location" class="nav nav-sidebar menugroup">
-<li><h3>Location</h3></li>
-<li>
-<a href="yacysearch_location.html?query=#[queryenc]#" class="MenuItemLink">
-<img src="env/grafics/earthsearch.png" width="100%" height="86" alt="earthsearchlogo" /><br/>
-show search results for "#[query]#" on map</a>
-</li>
-</ul>
+<div class="yacy-side-card">
+  <h3>Location</h3>
+  <a href="yacysearch_location.html?query=#[queryenc]#" class="block text-sm text-blue-600 hover:underline">
+    <img src="env/grafics/earthsearch.png" class="w-full max-w-[160px] mx-auto" alt="earthsearchlogo" />
+    show "#[query]#" on map
+  </a>
+</div>
 #(/cat-location)#
 
 #(nav-dates)#::
-<link rel="stylesheet" href="env/morris.css">
-<script src="js/raphael.min.js"></script>
-<script src="js/morris.js"></script>
-<script type="text/javascript" src="js/accessibleHistogram.js" charset="UTF-8"></script>
-<script>
-	var histogramContainer = document.getElementById("datehistogram");
-	if(histogramContainer != null) {
-		dates_in_content_dts = [#{element}#"#[name]#","#[count]#"#(nl)#::,#(/nl)##{/element}#];
-		var parsed = [];
-    	for (var i = 0; i < dates_in_content_dts.length; i = i + 2) {
-        	var date = dates_in_content_dts[i];
-        	var count = dates_in_content_dts[i + 1];
-        	if (date && count) {parsed[parsed.length] = {x: date,y: count};};
-    	};
-    	if (parsed.length > 0) {
-    		histogramContainer.style = "height:200px; cursor: pointer;";
-    		
-    		var histogramClickhandler = function(row) {
-	    		var query = document.getElementsByClassName('searchinput')[0].getAttribute("value");
-    			var onp = -1, fromp = -1, top = -1;
-	    		if ((onp = query.indexOf("on:")) >= 0) {
-    				query = query.substring(0, onp - 1);
-    			}
-    			if ((fromp = query.indexOf("from:")) < 0) {
-    				query = query + " from:" + row.x;
-    				document.getElementsByClassName('searchinput')[0].value = query;
-    				document.getElementById('Enter').click();
-    			} else if ((top = query.indexOf("to:")) < 0) {
-	    			query = query + " to:" + row.x;
-    				document.getElementsByClassName('searchinput')[0].value = query;
-    				document.getElementById('Enter').click();
-    			} else {
-    				query = query.substring(0, fromp) + " on:" + row.x;
-    				document.getElementsByClassName('searchinput')[0].value = query;
-    				document.getElementById('Enter').click();
-    			}
-    			console.log(i, row, query);
-    		}
-    		
-    		var histogram = Morris.Bar({
-     			element: 'datehistogram',
-      			data: parsed,
-      			xkey: 'x',
-      			ykeys: ['y'],
-      			labels: ['number of documents about this date'],
-      			yLabelFormat: function (y) { return y.toString() + ' docs'; },
-      			barColors: function (row, series, type) {
-    	  			var d = new Date(row.label);
-          			if (d.getDay() === 6) return '#4aaf46'; //saturday
-          			if (d.getDay() === 0) return '#4aaf46'; //sunday
-    	  			return '#3574c0';
-      			},
-      			hideHover: 'false'
-    		}).on('click', function(i, row) {
-    			histogramClickhandler(row);
-    		});
-    		
-    		/* Add keyboard navigation support and accessible attributes */
-    		makeAccessibleMorrisBar(histogram, 
-    				"Number of documents per date histogram", 
-    				function(data) {return data.x + " : " + data.y + " docs"},
-    				"link",
-    				histogramClickhandler); 
-    	}
-	}
-</script>
+<!-- Phase 6: nav-dates always disabled, this branch unreachable -->
 #(/nav-dates)#
 
 <script>
 function toggleVisibility(name, count) {
-	if (document.getElementById(name + "_0").style.display == "none") {
-		for (i = 0; i < count; i++) document.getElementById(name + "_" + i).style.display="block";
-		document.getElementById("chevron-" + name).className = "glyphicon glyphicon-chevron-up";
-	} else {
-		for (i = 0; i < count; i++) document.getElementById(name + "_" + i).style.display="none";
-		document.getElementById("chevron-" + name).className = "glyphicon glyphicon-chevron-down";
-	}
+  var first = document.getElementById(name + "_0");
+  if (!first) return;
+  var open = first.style.display !== "none";
+  for (var i = 0; i < count; i++) {
+    var el = document.getElementById(name + "_" + i);
+    if (el) el.style.display = open ? "none" : "block";
+  }
+  var ch = document.getElementById("chevron-" + name);
+  if (ch) ch.classList.toggle("up", !open);
 }
 </script>
 
 #{navs}#
-<ul id="nav-#[name]#" class="nav nav-sidebar menugroup">
-<li style="cursor: pointer; cursor: hand;">
-	<h3 onclick="toggleVisibility('#[name]#', #[count]#);">#[displayname]# [#[count]#]
-	#(navSort)#<span class="glyphicon glyphicon-sort-by-attributes-alt" title="Sorted by descending counts"></span>
-	::<span class="glyphicon glyphicon-sort-by-attributes" title="Sorted by ascending counts"></span>
-	::<span class="glyphicon glyphicon glyphicon-sort-by-alphabet-alt" title="Sorted by descending labels"></span>
-	::<span class="glyphicon glyphicon-sort-by-alphabet" title="Sorted by ascending labels"></span>#(/navSort)#
-	<span style="float:right" id="chevron-#[name]#" class="glyphicon glyphicon-chevron-down" title="click to expand facet"></span>
-	</h3>
-</li>
-#{element}#
-<li style="display:none" id="#[id]#"><a href="#[url]#" class="MenuItemLink"><input type="checkbox" onchange="window.location.href='#[url]#'"#(on)# checked="checked"::#(/on)#/> #[name]# (#[count]#)</a></li>
-#{/element}#</ul>
-<script>if (#[count]# <= 8) toggleVisibility('#[name]#', #[count]#);</script>
+<div class="yacy-side-card">
+  <h3 onclick="toggleVisibility('#[name]#', #[count]#);">
+    <span>#[displayname]# <span class="text-gray-400 font-normal">[#[count]#]</span></span>
+    <span id="chevron-#[name]#" class="yacy-side-chevron">▾</span>
+  </h3>
+  <ul id="nav-#[name]#" class="menugroup">
+    #{element}#
+    <li class="facet" style="display:none" id="#[id]#">
+      <a href="#[url]#"><input type="checkbox" onchange="window.location.href='#[url]#'"#(on)# checked="checked"::#(/on)#/> <span class="truncate">#[name]#</span> <span class="text-gray-400 ml-auto">(#[count]#)</span></a>
+    </li>
+    #{/element}#
+  </ul>
+  <script>if (#[count]# <= 8) toggleVisibility('#[name]#', #[count]#);</script>
+</div>
 #{/navs}#
 
 #{nav-vocabulary}#
-<ul id="nav-vocabulary" class="nav nav-sidebar menugroup">
-<li style="cursor: pointer; cursor: hand;">
-	<h3 onclick="toggleVisibility('vocabulary_#[navname]#', #[count]#);">#[navname]# [#[count]#]
-	<span class="glyphicon glyphicon-sort-by-attributes-alt" title="Sorted by descending counts"></span>
-	<span style="float:right" id="chevron-vocabulary_#[navname]#" class="glyphicon glyphicon-chevron-down" title="click to expand facet"></span>
-	</h3>
-</li>
-#{element}#
-<li style="display:none" id="#[id]#"><a href="#[url]#" class="MenuItemLink"><input type="checkbox" onchange="window.location.href='#[url]#'"#(on)# checked="checked"::#(/on)#/> #[name]# (#[count]#)</a></li>
-#{/element}#</ul>
-<script>if (#[count]# <= 8) toggleVisibility('vocabulary_#[navname]#', #[count]#);</script>
+<div class="yacy-side-card">
+  <h3 onclick="toggleVisibility('vocabulary_#[navname]#', #[count]#);">
+    <span>#[navname]# <span class="text-gray-400 font-normal">[#[count]#]</span></span>
+    <span id="chevron-vocabulary_#[navname]#" class="yacy-side-chevron">▾</span>
+  </h3>
+  <ul id="nav-vocabulary" class="menugroup">
+    #{element}#
+    <li class="facet" style="display:none" id="#[id]#">
+      <a href="#[url]#"><input type="checkbox" onchange="window.location.href='#[url]#'"#(on)# checked="checked"::#(/on)#/> <span class="truncate">#[name]#</span> <span class="text-gray-400 ml-auto">(#[count]#)</span></a>
+    </li>
+    #{/element}#
+  </ul>
+  <script>if (#[count]# <= 8) toggleVisibility('vocabulary_#[navname]#', #[count]#);</script>
+</div>
 #{/nav-vocabulary}#
 
 #(nav-about)#::
-<ul class="nav nav-sidebar menugroup">
-<li><h3>#[headline]#</h3></li>
-<li>#[body]#</li>
-</ul>
+<div class="yacy-side-card">
+  <h3>#[headline]#</h3>
+  <div class="text-sm text-gray-700">#[body]#</div>
+</div>
 #(/nav-about)#

@@ -263,8 +263,10 @@ public class yacysearchtrailer {
             if (pos == 1 && neg == 0) prop.put("nav-protocols", 0); // this navigation is not useful
         }
 
-        // date navigators
-        if (theSearch.dateNavigator == null || theSearch.dateNavigator.isEmpty()) {
+        // date navigators — disabled in VIR GOO: the histogram is noisy and the
+        // user explicitly asked for it to go (relevance×freshness boost in the
+        // ranking profile already handles "fresher first").
+        if (true || theSearch.dateNavigator == null || theSearch.dateNavigator.isEmpty()) {
             prop.put("nav-dates", 0);
         } else {
             prop.put("nav-dates", 1);

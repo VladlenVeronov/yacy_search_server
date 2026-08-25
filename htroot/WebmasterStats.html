@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Статистика хостів — VIR GOO Admin</title>
+    #%env/templates/metas.template%#
+    <link rel="stylesheet" type="text/css" href="env/css/tailwind.min.css" />
+</head>
+<body>
+
+#%env/templates/header.template%#
+
+    #(loggedIn)#
+      <div class="yg-pagehead"><div><h1>Потрібен вхід</h1></div></div>
+      <div class="yg-card" style="background: var(--yg-warn-bg); border-color: #fbbf24;">
+        <p style="color: var(--yg-warn); margin: 0 0 12px;">
+          Статистика доступна лише для залогінених вебмайстрів.
+        </p>
+        <a href="User.html?returnto=/WebmasterStats.html" class="yg-btn yg-btn--primary">Увійти</a>
+      </div>
+    ::
+      <div class="yg-pagehead">
+        <div>
+          <h1>Статистика хостів</h1>
+          <p>Користувач: <strong>#[username]#</strong></p>
+        </div>
+      </div>
+
+      #(hosts)#
+        <div class="rounded-lg border border-gray-200 p-8 text-center text-gray-500">
+          Ви ще не подавали жодного домену.
+          <a href="CrawlRequest.html" class="text-blue-600 hover:underline ml-1">Подати сайт →</a>
+        </div>
+      ::
+        <div class="overflow-x-auto rounded-lg border border-gray-200">
+          <table class="min-w-full divide-y divide-gray-200 text-sm">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-3 py-2 text-left font-medium text-gray-700">Домен</th>
+                <th class="px-3 py-2 text-left font-medium text-gray-700">Статус</th>
+                <th class="px-3 py-2 text-left font-medium text-gray-700">Бот</th>
+                <th class="px-3 py-2 text-right font-medium text-gray-700">В індексі</th>
+                <th class="px-3 py-2 text-right font-medium text-gray-700">4xx</th>
+                <th class="px-3 py-2 text-right font-medium text-gray-700">5xx</th>
+                <th class="px-3 py-2 text-left font-medium text-gray-700">Останній скан</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100 bg-white">
+              #{hosts}#
+              <tr>
+                <td class="px-3 py-2 font-medium text-gray-900"><a href="#[url]#" target="_blank" rel="noopener" class="hover:text-blue-600 hover:underline">#[host]#</a></td>
+                <td class="px-3 py-2"><span class="inline-block px-2 py-0.5 rounded text-xs bg-gray-100 text-gray-700">#[status]#</span></td>
+                <td class="px-3 py-2 text-xs text-gray-600">#[bot_decision]#</td>
+                <td class="px-3 py-2 text-right font-mono">#[count_total]#</td>
+                <td class="px-3 py-2 text-right font-mono text-amber-700">#[count_4xx]#</td>
+                <td class="px-3 py-2 text-right font-mono text-red-700">#[count_5xx]#</td>
+                <td class="px-3 py-2 text-xs text-gray-600">#[last_crawl]#</td>
+              </tr>
+              #{/hosts}#
+            </tbody>
+          </table>
+        </div>
+        <p class="text-xs text-gray-500 mt-4">
+          Дані оновлюються разом із краулом. Якщо щойно подали — статистика з'явиться після того,
+          як адмін затвердить заявку та запустить сканування.
+        </p>
+      #(/hosts)#
+    #(/loggedIn)#
+
+#%env/templates/footer.template%#
+
+</body>
+</html>

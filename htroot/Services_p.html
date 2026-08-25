@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Сервіси меню — VIR GOO Admin</title>
+    #%env/templates/metas.template%#
+    <link rel="stylesheet" type="text/css" href="env/css/tailwind.min.css" />
+</head>
+<body>
+
+#%env/templates/header.template%#
+
+<div class="yg-pagehead">
+  <div>
+    <h1>Сервіси у меню</h1>
+    <p>Іконки що показуються у бічному меню на головній сторінці.
+       Поле <em>icon_url</em> — абсолютний URL або відносний шлях (<code>env/grafics/news.png</code>).
+       Неактивні у меню не показуються.</p>
+  </div>
+</div>
+
+    <!-- token bar -->
+    <div id="tokenBar" class="mb-4 p-3 rounded-lg border border-amber-200 bg-amber-50 text-sm text-amber-900">
+      <div class="flex flex-wrap items-center gap-2">
+        <span>Адмін-токен vector_service:</span>
+        <input id="adminToken" type="password" autocomplete="off" placeholder="vector_service admin_token"
+               class="flex-1 min-w-[180px] px-2 py-1 border border-amber-300 rounded text-xs font-mono bg-white" />
+        <button onclick="saveToken()" class="px-3 py-1 bg-amber-600 text-white rounded hover:bg-amber-700 text-xs">Зберегти</button>
+        <button onclick="clearToken()" class="px-3 py-1 bg-white border border-amber-300 rounded text-amber-800 hover:bg-amber-100 text-xs">Очистити</button>
+      </div>
+      <div class="mt-1 text-xs text-amber-800/80">
+        Токен зберігається лише у localStorage цього браузера. Без нього доступний тільки перегляд.
+      </div>
+    </div>
+
+    <!-- list -->
+    <div id="loadStatus" class="text-sm text-gray-500 mb-2">Завантаження…</div>
+    <div class="overflow-x-auto rounded-lg border border-gray-200 mb-6">
+      <table class="min-w-full divide-y divide-gray-200 text-sm">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-3 py-2 text-left font-medium text-gray-700 w-12">#</th>
+            <th class="px-3 py-2 text-left font-medium text-gray-700">Назва</th>
+            <th class="px-3 py-2 text-left font-medium text-gray-700">URL</th>
+            <th class="px-3 py-2 text-left font-medium text-gray-700">Іконка</th>
+            <th class="px-3 py-2 text-right font-medium text-gray-700 w-20">Порядок</th>
+            <th class="px-3 py-2 text-center font-medium text-gray-700 w-16">Активн.</th>
+            <th class="px-3 py-2 text-right font-medium text-gray-700 w-32">Дії</th>
+          </tr>
+        </thead>
+        <tbody id="svcRows" class="bg-white divide-y divide-gray-100"></tbody>
+      </table>
+    </div>
+
+    <!-- create form -->
+    <div class="rounded-lg border border-gray-200 p-4 bg-gray-50">
+      <h2 class="text-sm font-medium mb-3">Додати сервіс</h2>
+      <form id="addForm" onsubmit="return addSvc(event);" class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+        <input id="newName" required maxlength="80" placeholder="Назва (видима у tooltip)"
+               class="px-3 py-2 border border-gray-300 rounded" />
+        <input id="newUrl" required maxlength="500" placeholder="URL (https://… або /path)"
+               class="px-3 py-2 border border-gray-300 rounded" />
+        <input id="newIcon" maxlength="500" placeholder="Icon URL (опційно)"
+               class="px-3 py-2 border border-gray-300 rounded" />
+        <input id="newSort" type="number" value="0" placeholder="Порядок (менше = вище)"
+               class="px-3 py-2 border border-gray-300 rounded" />
+        <label class="flex items-center gap-2 sm:col-span-2">
+          <input id="newActive" type="checkbox" checked />
+          <span>Активний</span>
+        </label>
+        <button type="submit" class="yg-btn yg-btn--primary sm:col-span-2"
+                style="height:40px;font-size:14px;justify-content:center;">
+          + Додати
+        </button>
+      </form>
+    </div>
+
+    <p id="opStatus" class="mt-3 text-sm" role="status"></p>
+
+<script>
+const API = '/api/vector';
+const KEY = 'vir_goo_admin_token';
+
+function getToken() { return localStorage.getItem(KEY) || ''; }
+function saveToken() {
+  const t = document.getElementById('adminToken').value.trim();
+  if (!t) return;
+  localStorage.setItem(KEY, t);
+  setStatus('Токен збережено локально', 'ok');
+  loadServices();
+}
+function clearToken() {
+  localStorage.removeItem(KEY);
+  document.getElementById('adminToken').value = '';
+  setStatus('Токен очищено', 'ok');
+}
+
+function setStatus(msg, kind) {
+  const el = document.getElementById('opStatus');
+  el.textContent = msg || '';
+  el.className = 'mt-3 text-sm ' + (kind === 'err' ? 'text-red-600' : kind === 'ok' ? 'text-green-700' : 'text-gray-500');
+}
+
+async function api(path, method, body) {
+  const opts = { method: method || 'GET', headers: {} };
+  if (body !== undefined) {
+    opts.headers['content-type'] = 'application/json';
+    opts.body = JSON.stringify(body);
+  }
+  const t = getToken();
+  if (t && path.indexOf('/admin/') !== -1) opts.headers['authorization'] = 'Bearer ' + t;
+  const r = await fetch(API + path, opts);
+  if (!r.ok) {
+    const txt = await r.text().catch(() => r.statusText);
+    throw new Error(r.status + ' ' + txt.slice(0, 200));
+  }
+  return r.status === 204 ? null : r.json();
+}
+
+function escHtml(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+function renderRow(s) {
+  const tr = document.createElement('tr');
+  tr.dataset.id = s.id;
+  tr.innerHTML = `
+    <td class="px-3 py-2 text-gray-500 font-mono text-xs">${s.id}</td>
+    <td class="px-3 py-2"><input class="w-full px-2 py-1 border border-gray-200 rounded" value="${escHtml(s.name)}" data-f="name" /></td>
+    <td class="px-3 py-2"><input class="w-full px-2 py-1 border border-gray-200 rounded font-mono text-xs" value="${escHtml(s.url)}" data-f="url" /></td>
+    <td class="px-3 py-2"><input class="w-full px-2 py-1 border border-gray-200 rounded font-mono text-xs" value="${escHtml(s.icon_url || '')}" data-f="icon_url" /></td>
+    <td class="px-3 py-2 text-right"><input type="number" class="w-16 px-2 py-1 border border-gray-200 rounded text-right" value="${Number(s.sort_order) || 0}" data-f="sort_order" /></td>
+    <td class="px-3 py-2 text-center"><input type="checkbox" data-f="active" ${s.active ? 'checked' : ''} /></td>
+    <td class="px-3 py-2 text-right whitespace-nowrap">
+      <button onclick="saveSvc(${s.id})" class="px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded text-xs">Зберегти</button>
+      <button onclick="deleteSvc(${s.id})" class="px-2 py-1 bg-white border border-red-300 text-red-700 hover:bg-red-50 rounded text-xs">×</button>
+    </td>
+  `;
+  return tr;
+}
+
+async function loadServices() {
+  document.getElementById('loadStatus').textContent = 'Завантаження…';
+  try {
+    const list = await api('/services?include_inactive=true');
+    const tbody = document.getElementById('svcRows');
+    tbody.innerHTML = '';
+    list.forEach(s => tbody.appendChild(renderRow(s)));
+    document.getElementById('loadStatus').textContent =
+      list.length ? `${list.length} сервіс(ів)` : 'Сервісів ще немає';
+  } catch (e) {
+    document.getElementById('loadStatus').textContent = 'Помилка: ' + e.message;
+  }
+}
+
+function rowFields(id) {
+  const tr = document.querySelector(`tr[data-id="${id}"]`);
+  const get = f => tr.querySelector(`[data-f="${f}"]`);
+  return {
+    name: get('name').value.trim(),
+    url: get('url').value.trim(),
+    icon_url: get('icon_url').value.trim() || null,
+    sort_order: parseInt(get('sort_order').value, 10) || 0,
+    active: get('active').checked,
+  };
+}
+
+async function saveSvc(id) {
+  if (!getToken()) return setStatus('Введіть admin token щоб редагувати', 'err');
+  try {
+    await api('/admin/services/' + id, 'PUT', rowFields(id));
+    setStatus('Збережено #' + id, 'ok');
+  } catch (e) { setStatus('Помилка: ' + e.message, 'err'); }
+}
+
+async function deleteSvc(id) {
+  if (!getToken()) return setStatus('Введіть admin token щоб видаляти', 'err');
+  if (!confirm('Видалити сервіс #' + id + '?')) return;
+  try {
+    await api('/admin/services/' + id, 'DELETE');
+    setStatus('Видалено #' + id, 'ok');
+    loadServices();
+  } catch (e) { setStatus('Помилка: ' + e.message, 'err'); }
+}
+
+async function addSvc(ev) {
+  ev.preventDefault();
+  if (!getToken()) { setStatus('Введіть admin token щоб додавати', 'err'); return false; }
+  const body = {
+    name: document.getElementById('newName').value.trim(),
+    url: document.getElementById('newUrl').value.trim(),
+    icon_url: document.getElementById('newIcon').value.trim() || null,
+    sort_order: parseInt(document.getElementById('newSort').value, 10) || 0,
+    active: document.getElementById('newActive').checked,
+  };
+  try {
+    const created = await api('/admin/services', 'POST', body);
+    setStatus('Додано #' + created.id, 'ok');
+    document.getElementById('addForm').reset();
+    document.getElementById('newActive').checked = true;
+    loadServices();
+  } catch (e) { setStatus('Помилка: ' + e.message, 'err'); }
+  return false;
+}
+
+// init
+document.getElementById('adminToken').value = getToken();
+loadServices();
+</script>
+
+#%env/templates/footer.template%#
+
+</body>
+</html>

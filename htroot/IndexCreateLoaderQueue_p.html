@@ -1,20 +1,19 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="uk">
   <head>
     <title>YaCy '#[clientname]#': Loader Queue</title>
     #%env/templates/metas.template%#
   </head>
   <body id="IndexCreateLoaderQueue">
     #%env/templates/header.template%#
-    #%env/templates/submenuCrawlMonitor.template%#
-    <h2>Loader Queue</h2>
+        <h2>Loader Queue</h2>
     
     <p>
     #(loader-set)#
     The loader set is empty</p>
     ::
     There are #[num]# entries in the loader set:</p>
-    <table border="0">
+    <table>
       <colgroup>
         <col width="60" />
         <col width="10" />
@@ -23,7 +22,7 @@
       <tr class="TableHeader">
         <th>Initiator</th>
         <th>Depth</th>
-        <th>Status</th>
+        <th>Статус</th>
         <th>URL</th>
       </tr>
       #{list}#

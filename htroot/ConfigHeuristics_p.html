@@ -1,29 +1,28 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="uk">
   <head>
     <title>YaCy '#[clientname]#': Heuristics Configuration</title>
     #%env/templates/metas.template%#
   </head>
   <body id="ConfigNetwork">
     #%env/templates/header.template%#
-    #%env/templates/submenuRanking.template%#
-    <h2>Heuristics Configuration</h2>
+        <h2>Heuristics Configuration</h2>
     <p>
     A <a href="http://en.wikipedia.org/wiki/Heuristic" target="_blank">heuristic</a> is an 'experience-based technique that help in problem solving, learning and discovery' (wikipedia). The search heuristics that can be switched on here are techniques that help the discovery of possible search results based on link guessing, in-search crawling and requests to other search engines.
     When a search heuristic is used, the resulting links are not used directly as search result but the loaded pages are indexed and stored like other content. This ensures that blacklists can be used and that the searched word actually appears on the page that was discovered by the heuristic.
     </p>
     
     <form action=""><fieldset>
-    The success of heuristics are marked with an image (<img width="16" height="9" src="env/grafics/heuristic_redundant.gif" title="heuristic:&lt;name&gt; (redundant)" style="width:16px; height:9px;" alt="heuristic:&lt;name&gt; (redundant)"/>/<img width="16" height="9" src="env/grafics/heuristic_new.gif" title="heuristic:&lt;name&gt; (new link)" style="width:16px; height:9px;" alt="heuristic:&lt;name&gt; (new link)"/>) below the favicon left from the search result entry:
+    The success of heuristics are marked with an image (<img src="env/grafics/heuristic_redundant.gif" title="heuristic:&lt;name&gt; (redundant)" style="width:16px; height:9px;" alt="heuristic:&lt;name&gt; (redundant)"/>/<img src="env/grafics/heuristic_new.gif" title="heuristic:&lt;name&gt; (new link)" style="width:16px; height:9px;" alt="heuristic:&lt;name&gt; (new link)"/>) below the favicon left from the search result entry:
     <dl>
         <dt>
-          <img width="16" height="9" src="env/grafics/heuristic_redundant.gif" title="heuristic:&lt;name&gt; (redundant)" style="width:16px; height:9px;" alt="heuristic:&lt;name&gt; (redundant)"/>
+          <img src="env/grafics/heuristic_redundant.gif" title="heuristic:&lt;name&gt; (redundant)" style="width:16px; height:9px;" alt="heuristic:&lt;name&gt; (redundant)"/>
         </dt>
         <dd>
           The search result was discovered by a heuristic, but the link was already known by YaCy
         </dd>
         <dt>
-          <img width="16" height="9" src="env/grafics/heuristic_new.gif" title="heuristic:&lt;name&gt; (new link)" style="width:16px; height:9px;" alt="heuristic:&lt;name&gt; (new link)"/>
+          <img src="env/grafics/heuristic_new.gif" title="heuristic:&lt;name&gt; (new link)" style="width:16px; height:9px;" alt="heuristic:&lt;name&gt; (new link)"/>
         </dt>
         <dd>
           The search result was discovered by a heuristic, not previously known by YaCy
@@ -87,8 +86,8 @@
     <form action="ConfigHeuristics_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
       <div>
       <b>Available/Active Opensearch System</b>
-      <table class="sortable" border="0">
-      <tr class="TableHeader" valign="bottom">
+      <table class="sortable">
+      <tr class="TableHeader">
         <td>Active</td>
         <td>Title</td>
         <td>Comment</td>
@@ -97,11 +96,11 @@
       </tr>
       #{osdcfg}#
       <tr class="TableCell#(dark)#Light::Dark#(/dark)#">
-        <td align="center"><input type="checkbox" name="ossys_#[title]#" value="checked" #(checked)#::checked="checked"#(/checked)#/></td>
-        <td align="left"><b><a href="#[urlhostlink]#" target="_blank">#[title]#</b></a> </td>
-        <td align="left">#[comment]#</td>
-        <td align="left"><input type="text" name="ossys_url_#[title]#" value="#[url]#" size="70" required="required"/></td>
-        <td align="center"><input type="checkbox" name="ossys_del_#[title]#" value="checked" #(delchecked)#::checked="checked"#(/delchecked)#/></td>
+        <td><input type="checkbox" name="ossys_#[title]#" value="checked" #(checked)#::checked="checked"#(/checked)#/></td>
+        <td><b><a href="#[urlhostlink]#" target="_blank">#[title]#</b></a> </td>
+        <td>#[comment]#</td>
+        <td><input type="text" name="ossys_url_#[title]#" value="#[url]#" size="70" required="required"/></td>
+        <td><input type="checkbox" name="ossys_del_#[title]#" value="checked" #(delchecked)#::checked="checked"#(/delchecked)#/></td>
       </tr>
       #{/osdcfg}#
       <tr>
@@ -113,7 +112,7 @@
       </tr>
       <tr>
         <td colspan="3" style="padding-top:10px "><input type="submit" name="setopensearch" value="Save" class="btn btn-primary"/></td>
-        <td colspan="2" align="center" style="padding-top:10px "><input type="submit" name="resettodefaultosdlist" value="reset to default list" class="btn btn-primary"/></td>
+        <td colspan="2" style="padding-top:10px "><input type="submit" name="resettodefaultosdlist" value="reset to default list" class="btn btn-primary"/></td>
       </tr>
       </table>
       </div>

@@ -1,0 +1,34 @@
+# YACY local development env-vars
+# Copy to ~/.yacy_env and fill in real values. NEVER commit real keys.
+#
+# Required for vector indexing post-commit hook
+# (docs/yacy-project/scripts/install_hook.sh + reindex_vectors.py)
+
+export SUPABASE_URL="https://your-project-ref.supabase.co"
+export SUPABASE_SERVICE_KEY="your-service-key-here"
+export OPENAI_API_KEY="your-openai-key-here"
+
+# Optional: HuggingFace token for embeddings model (intfloat/multilingual-e5-base)
+export HF_TOKEN="your-hf-token-here"
+
+# Optional: Telegram bot for daily-agent reports
+# (docs/yacy-project/scripts/daily_agent.sh)
+export TG_BOT_TOKEN=""
+export TG_CHAT_ID=""
+
+# ----------------------------------------------------------------------------
+# Hybrid semantic re-ranking via the external Python vector_service.
+# The Java search pipeline reads these env vars in priority over yacy.init —
+# changing the URL on the production server is a one-line .env edit, no code
+# changes. Set ENABLED=true to actually call the service from /yacysearch.
+#
+# Mac dev (Python service on the same box):
+#   export VECTOR_RANK_ENABLED=true
+#   export VECTOR_RANK_URL=http://127.0.0.1:8001/rank
+#
+# Production server (Python service in the same docker network):
+#   export VECTOR_RANK_ENABLED=true
+#   export VECTOR_RANK_URL=http://vector_service:8001/rank
+export VECTOR_RANK_ENABLED="false"
+export VECTOR_RANK_URL="http://127.0.0.1:8001/rank"
+export VECTOR_RANK_TIMEOUT_MS="1500"

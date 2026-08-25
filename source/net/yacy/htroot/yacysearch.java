@@ -150,6 +150,9 @@ public class yacysearch {
         final servletProperties prop = new servletProperties();
         prop.put("topmenu", sb.getConfigBool("publicTopmenu", true) ? 1 : 0);
         prop.put("authSearch", authenticatedUserName != null);
+        // For yacy-public-header.template: 0=anon, 1=user
+        prop.put("publicLoggedIn", authenticatedUserName != null ? 1 : 0);
+        if (authenticatedUserName != null) prop.putHTML("publicLoggedIn_userName", authenticatedUserName);
 
         // produce vocabulary navigation sidebars
         final Collection<Tagging> vocabularies = LibraryProvider.autotagging.getVocabularies();

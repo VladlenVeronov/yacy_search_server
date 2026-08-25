@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="uk">
 	<head>
 		<title>YaCy '#[clientname]#': Bookmarks</title>
 		#%env/templates/metas.template%#		
@@ -24,7 +24,7 @@
 		#(mode)#
 		<!-- SubMenu (mode=0) -->
 			<ul class="SubMenu">
-				<li><a href="Bookmarks.html?login=true" class="MenuItemLink">Login</a></li>
+				<li><a href="Bookmarks.html?login=true" class="MenuItemLink">Увійти</a></li>
                 <li><a href="Bookmarks.html" class="MenuItemLink #(authorized)#lock::unlock#(/authorized)#">List Bookmarks</a></li>
 				<li><a href="Bookmarks.html?login=true&amp;mode=add" class="MenuItemLink #(authorized)#lock::unlock#(/authorized)#">Add Bookmark</a></li>
 				<li><a href="Bookmarks.html?login=true&amp;mode=importxml" class="MenuItemLink #(authorized)#lock::unlock#(/authorized)#">Import Bookmarks</a></li>
@@ -176,7 +176,7 @@
 document.write("\<a href=\"Bookmarks.rss?" + window.location.search.substring(1) + "\"\>")
 //]]>
 </script>
-<a href="#"><img src="env/grafics/api.png" width="60" height="40" alt="API" /></a>
+<a href="#"><img src="env/grafics/api.png" alt="API" /></a>
 <span>The bookmarks list can also be retrieved as RSS feed. This can also be done when you select a specific tag.
 Click the API icon to load the RSS from the current selection.
 To see a list of all APIs, please visit the <a href="https://wiki.yacy.net/index.php/Dev:API" target="_blank">API wiki page</a>.</span>
@@ -264,7 +264,7 @@ To see a list of all APIs, please visit the <a href="https://wiki.yacy.net/index
 				<p class="bookmarkActions">
 					<a href="Bookmarks.html?edit=#[hash]#" class="bookmarkAction">Edit</a>
 					/
-					<a href="Bookmarks.html?delete=#[hash]#" class="bookmarkAction" onclick="return confirm('Confirm deletion')">Delete</a>
+					<a href="Bookmarks.html?delete=#[hash]#" class="bookmarkAction" onclick="return confirm('Confirm deletion')">Видалити</a>
 					/
 					<a href="api/getpageinfo_p.xml?url=#[link]#" target="_blank" class="bookmarkAction">Info</a>
                                         #(hasquery)#::

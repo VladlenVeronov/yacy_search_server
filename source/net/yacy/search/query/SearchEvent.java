@@ -102,6 +102,7 @@ import net.yacy.search.index.Segment;
 import net.yacy.search.navigator.Navigator;
 import net.yacy.search.navigator.NavigatorPlugins;
 import net.yacy.search.ranking.ReferenceOrder;
+import net.yacy.search.ranking.VectorRankClient;
 import net.yacy.search.schema.CollectionConfiguration;
 import net.yacy.search.schema.CollectionSchema;
 import net.yacy.search.snippet.TextSnippet;
@@ -224,6 +225,12 @@ public final class SearchEvent implements ScoreMapUpdatesListener {
 
     /** thats the result list where the actual search result is waiting to be displayed */
     private final WeakPriorityBlockingQueue<URIMetadataNode>  resultList;
+
+    /** id (URL hash, ASCII) → hybrid score from the external vector_service.
+     * Populated incrementally by addNodes() when vector_rank.enabled is true.
+     * Empty map = no override; addResult() falls back to the original
+     * Solr/RWI-derived ranking. */
+    private final Map<String, Long> hybridOverrides = new ConcurrentHashMap<>();
 
     /** if this is true, then every entry in result List is polled immediately to prevent a re-ranking in the resultList. This is usefull if there is only one index source. */
     private final boolean pollImmediately;
@@ -956,6 +963,19 @@ public final class SearchEvent implements ScoreMapUpdatesListener {
         }
         assert (nodeList != null);
         if (nodeList.isEmpty()) return;
+
+        // Pre-fetch hybrid scores for this batch in one HTTP call. The map
+        // is consulted later in addResult() — no-op when the feature flag
+        // is off or the service is unreachable.
+        try {
+            final Map<String, Long> overrides = VectorRankClient.rank(
+                    this.query.getQueryGoal().getQueryString(false), nodeList);
+            if (!overrides.isEmpty()) this.hybridOverrides.putAll(overrides);
+        } catch (final Throwable t) {
+            // VectorRankClient already swallows its own errors, but keep a
+            // belt-and-braces guard so a bug here can never break search.
+            ConcurrentLog.warn("SEARCH", "vector rank pre-fetch failed: " + t.getMessage());
+        }
 
         if (local) {
             this.local_solr_stored.set(fullResource);
@@ -1938,10 +1958,21 @@ public final class SearchEvent implements ScoreMapUpdatesListener {
      */
     public void addResult(URIMetadataNode resultEntry, final long score) {
         if (resultEntry == null) return;
-        final long ranking = (score * 128) + postRanking(resultEntry, this.ref /*this.getTopicNavigator(MAX_TOPWORDS)*/);
-        // TODO: above was originally using (see below), but getTopicNavigator returns this.ref and possibliy alters this.ref on first call (this.ref.size < 2 -> this.ref.clear)
-        // TODO: verify and straighten the use of addTopic, getTopic and getTopicNavigator and related score calculation
-        // final long ranking = ((long) (score * 128.f)) + postRanking(resultEntry, this.getTopicNavigator(MAX_TOPWORDS));
+        final long ranking;
+        final Long override = this.hybridOverrides.get(ASCII.String(resultEntry.url().hash()));
+        if (override != null) {
+            // Hybrid score from vector_service entirely replaces the
+            // legacy Solr/RWI ranking — that's the whole point of the
+            // PLAN's "minimize PageRank/backlinks" line. postRanking is
+            // skipped on purpose: it adds keyword/topic boosts that the
+            // semantic similarity already captures.
+            ranking = override;
+        } else {
+            ranking = (score * 128) + postRanking(resultEntry, this.ref /*this.getTopicNavigator(MAX_TOPWORDS)*/);
+            // TODO: above was originally using (see below), but getTopicNavigator returns this.ref and possibliy alters this.ref on first call (this.ref.size < 2 -> this.ref.clear)
+            // TODO: verify and straighten the use of addTopic, getTopic and getTopicNavigator and related score calculation
+            // final long ranking = ((long) (score * 128.f)) + postRanking(resultEntry, this.getTopicNavigator(MAX_TOPWORDS));
+        }
 
         resultEntry.setScore(ranking); // update the score of resultEntry for access by search interface / api
         this.resultList.put(new ReverseElement<>(resultEntry, ranking)); // remove smallest in case of overflow

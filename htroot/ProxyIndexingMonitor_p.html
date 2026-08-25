@@ -1,13 +1,12 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="uk">
   <head>
     <title>YaCy '#[clientname]#': Indexing with Proxy</title>
     #%env/templates/metas.template%#
   </head>
   <body id="ProxyIndexingMonitor">
     #%env/templates/header.template%#
-    #%env/templates/submenuIndexCreate.template%#
-    <h2>Indexing with Proxy</h2>
+        <h2>Indexing with Proxy</h2>
     <p>
       YaCy can be used to 'scrape' content from pages that pass the integrated caching HTTP proxy.
       When scraping proxy pages then <strong>no personal or protected page is indexed</strong>;
@@ -19,13 +18,13 @@
     </p>
     
     <form action="ProxyIndexingMonitor_p.html" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
-      <table border="0">
+      <table>
         <tr class="TableCellDark">
           <td colspan="3"><strong>Proxy Auto Config:</strong>
           this controls the proxy auto configuration script for browsers at http://localhost:8090/autoconfig.pac
           </td> 
         </tr>
-        <tr valign="top" class="TableCellLight">
+        <tr class="TableCellLight">
           <td><label for="proxyYacyOnly">.yacy-domains only</label></td>
           <td><input type="checkbox" id="proxyYacyOnly" name="proxyYacyOnly"#(proxyYacyOnly)#:: checked="checked"#(/proxyYacyOnly)# /></td>
           <td>
@@ -39,7 +38,7 @@
           URLs as crawling start points for crawling.</td> 
         </tr>
       
-        <tr valign="top" class="TableCellLight">
+        <tr class="TableCellLight">
           <td><label for="prxy_prefetch">Prefetch Depth</label></td>
           <td><input name="proxyPrefetchDepth" id="prxy_prefetch" type="text" size="2" maxlength="2" value="#[proxyPrefetchDepth]#" /></td>
           <td>
@@ -48,26 +47,26 @@
             this means that only embedded href-anchors are prefetched additionally.
           </td>
         </tr>
-        <tr valign="top" class="TableCellLight">
+        <tr class="TableCellLight">
           <td><label for="prxy_storeHTCache">Store to Cache</label></td>
           <td><input type="checkbox" id="prxy_storeHTCache" name="proxyStoreHTCache"#(proxyStoreHTCacheChecked)#:: checked="checked"#(/proxyStoreHTCacheChecked)# /></td>
           <td>It is almost always recommended to set this on. The only exception is that you have another caching proxy running as secondary proxy and YaCy is configured to used that proxy in proxy-proxy - mode.</td>
         </tr>
-        <tr valign="top" class="TableCellLight">
+        <tr class="TableCellLight">
           <td><label for="prxy_index_text">Do Local Text-Indexing</label></td>
           <td><input type="checkbox" id="prxy_index_text" name="proxyIndexingLocalText"#(proxyIndexingLocalText)#:: checked="checked"#(/proxyIndexingLocalText)# /></td>
           <td>
             If this is on, all pages (except private content) that passes the proxy is indexed. 
           </td>
         </tr>
-        <tr valign="top" class="TableCellLight">
+        <tr class="TableCellLight">
           <td><label for="prxy_index_media">Do Local Media-Indexing</label></td>
           <td><input type="checkbox" id="prxy_index_media" name="proxyIndexingLocalMedia"#(proxyIndexingLocalMedia)#:: checked="checked"#(/proxyIndexingLocalMedia)# /></td>
           <td>
             This is the same as for Local Text-Indexing, but switches only the indexing of media content on.
           </td>
         </tr>
-        <tr valign="top" class="TableCellLight">
+        <tr class="TableCellLight">
           <td><label for="prxy_crawl_order">Do Remote Indexing</label></td>
           <td><input type="checkbox" id="prxy_crawl_order" name="proxyIndexingRemote"#(proxyIndexingRemote)#:: checked="checked"#(/proxyIndexingRemote)# /></td>
           <td>
@@ -82,18 +81,18 @@
           <td colspan="3"><strong>Proxy generally</strong></td> 
         </tr>
       
-        <tr valign="top" class="TableCellLight">
+        <tr class="TableCellLight">
           <td><label for="prxy_path">Path</label></td>
           <td><input name="proxyCache" type="text" id="prxy_path" size="20" maxlength="300" value="#[proxyCache]#" /></td>
           <td>The path where the pages are stored (max. length 300)</td>
         </tr>
-        <tr valign="top" class="TableCellLight">
+        <tr class="TableCellLight">
           <td><label for="HTCache_size">Size</label></td>
           <td><input name="proxyCacheSize" type="text" id="HTCache_size" size="8" maxlength="24" value="#[proxyCacheSize]#" /></td>
           <td>The size in MB of the cache.</td>
         </tr>
       
-        <tr valign="top" class="TableCellDark">
+        <tr class="TableCellDark">
           <td colspan="1">&nbsp;</td>
           <td colspan="2"><input type="submit" name="proxyprofileset" class="btn btn-primary" value="Set proxy profile" /></td>
         </tr>

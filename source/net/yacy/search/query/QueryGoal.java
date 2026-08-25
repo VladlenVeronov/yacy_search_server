@@ -54,6 +54,13 @@ public class QueryGoal {
     private static char dq = '"';
     private static String seps = ":;#*`!$%()=?^<>/&_";
 
+    /**
+     * Threshold above which we switch from strict AND-between-terms to
+     * permissive (no operator) joining so Solr edismax `mm` can take over.
+     * 1-4 terms keep AND for precision; 5+ terms become recall-friendly.
+     */
+    public static final int LONG_QUERY_THRESHOLD = 5;
+
     public String query_original;
     private HandleSet include_hashes, exclude_hashes;
     private final NormalizedWords include_words, exclude_words;
@@ -259,6 +266,15 @@ public class QueryGoal {
     public int getIncludeSize() {
         assert this.include_hashes == null || this.include_words.size() == 0 || this.include_hashes.size() == this.include_words.size();
         return this.include_hashes == null ? this.include_words.size() : this.include_hashes.size();
+    }
+
+    /**
+     * Long queries (>= LONG_QUERY_THRESHOLD include terms) get joined without
+     * explicit AND so edismax can apply min-should-match instead of failing
+     * to 0 hits when one term is missing.
+     */
+    public boolean isLongQuery() {
+        return this.include_strings.size() >= LONG_QUERY_THRESHOLD;
     }
 
     public int getExcludeSize() {
@@ -514,20 +530,22 @@ public class QueryGoal {
     }
 
     private StringBuilder getGoalQuery() {
+        final boolean longQuery = isLongQuery();
         int wc = 0;
         StringBuilder w = new StringBuilder(80);
         for (String s: include_strings) {
             if (Segment.catchallString.equals(s)) continue;
-            if (wc > 0) w.append(" AND ");
+            if (wc > 0) w.append(longQuery ? " " : " AND ");
             if (s.indexOf('~') >= 0 || s.indexOf('*') >= 0 || s.indexOf('?') >= 0) w.append(s); else w.append(dq).append(s).append(dq);
             wc++;
         }
         for (String s: exclude_strings){
-            if (wc > 0) w.append(" AND -");
+            // excludes always need explicit "-" so they remain MUST-NOT in mm mode
+            if (wc > 0) w.append(longQuery ? " -" : " AND -");
             if (s.indexOf('~') >= 0 || s.indexOf('*') >= 0 || s.indexOf('?') >= 0) w.append(s); else w.append(dq).append(s).append(dq);
             wc++;
         }
-        if (wc > 1) {w.insert(0, '('); w.append(')');}
+        if (wc > 1 && !longQuery) {w.insert(0, '('); w.append(')');}
         return w;
     }
 

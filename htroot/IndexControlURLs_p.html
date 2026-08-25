@@ -61,10 +61,9 @@ function updatepage(str) {
   </head>
   <body id="IndexControl">
     #%env/templates/header.template%#
-    #%env/templates/submenuIndexControl.template%#
-    <div id="api">
+        <div id="api">
     <a href="solr/select?defType=edismax&start=0&rows=3&core=collection1&wt=html&omitHeader=true&q=id:%22#[urlhash]#%22">
-    <img src="env/grafics/api.png" width="60" height="40" alt="API" /></a>
+    <img src="env/grafics/api.png" alt="API" /></a>
     <span>These document details can be retrieved as <a href="http://www.w3.org/TR/xhtml-rdfa-primer/" target="_blank">XHTML+RDFa</a>
     document containg <a href="http://www.w3.org/RDF/" target="_blank">RDF</a> annotations in <a href="http://dublincore.org/" target="_blank">Dublin Core</a> vocabulary.
     The XHTML+RDFa data format is both a XML content format and a HTML display format and is considered as an important <a href="http://www.w3.org/2001/sw/" target="_blank">Semantic Web</a> content format.
@@ -156,7 +155,7 @@ function updatepage(str) {
     <p><em>Statistics about the top-#[domains]# domains in the database:</em></p>
     <table >
       <tr class="TableHeader">
-   		<td align="center"></td>
+   		<td></td>
         <td><strong>Domain</strong></td>
         <td><strong>URLs</strong></td>
       </tr>

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Подати сайт на сканування — VIR GOO</title>
+    <link rel="stylesheet" type="text/css" href="env/css/tailwind.min.css" />
+    <link rel="stylesheet" type="text/css" href="env/css/yacy-public.css?v=20260509b" />
+</head>
+<body class="min-h-screen bg-white text-gray-900 flex flex-col">
+
+#%env/templates/yacy-public-header.template%#
+
+<main class="flex-1 px-4 py-12 sm:py-16">
+  <div class="max-w-2xl mx-auto">
+
+    <h1 class="text-3xl font-light tracking-tight mb-2">Подати сайт на сканування</h1>
+    <p class="text-sm text-gray-500 mb-8">
+      Вебмайстри подають домен — бот перевіряє його на blacklist та категорії
+      (порно/казино/спам), після чого адміністратор затверджує. Скануємо лише
+      запитаний домен, без переходу на зовнішні посилання.
+    </p>
+
+    #(loggedIn)#
+      <!-- not authenticated -->
+      <div class="rounded-lg border border-amber-200 bg-amber-50 p-6">
+        <h2 class="text-lg font-semibold text-amber-900 mb-2">Потрібен вхід</h2>
+        <p class="text-sm text-amber-800 mb-4">
+          Щоб подавати запити на сканування, потрібен акаунт із правом
+          <code class="text-xs bg-amber-100 px-1 rounded">webmasterRight</code>.
+          Зверніться до адміністратора за акаунтом.
+        </p>
+        <div class="flex flex-wrap items-center gap-3">
+          <a href="Register.html?webmaster=1"
+             class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 transition">
+            Зареєструватись як вебмайстер
+          </a>
+          <a href="User.html?returnto=/CrawlRequest.html"
+             class="inline-flex items-center px-4 py-2 border border-gray-300 text-gray-700 text-sm font-medium rounded-md hover:bg-gray-100 transition">
+            Я вже маю акаунт
+          </a>
+        </div>
+      </div>
+    ::
+      <!-- authenticated; check rights -->
+      #(canSubmit)#
+        <!-- logged in but no webmaster right — one click to activate -->
+        <div class="rounded-lg border border-blue-200 bg-blue-50 p-6">
+          <h2 class="text-lg font-semibold text-blue-900 mb-2">Активувати роль вебмайстра</h2>
+          <p class="text-sm text-blue-800 mb-4">
+            Ви увійшли як <strong>#[username]#</strong>. Натисніть кнопку нижче,
+            щоб увімкнути роль вебмайстра — після цього зможете подавати домени
+            на сканування. Кожна заявка перевіряється ботом (blacklist + категорії).
+          </p>
+          <form method="post" action="CrawlRequest.html">
+            <input type="hidden" name="become_webmaster" value="1" />
+            <button type="submit"
+                    class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md transition">
+              Стати вебмайстром
+            </button>
+          </form>
+        </div>
+      ::
+        <!-- has webmaster right (or admin) -->
+        <div class="rounded-lg border border-gray-200 p-6">
+          <p class="text-sm text-gray-600 mb-4">
+            Ви увійшли як <strong>#[username]#</strong>.
+          </p>
+
+          #(state)#::
+            <div class="mb-4 rounded-md bg-red-50 border border-red-200 p-3 text-sm text-red-800">
+              <strong>Помилка.</strong> #[message]#
+            </div>
+          ::
+            <div class="mb-4 rounded-md bg-green-50 border border-green-200 p-4 text-sm text-green-900">
+              <p class="font-semibold mb-2">Ваш сайт <code>#[host]#</code> проходить перевірку.</p>
+              <p class="mb-1">У пошуковому індексі зараз: <strong>#[indexed]#</strong> сторінок.</p>
+              <p class="text-xs text-green-800">
+                ID заявки: <code>#[message]#</code>.
+                Подробиці та свіжа статистика —
+                <a href="WebmasterStats.html" class="underline font-medium">«Моя статистика»</a>.
+              </p>
+            </div>
+          #(/state)#
+
+          <form method="post" action="CrawlRequest.html" class="space-y-4">
+            <div>
+              <label for="url" class="block text-sm font-medium text-gray-700 mb-1">
+                URL домену <span class="text-red-500">*</span>
+              </label>
+              <input id="url" name="url" type="url" required
+                     placeholder="https://example.com/"
+                     class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" />
+              <p class="text-xs text-gray-500 mt-1">
+                Скануватимемо тільки цей домен. Зовнішні посилання ігноруються.
+              </p>
+            </div>
+
+            <div>
+              <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
+                Контактний email
+              </label>
+              <input id="email" name="email" type="email"
+                     placeholder="webmaster@example.com"
+                     class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" />
+            </div>
+
+            <div>
+              <label for="description" class="block text-sm font-medium text-gray-700 mb-1">
+                Опис сайту
+              </label>
+              <textarea id="description" name="description" rows="3"
+                        placeholder="Тематика сайту, мова, ~приблизна кількість сторінок"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"></textarea>
+            </div>
+
+            <button type="submit"
+                    class="inline-flex items-center px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition">
+              Подати запит
+            </button>
+          </form>
+        </div>
+      #(/canSubmit)#
+    #(/loggedIn)#
+
+  </div>
+</main>
+
+<footer class="border-t border-gray-200 py-4">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-wrap justify-between items-center gap-3 text-xs text-gray-500">
+    <span>VIR GOO — відкритий децентралізований пошук · powered by YaCy</span>
+    <div class="flex items-center gap-4">
+      <a href="ConfigBasic.html" class="hover:text-blue-600 transition">Адмін</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

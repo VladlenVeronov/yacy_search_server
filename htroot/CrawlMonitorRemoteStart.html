@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="uk">
   <head>
     <title>YaCy '#[clientname]#': Monitor for remotely started global crawls</title>
     #%env/templates/metas.template%#
@@ -8,11 +8,10 @@
   </head>
   <body id="IndexCreate">
     #%env/templates/header.template%#
-    #%env/templates/submenuIndexCreate.template%#
-    <h2>Recently started remote crawls in progress</h2>
+        <h2>Recently started remote crawls in progress</h2>
     
     <p><strong>Remote crawl start points, crawl is ongoing</strong></p>
-    <table border="0">
+    <table>
       <tr class="TableHeader">
         <td><strong>Start Time</strong></td>
         <td><strong>Peer Name</strong></td>
@@ -33,7 +32,7 @@
     #{/otherCrawlStartInProgress}#
     </table>
     <p><strong>Remote crawl start points, finished:</strong></p>
-    <table border="0">
+    <table>
       <tr class="TableHeader">
         <td><strong>Start Time</strong></td>
         <td><strong>Peer Name</strong></td>
