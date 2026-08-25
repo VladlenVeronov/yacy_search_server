@@ -101,7 +101,7 @@
 - [x] CONTENT MODERATION: POST /admin/moderate-batch (LLM classify 40/run, cron 4h) + moderation_log + cron-moderate.sh (2026-08-25) — `list.black` (401 entries) активний на DHT type. Hot-cache + Solr URL lookup
 - [-] NETWORK: API для підключення нових вузлів — used vanilla YaCy seed-list bootstrap (нічого свого не додаємо). Документовано як працює
 - [x] NETWORK: Документація для операторів — `docs/yacy-project/HOWTO-NODE-OPERATOR.md` (5-min install, sharing posture, cron, troubleshooting)
-- [~] NETWORK: Механіка репутації вузла — defer (потребує per-peer hit-source tracking, infra heavy). Записано як deferred TODO у P2P-AUDIT.md §4
+- [x] NETWORK: Механіка репутації вузла — DHT quality-score sort (wordCount+PPM+age) + peer_reputation table + /track-peer-hit + /peer-reputation + PeerReputationClient.java (2026-08-25) — defer (потребує per-peer hit-source tracking, infra heavy). Записано як deferred TODO у P2P-AUDIT.md §4
 - [x] PROMO: README — `README-VIR-GOO.md` оновлено під поточний стан (drop dead Authentik/cabinet refs, додати DHT filter + freshness recip + native UserDB)
 - [x] PROMO: HN/Reddit/PH — `PROMO.md` готовий: Show HN title, body, r/privacy / r/degoogle / r/selfhosted версії, Twitter thread, PH tagline
 - [x] PROMO: Webmaster onboarding — `docs/yacy-project/HOWTO-WEBMASTER.md` (5-min flow + troubleshooting + source pointers)
