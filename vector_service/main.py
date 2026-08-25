@@ -203,22 +203,46 @@ def _freshness_score(last_modified: Optional[datetime]) -> float:
     return max(0.0, min(1.0, decay))
 
 
+# TLD reputation table — higher = more trustworthy on average.
+_TLD_QUALITY: dict[str, float] = {
+    "edu": 1.0, "gov": 0.95, "mil": 0.90,
+    "org": 0.80, "net": 0.70, "com": 0.65,
+    "io":  0.60, "co":  0.55,
+    # Country TLDs (neutral)
+    "ua": 0.65, "de": 0.65, "uk": 0.65, "fr": 0.65,
+    "pl": 0.65, "cz": 0.65, "nl": 0.65, "se": 0.65,
+    # Low-trust generic TLDs frequently abused for spam
+    "info": 0.35, "biz": 0.30, "xyz": 0.25, "top": 0.20,
+    "click": 0.15, "loan": 0.10, "win": 0.10, "gq": 0.10,
+    "cf": 0.10, "tk": 0.10, "ml": 0.10,
+}
+
+
 def _quality_score(url: Optional[str]) -> float:
-    """Lightweight URL-only quality signal — HTTPS gets full credit, HTTP a
-    sharp penalty. Real signals (page speed, ad/tracker presence) need
-    crawl-time data not yet available here; this is a placeholder slot in
-    the hybrid weight so adding them later is a one-line change."""
+    """Multi-signal URL quality score combining HTTPS, TLD reputation,
+    and subdomain depth. Score in [0.1, 1.0]."""
     if not url:
         return 0.5
     try:
-        scheme = urlparse(url).scheme.lower()
+        parsed = urlparse(url)
+        scheme = parsed.scheme.lower()
+        host = (parsed.hostname or "").lower()
     except ValueError:
         return 0.3
-    if scheme == "https":
-        return 1.0
-    if scheme == "http":
+    if scheme not in ("http", "https"):
         return 0.3
-    return 0.5
+
+    https_score = 1.0 if scheme == "https" else 0.3
+
+    parts = [p for p in host.split(".") if p]
+    tld = parts[-1] if parts else ""
+    tld_score = _TLD_QUALITY.get(tld, 0.50)
+
+    # Penalty for unusually deep subdomains (3+ labels beyond TLD often = spam)
+    depth_penalty = max(0.0, (len(parts) - 3) * 0.08) if len(parts) > 3 else 0.0
+
+    score = https_score * 0.45 + tld_score * 0.55 - depth_penalty
+    return max(0.1, min(1.0, score))
 
 
 # --------------------------------------------------------------------
@@ -793,3 +817,139 @@ async def unsatisfied(hours: int = 168, limit: int = 100):
     return [dict(r) for r in rows]
 
 
+
+
+
+# ---------------------------------------------------------------------------
+# Content moderator: batch-classifies indexed pages via LLM and purges bad
+# ones from both pgvector and YaCy Solr (via internal HTTP to yacy container).
+# ---------------------------------------------------------------------------
+
+
+class ModerationResult(BaseModel):
+    url: str
+    host: Optional[str]
+    action: str     # 'deleted' | 'kept'
+    verdict: str
+    reason: str
+
+
+class ModerationBatchResponse(BaseModel):
+    processed: int
+    deleted: int
+    results: list[ModerationResult]
+
+
+async def _yacy_delete_url(url: str) -> bool:
+    """Ask YaCy to remove a URL from its Solr index."""
+    import httpx, os as _os
+    user = _os.environ.get('YACY_ADMIN_USER', '')
+    pw   = _os.environ.get('YACY_ADMIN_PASS', '')
+    if not user or not pw:
+        return False
+    try:
+        async with httpx.AsyncClient(timeout=10.0) as cli:
+            r = await cli.get(
+                'http://yacy:8090/IndexControlURLs_p.html',
+                params={'deleteIndexEntry': url},
+                headers={'Authorization': 'Basic ' + _base64.b64encode(f'{user}:{pw}'.encode()).decode()},
+            )
+            return r.status_code < 400
+    except Exception:
+        return False
+
+
+async def _blacklist_host(host: str, stack_dir: str = '/home/vir/stacks/yacy') -> None:
+    """Append host to YaCy list.black so it won't be re-crawled or shared via DHT."""
+    import asyncio as _aio_bl
+    bl_path = f'{stack_dir}/yacy-data/DATA/LISTS/list.black'
+    def _write():
+        try:
+            with open(bl_path, 'a') as _fh:
+                _fh.write(f'{host}\n')
+        except Exception:
+            pass
+    await _aio_bl.get_event_loop().run_in_executor(None, _write)
+
+
+@app.post('/admin/moderate-batch', response_model=ModerationBatchResponse)
+async def moderate_batch(
+    batch_size: int = 40,
+    authorization: Optional[str] = Header(default=None),
+):
+    """Classify up to batch_size unmoderated pages via LLM.
+    Blocked pages are deleted from pgvector and from YaCy Solr; their host
+    is added to list.black. Verdicts are persisted in moderation_log so
+    already-processed pages are skipped on the next run."""
+    _require_admin(authorization)
+    if not settings.llm_api_url or not settings.llm_api_key:
+        raise HTTPException(status_code=503, detail='LLM not configured')
+
+    async with pool().acquire() as con:
+        rows = await con.fetch(
+            """
+            SELECT p.id, p.url, p.host, p.title
+              FROM pages p
+              LEFT JOIN moderation_log m ON m.url = p.url
+             WHERE m.url IS NULL
+             ORDER BY p.indexed_at ASC
+             LIMIT $1
+            """,
+            batch_size,
+        )
+
+    results: list[ModerationResult] = []
+    deleted = 0
+
+    for row in rows:
+        url    = row['url']
+        host   = row['host'] or ''
+        doc_id = row['id']
+        title  = row['title']
+
+        cat, reason = await _llm_classify(url, title, None)
+
+        async with pool().acquire() as con:
+            await con.execute(
+                """
+                INSERT INTO moderation_log (url, host, verdict, reason)
+                VALUES ($1, $2, $3, $4)
+                ON CONFLICT (url) DO UPDATE
+                    SET verdict = EXCLUDED.verdict,
+                        reason  = EXCLUDED.reason,
+                        ts      = now()
+                """,
+                url, host, cat, reason,
+            )
+
+        if cat in _BLOCK_CATEGORIES:
+            async with pool().acquire() as con:
+                await con.execute('DELETE FROM pages WHERE id = $1', doc_id)
+            await _yacy_delete_url(url)
+            if host:
+                await _blacklist_host(host)
+            results.append(ModerationResult(url=url, host=host, action='deleted', verdict=cat, reason=reason))
+            deleted += 1
+        else:
+            results.append(ModerationResult(url=url, host=host, action='kept', verdict=cat, reason=reason))
+
+    return ModerationBatchResponse(processed=len(results), deleted=deleted, results=results)
+
+
+@app.get('/admin/moderation-stats')
+async def moderation_stats(authorization: Optional[str] = Header(default=None)):
+    """Summary of moderation verdicts and coverage so far."""
+    _require_admin(authorization)
+    async with pool().acquire() as con:
+        verdict_rows = await con.fetch(
+            'SELECT verdict, COUNT(*) AS cnt FROM moderation_log GROUP BY verdict ORDER BY cnt DESC'
+        )
+        total = await con.fetchval('SELECT COUNT(*) FROM pages')
+        unmoderated = await con.fetchval(
+            'SELECT COUNT(*) FROM pages p LEFT JOIN moderation_log m ON m.url=p.url WHERE m.url IS NULL'
+        )
+    return {
+        'total_indexed': total,
+        'unmoderated': unmoderated,
+        'verdicts': [dict(r) for r in verdict_rows],
+    }
