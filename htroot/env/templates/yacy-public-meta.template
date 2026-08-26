@@ -4,4 +4,21 @@
   <meta name="referrer" content="#[referrer.meta.policy]#" />
 
   <link rel="stylesheet" type="text/css" href="#[relativeBase]#env/css/tailwind.min.css" />
-  <link rel="stylesheet" type="text/css" href="#[relativeBase]#env/css/yacy-public.css?v=20260805a" />
+  <link rel="stylesheet" type="text/css" href="#[relativeBase]#env/css/yacy-public.css?v=20260826a" />
+<!-- Matomo -->
+<script>
+var _paq = window._paq = window._paq || [];
+_paq.push(['setTrackerUrl', 'https://analytics.newsgroup.site/matomo.php']);
+_paq.push(['setSiteId', '6']);
+_paq.push(['enableLinkTracking']);
+if (window.location.pathname.indexOf('yacysearch') === -1) {
+  _paq.push(['trackPageView']);
+}
+(function() {
+  var g = document.createElement('script');
+  g.async = true; g.src = 'https://analytics.newsgroup.site/matomo.js';
+  var s = document.getElementsByTagName('script')[0];
+  s.parentNode.insertBefore(g, s);
+})();
+</script>
+<!-- End Matomo -->

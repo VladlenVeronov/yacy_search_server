@@ -59,7 +59,7 @@
                class="yacy-search-input w-full pl-9 pr-24 py-2 text-base border border-gray-300 rounded-full transition" />
         <button id="Enter" name="Enter" type="submit"
                 class="absolute right-1 top-1 bottom-1 px-4 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-full transition">
-          search
+          Шукати
         </button>
         #(resortEnabled)#::
         <a id="resortCached" class="hidden absolute right-24 top-1 bottom-1 px-3 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm rounded-full inline-flex items-center transition" role="button" href="#[url]#"
@@ -420,5 +420,56 @@ $(document).ready(function() {
 })();
 </script>
 
+<script>
+(function() {
+  var _paq = window._paq = window._paq || [];
+  var params = new URLSearchParams(window.location.search);
+  var q = params.get('query') || '';
+  if (!q) return;
+
+  // No-results: server-rendered state (statistics() never called)
+  if (document.querySelector('p.num-results')) {
+    _paq.push(['trackSiteSearch', q, false, 0]);
+    _paq.push(['trackEvent', 'Пошук', 'НемаєРезультатів', q]);
+    return;
+  }
+
+  // Results load via AJAX — wrap statistics() to capture final count
+  var _orig = window.statistics;
+  var _done = false;
+  if (typeof _orig === 'function') {
+    window.statistics = function() {
+      _orig.apply(this, arguments);
+      var feedRunning = arguments[9];
+      if (_done || feedRunning) return;
+      _done = true;
+      var cnt = parseInt(String(arguments[3]).replace(/[\s,]/g, ''), 10) || 0;
+      _paq.push(['trackSiteSearch', q, false, cnt]);
+      if (cnt === 0) {
+        _paq.push(['trackEvent', 'Пошук', 'НемаєРезультатів', q]);
+      }
+    };
+  }
+})();
+</script>
+
+<!-- Image masonry grid: collect .thumbcontainer into a CSS columns wrapper -->
+<script>
+(function() {
+  var col = document.getElementById('resultscolumn');
+  if (!col) return;
+  var thumbs = Array.from(col.querySelectorAll('.thumbcontainer'));
+  if (!thumbs.length) return;
+  var grid = document.createElement('div');
+  grid.className = 'thumb-masonry';
+  col.insertBefore(grid, thumbs[0]);
+  thumbs.forEach(function(t) { grid.appendChild(t); });
+  // Also remove the stray empty <table> the server emits for image mode
+  col.querySelectorAll('table.w-full').forEach(function(tbl) {
+    var hasContent = tbl.querySelector('th, td');
+    if (!hasContent) tbl.remove();
+  });
+})();
+</script>
 </body>
 </html>

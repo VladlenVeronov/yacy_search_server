@@ -45,12 +45,12 @@
   <input type="hidden" name="constraint" value="#[constraint]#" />
   <input type="hidden" name="meanCount" value="#[meanCount]#" />
   <div class="yacy-side-card">
-    <h3>Mode</h3>
+    <h3>Режим</h3>
     <div class="yacy-toggle-group">
       <button type="#(global)#submit::button#(/global)#" name="resource" value="global"
               class="yacy-toggle-btn #(global)#::active#(/global)#">Peer-to-Peer</button>
       <button type="#(global)#button::submit#(/global)#" name="resource" value="local"
-              class="yacy-toggle-btn #(global)#privacy::#(/global)#">#(global)#Stealth::Privacy#(/global)#</button>
+              class="yacy-toggle-btn #(global)#privacy::#(/global)#">#(global)#Приватний::Локальний#(/global)#</button>
     </div>
   </div>
 </form>
@@ -72,16 +72,16 @@
   <input type="hidden" name="constraint" value="#[constraint]#" />
   <input type="hidden" name="meanCount" value="#[meanCount]#" />
   <div class="yacy-side-card" data-nav-generation="#[nav-generation]#" id="rankingButtons">
-    <h3>Sort</h3>
+    <h3>Сортування</h3>
     <div class="yacy-toggle-group">
       <button type="#(contextRanking)#submit::button#(/contextRanking)#"
               class="yacy-toggle-btn #(contextRanking)#::active#(/contextRanking)#"
               title="Default ranking — by relevance"
-              #(contextRanking)#name="query" value="#[formerWithoutDate]#" onclick="this.value=document.getElementById('search').value.replace(' /date','');"::#(/contextRanking)#>Relevance</button>
+              #(contextRanking)#name="query" value="#[formerWithoutDate]#" onclick="this.value=document.getElementById('search').value.replace(' /date','');"::#(/contextRanking)#>Релевантність</button>
       <button type="#(dateRanking)#submit::button#(/dateRanking)#"
               class="yacy-toggle-btn #(dateRanking)#::active#(/dateRanking)#"
               title="Sort by document last modification date"
-              #(dateRanking)#name="query" value="#[former]# /date" onclick="this.value=document.getElementById('search').value + ' /date';"::#(/dateRanking)#>Date</button>
+              #(dateRanking)#name="query" value="#[former]# /date" onclick="this.value=document.getElementById('search').value + ' /date';"::#(/dateRanking)#>Дата</button>
     </div>
   </div>
 </form>
@@ -104,13 +104,13 @@
   <input type="hidden" name="constraint" value="#[constraint]#" />
   <input type="hidden" name="meanCount" value="#[meanCount]#" />
   <div class="yacy-side-card">
-    <h3>Type</h3>
+    <h3>Тип</h3>
     <div class="yacy-toggle-group">
-      #(searchtext)#::<button type="submit" name="contentdom" value="text" class="yacy-toggle-btn #(check)#::active#(/check)#" onclick="this.form.maximumRecords.value = '10';">Documents</button>#(/searchtext)#
-      #(searchimage)#::<button type="submit" name="contentdom" value="image" class="yacy-toggle-btn #(check)#::active#(/check)#" onclick="this.form.maximumRecords.value = '20';">Images</button>#(/searchimage)#
-      #(searchaudio)#::<button type="submit" name="contentdom" value="audio" class="yacy-toggle-btn #(check)#::active#(/check)#" onclick="this.form.maximumRecords.value = '10';">Audio</button>#(/searchaudio)#
-      #(searchvideo)#::<button type="submit" name="contentdom" value="video" class="yacy-toggle-btn #(check)#::active#(/check)#" onclick="this.form.maximumRecords.value = '10';">Video</button>#(/searchvideo)#
-      #(searchapp)#::<button type="submit" name="contentdom" value="app" class="yacy-toggle-btn #(check)#::active#(/check)#" onclick="this.form.maximumRecords.value = '10';">Apps</button>#(/searchapp)#
+      #(searchtext)#::<button type="submit" name="contentdom" value="text" class="yacy-toggle-btn #(check)#::active#(/check)#" onclick="this.form.maximumRecords.value = '10';">Документи</button>#(/searchtext)#
+      #(searchimage)#::<button type="submit" name="contentdom" value="image" class="yacy-toggle-btn #(check)#::active#(/check)#" onclick="this.form.maximumRecords.value = '20';">Зображення</button>#(/searchimage)#
+      #(searchaudio)#::<button type="submit" name="contentdom" value="audio" class="yacy-toggle-btn #(check)#::active#(/check)#" onclick="this.form.maximumRecords.value = '10';">Аудіо</button>#(/searchaudio)#
+      #(searchvideo)#::<button type="submit" name="contentdom" value="video" class="yacy-toggle-btn #(check)#::active#(/check)#" onclick="this.form.maximumRecords.value = '10';">Відео</button>#(/searchvideo)#
+      #(searchapp)#::<button type="submit" name="contentdom" value="app" class="yacy-toggle-btn #(check)#::active#(/check)#" onclick="this.form.maximumRecords.value = '10';">Застосунки</button>#(/searchapp)#
     </div>
   </div>
 </form>
@@ -131,14 +131,14 @@
   <input type="hidden" name="constraint" value="#[constraint]#" />
   <input type="hidden" name="meanCount" value="#[meanCount]#" />
   <div class="yacy-side-card">
-    <h3>Match</h3>
+    <h3>Охоплення</h3>
     <div class="yacy-toggle-group">
       <button type="#(strictContentDom)#button::submit#(/strictContentDom)#" name="strictContentDom" value="false"
               title="Extend media search to pages including such media"
-              class="yacy-toggle-btn #(strictContentDom)#active::#(/strictContentDom)#">Extended</button>
+              class="yacy-toggle-btn #(strictContentDom)#active::#(/strictContentDom)#">Розширений</button>
       <button type="#(strictContentDom)#submit::button#(/strictContentDom)#" name="strictContentDom" value="true"
               title="Strictly limit to indexed documents matching exactly the desired content domain"
-              class="yacy-toggle-btn #(strictContentDom)#::active#(/strictContentDom)#">Strict</button>
+              class="yacy-toggle-btn #(strictContentDom)#::active#(/strictContentDom)#">Строгий</button>
     </div>
   </div>
 </form>
@@ -147,7 +147,7 @@
 
 #(nav-protocols)#::
 <div class="yacy-side-card" id="nav-protocols">
-  <h3>Protocol</h3>
+  <h3>Протокол</h3>
   <div class="yacy-toggle-group">
     #{element}#
     <button type="button" class="yacy-toggle-btn #(on)#::active#(/on)#"
@@ -159,7 +159,7 @@
 
 #(nav-topics)#::
 <div class="yacy-side-card">
-  <h3>Topics</h3>
+  <h3>Теми</h3>
   <div id="tagcloud" class="yacy-tagcloud">
     #{element}#
     <a href="#[url]#" style="font-size:#[size]#px;">#[name]#</a>
