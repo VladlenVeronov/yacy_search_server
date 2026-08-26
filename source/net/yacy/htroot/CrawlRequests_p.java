@@ -146,26 +146,26 @@ public class CrawlRequests_p {
                 return Long.compare(bx, ax);
             });
             for (final Tables.Row row : rows) {
-                prop.putHTML("rows_" + idx + "_pk",                new String(row.getPK()));
-                prop.putHTML("rows_" + idx + "_url",               row.get("url", ""));
-                prop.putHTML("rows_" + idx + "_host",              row.get("host", ""));
-                prop.putHTML("rows_" + idx + "_status",            row.get("status", ""));
-                prop.putHTML("rows_" + idx + "_bot_decision",      row.get("bot_decision", ""));
-                prop.putHTML("rows_" + idx + "_bot_reason",        row.get("bot_reason", ""));
-                prop.putHTML("rows_" + idx + "_requested_by_user", row.get("requested_by_user", ""));
-                prop.putHTML("rows_" + idx + "_contact_email",     row.get("contact_email", ""));
-                prop.putHTML("rows_" + idx + "_description",       row.get("description", ""));
-                prop.putHTML("rows_" + idx + "_submitted_at",      row.get("submitted_at", ""));
+                // Keys use "hasRows_rows_N_field" prefix because #{rows}# is nested
+                // inside #(hasRows)# alternative — YaCy template engine prepends the
+                // alternative name ("hasRows_") to all keys looked up within that branch.
+                prop.putHTML("hasRows_rows_" + idx + "_pk",                new String(row.getPK()));
+                prop.putHTML("hasRows_rows_" + idx + "_url",               row.get("url", ""));
+                prop.putHTML("hasRows_rows_" + idx + "_host",              row.get("host", ""));
+                prop.putHTML("hasRows_rows_" + idx + "_status",            row.get("status", ""));
+                prop.putHTML("hasRows_rows_" + idx + "_bot_decision",      row.get("bot_decision", ""));
+                prop.putHTML("hasRows_rows_" + idx + "_bot_reason",        row.get("bot_reason", ""));
+                prop.putHTML("hasRows_rows_" + idx + "_requested_by_user", row.get("requested_by_user", ""));
+                prop.putHTML("hasRows_rows_" + idx + "_contact_email",     row.get("contact_email", ""));
+                prop.putHTML("hasRows_rows_" + idx + "_description",       row.get("description", ""));
+                prop.putHTML("hasRows_rows_" + idx + "_submitted_at",      row.get("submitted_at", ""));
                 idx++;
             }
         } catch (final IOException e) {
             ConcurrentLog.warn("CrawlRequests_p", "iterate: " + e.getMessage());
         }
-        // Two distinct keys so the template never confuses alternative vs multi:
-        //   #(hasRows)# empty :: table-with-#{rows}# #(/hasRows)#
-        //   #{rows}# … #{/rows}#  iterates `rows` times via prop.put("rows", idx)
         prop.put("hasRows", idx == 0 ? 0 : 1);
-        prop.put("rows",    idx);
+        prop.put("hasRows_rows", idx); // prefixed: #{rows}# inside #(hasRows)# branch sees "hasRows_rows"
         prop.put("total",   total);
         prop.putHTML("filter", filter);
         prop.put("filter_empty",    filter.isEmpty()         ? 1 : 0);
