@@ -33,8 +33,8 @@
     <div class="yp-actions">
       <div class="yp-auth">
         #(publicLoggedIn)#
-          <a href="Register.html" class="yp-btn yp-btn--ghost">Реєстрація</a>
-          <a href="User.html" class="yp-btn yp-btn--primary">Увійти</a>
+          <a href="https://auth.vir.group/session/start" class="yp-btn yp-btn--ghost" data-vir-auth>Реєстрація</a>
+          <a href="https://auth.vir.group/session/start" class="yp-btn yp-btn--primary" data-vir-auth>Увійти</a>
         ::
           <a href="User.html" class="yp-btn yp-btn--primary">
             <svg class="yp-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
@@ -69,8 +69,8 @@
     <div class="yp-mobile-nav__auth">
       #(publicLoggedIn)#
         <div class="yp-mobile-nav__auth-row">
-          <a href="Register.html" class="yp-btn yp-btn--ghost">Реєстрація</a>
-          <a href="User.html" class="yp-btn yp-btn--primary">Увійти</a>
+          <a href="https://auth.vir.group/session/start" class="yp-btn yp-btn--ghost" data-vir-auth>Реєстрація</a>
+          <a href="https://auth.vir.group/session/start" class="yp-btn yp-btn--primary" data-vir-auth>Увійти</a>
         </div>
       ::
         <a href="User.html" class="yp-btn yp-btn--primary">
@@ -99,6 +99,31 @@
 
 <script>
 (function () {
+  // VIR Auth: intercept login/register clicks — send user through auth.vir.group with return_to=<current URL>
+  document.querySelectorAll('a[data-vir-auth]').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      e.preventDefault();
+      var ret = encodeURIComponent(window.location.href);
+      window.location.href = 'https://auth.vir.group/session/start?return_to=' + ret;
+    });
+  });
+
+  // VIR Auth: probe /status (CORS + credentials) — swap Login/Register slot with Cabinet if authenticated
+  fetch('https://auth.vir.group/session/status', { credentials: 'include' })
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (data) {
+      if (!data || !data.authenticated) return;
+      var name = data.username || 'кабінет';
+      var mastoUrl = 'https://social.vir.group/@' + (data.username || '');
+      document.querySelectorAll('.yp-auth, .yp-mobile-nav__auth').forEach(function (slot) {
+        slot.innerHTML = '<a href="' + mastoUrl + '" class="yp-btn yp-btn--primary" title="Ваш профіль">'
+          + '<svg class="yp-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">'
+          + '<path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>'
+          + '<span>@' + name + '</span></a>';
+      });
+    })
+    .catch(function () { /* not authenticated / CORS blocked — leave Login/Register as-is */ });
+
   // Auth toggle is rendered server-side by the template engine.
   var burger = document.getElementById('yp-burger');
   var mob = document.getElementById('yp-mobile-nav');
