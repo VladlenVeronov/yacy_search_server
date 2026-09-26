@@ -24,7 +24,7 @@
       <a href="About.html" class="yp-nav__link">Про</a>
       #(publicLoggedIn)#
         <a href="Register.html?webmaster=1" class="yp-nav__link">Вебмайстер</a>
-        <a href="ConfigBasic.html" class="yp-nav__link">Адмін</a>
+        <a href="/vir-auth-bridge/start?return_to=/Dashboard_p.html" class="yp-nav__link" data-vir-admin>Адмін</a>
       ::
         <a href="CrawlRequest.html" class="yp-nav__link">Подати сайт</a>
       #(/publicLoggedIn)#
@@ -33,8 +33,8 @@
     <div class="yp-actions">
       <div class="yp-auth">
         #(publicLoggedIn)#
-          <a href="https://auth.vir.group/session/start" class="yp-btn yp-btn--ghost" data-vir-auth>Реєстрація</a>
-          <a href="https://auth.vir.group/session/start" class="yp-btn yp-btn--primary" data-vir-auth>Увійти</a>
+          <a href="https://social.vir.group/auth/sign_up?redirect_after_sign_in=https%3A%2F%2Fsearch.newsgroup.site%2Fvir-auth-bridge%2Fstart%3Freturn_to%3Dhttps%253A%252F%252Fsearch.newsgroup.site%252FCrawlRequest.html" class="yp-btn yp-btn--ghost">Реєстрація</a>
+          <a href="/vir-auth-bridge/start?return_to=/User.html" class="yp-btn yp-btn--primary">Увійти</a>
         ::
           <a href="User.html" class="yp-btn yp-btn--primary">
             <svg class="yp-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
@@ -61,7 +61,7 @@
     <a href="About.html">Про</a>
     #(publicLoggedIn)#
       <a href="Register.html?webmaster=1">Вебмайстер</a>
-      <a href="ConfigBasic.html">Адмін</a>
+      <a href="/vir-auth-bridge/start?return_to=/Dashboard_p.html" data-vir-admin>Адмін</a>
     ::
       <a href="CrawlRequest.html">Подати сайт</a>
     #(/publicLoggedIn)#
@@ -69,8 +69,8 @@
     <div class="yp-mobile-nav__auth">
       #(publicLoggedIn)#
         <div class="yp-mobile-nav__auth-row">
-          <a href="https://auth.vir.group/session/start" class="yp-btn yp-btn--ghost" data-vir-auth>Реєстрація</a>
-          <a href="https://auth.vir.group/session/start" class="yp-btn yp-btn--primary" data-vir-auth>Увійти</a>
+          <a href="https://social.vir.group/auth/sign_up?redirect_after_sign_in=https%3A%2F%2Fsearch.newsgroup.site%2Fvir-auth-bridge%2Fstart%3Freturn_to%3Dhttps%253A%252F%252Fsearch.newsgroup.site%252FCrawlRequest.html" class="yp-btn yp-btn--ghost">Реєстрація</a>
+          <a href="/vir-auth-bridge/start?return_to=/User.html" class="yp-btn yp-btn--primary">Увійти</a>
         </div>
       ::
         <a href="User.html" class="yp-btn yp-btn--primary">
@@ -99,27 +99,44 @@
 
 <script>
 (function () {
-  // VIR Auth: intercept login/register clicks — send user through auth.vir.group with return_to=<current URL>
-  document.querySelectorAll('a[data-vir-auth]').forEach(function (a) {
-    a.addEventListener('click', function (e) {
-      e.preventDefault();
-      var ret = encodeURIComponent(window.location.href);
-      window.location.href = 'https://auth.vir.group/session/start?return_to=' + ret;
-    });
+  // VIR Auth: on authenticated pages, swap navigation to show admin/logout instead of login/register.
+  // Any anchor with data-vir-return will pick up current URL as return_to for bridge flow.
+  document.querySelectorAll('a[data-vir-return]').forEach(function (a) {
+    var base = a.getAttribute('href') || '/vir-auth-bridge/start';
+    var sep = base.indexOf('?') >= 0 ? '&' : '?';
+    a.setAttribute('href', base + sep + 'return_to=' + encodeURIComponent(window.location.href));
   });
 
   // VIR Auth: probe /status (CORS + credentials) — swap Login/Register slot with Cabinet if authenticated
-  fetch('https://auth.vir.group/session/status', { credentials: 'include' })
+  fetch('/vir-auth-bridge/status', { credentials: 'same-origin' })
     .then(function (r) { return r.ok ? r.json() : null; })
     .then(function (data) {
       if (!data || !data.authenticated) return;
       var name = data.username || 'кабінет';
       var mastoUrl = 'https://social.vir.group/@' + (data.username || '');
+      var logoutHref = '/vir-auth-bridge/logout?return_to=' + encodeURIComponent(window.location.href);
+      var cabinetHtml =
+        '<a href="' + mastoUrl + '" class="yp-btn yp-btn--primary" title="Ваш профіль">'
+        + '<svg class="yp-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">'
+        + '<path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>'
+        + '<span>@' + name + '</span></a>'
+        + '<a href="' + logoutHref + '" class="yp-btn yp-btn--ghost" title="Вийти">Вийти</a>';
       document.querySelectorAll('.yp-auth, .yp-mobile-nav__auth').forEach(function (slot) {
-        slot.innerHTML = '<a href="' + mastoUrl + '" class="yp-btn yp-btn--primary" title="Ваш профіль">'
-          + '<svg class="yp-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">'
-          + '<path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>'
-          + '<span>@' + name + '</span></a>';
+        slot.innerHTML = cabinetHtml;
+      });
+      // Swap nav: hide Вебмайстер/Register, show Подати сайт; keep or expose Адмін.
+      document.querySelectorAll('a[href*="Register.html?webmaster=1"]').forEach(function (a) {
+        a.textContent = 'Подати сайт';
+        a.setAttribute('href', '/CrawlRequest.html');
+      });
+      // Admin nav visibility: keep visible only for admins.
+      document.querySelectorAll('a[data-vir-admin]').forEach(function (a) {
+        if (data.is_admin) {
+          a.setAttribute('href', '/Dashboard_p.html');
+          a.style.display = '';
+        } else {
+          a.style.display = 'none';
+        }
       });
     })
     .catch(function () { /* not authenticated / CORS blocked — leave Login/Register as-is */ });

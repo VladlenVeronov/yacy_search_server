@@ -32,6 +32,7 @@ _paq.push(['enableLinkTracking']);
 <main class="flex-1 px-4 py-12 sm:py-16">
   <div class="max-w-md mx-auto">
 
+    <div id="vir-signup-area">
     <h1 class="text-3xl font-light tracking-tight mb-2">Створити акаунт</h1>
     <p class="text-sm text-gray-500 mb-6">Один VIR ID — доступ до всіх сервісів VIR.GROUP: пошук, соцмережа, розробники, спільнота.</p>
 
@@ -120,6 +121,36 @@ _paq.push(['enableLinkTracking']);
       </form>
     </div>
     </details>
+    </div>
+
+    <div id="vir-cabinet-area" style="display:none">
+      <h1 class="text-3xl font-light tracking-tight mb-2">Ви вже увійшли</h1>
+      <p class="text-sm text-gray-500 mb-6">Ваш VIR ID активний. Тепер ви можете подати сайт на індексацію.</p>
+      <div class="rounded-lg border border-gray-200 p-6 mb-4">
+        <p id="vir-cabinet-user" class="text-sm text-gray-700 mb-4">Логін: <strong></strong></p>
+        <div class="flex flex-wrap gap-2">
+          <a href="/CrawlRequest.html" class="inline-flex items-center px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md transition">Подати сайт</a>
+          <a id="vir-cabinet-admin" href="/Dashboard_p.html" class="inline-flex items-center px-3 py-1.5 bg-gray-700 hover:bg-gray-800 text-white text-sm font-medium rounded-md transition" style="display:none">Адмін-панель</a>
+          <a id="vir-cabinet-logout" href="/vir-auth-bridge/logout?return_to=/" class="inline-flex items-center px-3 py-1.5 border border-red-200 hover:bg-red-50 text-red-600 text-sm font-medium rounded-md transition">Вийти</a>
+        </div>
+      </div>
+    </div>
+
+    <script>
+    (function () {
+      fetch('/vir-auth-bridge/status', { credentials: 'same-origin' })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (data) {
+          if (!data || !data.authenticated) return;
+          document.getElementById('vir-signup-area').style.display = 'none';
+          var cab = document.getElementById('vir-cabinet-area');
+          cab.style.display = '';
+          cab.querySelector('#vir-cabinet-user strong').textContent = '@' + (data.username || '');
+          if (data.is_admin) document.getElementById('vir-cabinet-admin').style.display = '';
+        })
+        .catch(function () { /* leave signup form */ });
+    })();
+    </script>
 
     <script>
       // Block double-submit and skip browser save-password prompt by using

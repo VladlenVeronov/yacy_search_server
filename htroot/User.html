@@ -32,6 +32,7 @@ _paq.push(['enableLinkTracking']);
 
     #(logged-in)#
       <!-- not logged in -->
+      <div id="vir-login-area">
       <h1 class="text-3xl font-light tracking-tight mb-2">Вхід</h1>
       <p class="text-sm text-gray-500 mb-6">Через ваш VIR ID — єдиний акаунт для всіх сервісів VIR.GROUP.</p>
 
@@ -73,6 +74,39 @@ _paq.push(['enableLinkTracking']);
 
         </form>
       </details>
+      </div>
+
+      <div id="vir-cabinet-area" style="display:none">
+        <h1 class="text-3xl font-light tracking-tight mb-2">Ви вже увійшли</h1>
+        <p class="text-sm text-gray-500 mb-6">Через ваш VIR ID.</p>
+        <div class="rounded-lg border border-gray-200 p-6 mb-4">
+          <p id="vir-cabinet-user" class="text-sm text-gray-700 mb-4">Логін: <strong></strong></p>
+          <div class="flex flex-wrap gap-2">
+            <a id="vir-cabinet-crawl" href="/CrawlRequest.html" class="inline-flex items-center px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md transition">Подати сайт</a>
+            <a id="vir-cabinet-admin" href="/Dashboard_p.html" class="inline-flex items-center px-3 py-1.5 bg-gray-700 hover:bg-gray-800 text-white text-sm font-medium rounded-md transition" style="display:none">Адмін-панель</a>
+            <a id="vir-cabinet-profile" href="#" class="inline-flex items-center px-3 py-1.5 border border-gray-300 hover:bg-gray-50 text-gray-700 text-sm font-medium rounded-md transition">Мій профіль</a>
+            <a id="vir-cabinet-logout" href="/vir-auth-bridge/logout?return_to=/" class="inline-flex items-center px-3 py-1.5 border border-red-200 hover:bg-red-50 text-red-600 text-sm font-medium rounded-md transition">Вийти</a>
+          </div>
+        </div>
+      </div>
+
+      <script>
+      (function () {
+        fetch('/vir-auth-bridge/status', { credentials: 'same-origin' })
+          .then(function (r) { return r.ok ? r.json() : null; })
+          .then(function (data) {
+            if (!data || !data.authenticated) return;
+            document.getElementById('vir-login-area').style.display = 'none';
+            var cab = document.getElementById('vir-cabinet-area');
+            cab.style.display = '';
+            cab.querySelector('#vir-cabinet-user strong').textContent = '@' + (data.username || '');
+            var prof = document.getElementById('vir-cabinet-profile');
+            if (prof) prof.setAttribute('href', 'https://social.vir.group/@' + (data.username || ''));
+            if (data.is_admin) document.getElementById('vir-cabinet-admin').style.display = '';
+          })
+          .catch(function () { /* leave login form */ });
+      })();
+      </script>
     ::
       <!-- user logged in via UserDB -->
       <h1 class="text-3xl font-light tracking-tight mb-6">Ви увійшли</h1>
@@ -121,6 +155,39 @@ _paq.push(['enableLinkTracking']);
           </button>
         </form>
       </details>
+      </div>
+
+      <div id="vir-cabinet-area" style="display:none">
+        <h1 class="text-3xl font-light tracking-tight mb-2">Ви вже увійшли</h1>
+        <p class="text-sm text-gray-500 mb-6">Через ваш VIR ID.</p>
+        <div class="rounded-lg border border-gray-200 p-6 mb-4">
+          <p id="vir-cabinet-user" class="text-sm text-gray-700 mb-4">Логін: <strong></strong></p>
+          <div class="flex flex-wrap gap-2">
+            <a id="vir-cabinet-crawl" href="/CrawlRequest.html" class="inline-flex items-center px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md transition">Подати сайт</a>
+            <a id="vir-cabinet-admin" href="/Dashboard_p.html" class="inline-flex items-center px-3 py-1.5 bg-gray-700 hover:bg-gray-800 text-white text-sm font-medium rounded-md transition" style="display:none">Адмін-панель</a>
+            <a id="vir-cabinet-profile" href="#" class="inline-flex items-center px-3 py-1.5 border border-gray-300 hover:bg-gray-50 text-gray-700 text-sm font-medium rounded-md transition">Мій профіль</a>
+            <a id="vir-cabinet-logout" href="/vir-auth-bridge/logout?return_to=/" class="inline-flex items-center px-3 py-1.5 border border-red-200 hover:bg-red-50 text-red-600 text-sm font-medium rounded-md transition">Вийти</a>
+          </div>
+        </div>
+      </div>
+
+      <script>
+      (function () {
+        fetch('/vir-auth-bridge/status', { credentials: 'same-origin' })
+          .then(function (r) { return r.ok ? r.json() : null; })
+          .then(function (data) {
+            if (!data || !data.authenticated) return;
+            document.getElementById('vir-login-area').style.display = 'none';
+            var cab = document.getElementById('vir-cabinet-area');
+            cab.style.display = '';
+            cab.querySelector('#vir-cabinet-user strong').textContent = '@' + (data.username || '');
+            var prof = document.getElementById('vir-cabinet-profile');
+            if (prof) prof.setAttribute('href', 'https://social.vir.group/@' + (data.username || ''));
+            if (data.is_admin) document.getElementById('vir-cabinet-admin').style.display = '';
+          })
+          .catch(function () { /* leave login form */ });
+      })();
+      </script>
     ::
       <!-- static admin (config password, not UserDB) -->
       <h1 class="text-3xl font-light tracking-tight mb-6">Адміністратор</h1>
