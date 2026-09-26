@@ -3,9 +3,27 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="canonical" href="https://search.newsgroup.site/Register.html" />
     <title>Реєстрація — VIR GOO</title>
     <link rel="stylesheet" type="text/css" href="env/css/tailwind.min.css" />
-    <link rel="stylesheet" type="text/css" href="env/css/yacy-public.css?v=20260509b" />
+    <link rel="stylesheet" type="text/css" href="env/css/yacy-public.css?v=20260805a" />
+<!-- Matomo -->
+<script>
+var _paq = window._paq = window._paq || [];
+_paq.push(['setTrackerUrl', 'https://analytics.newsgroup.site/matomo.php']);
+_paq.push(['setSiteId', '6']);
+_paq.push(['trackEvent', 'Auth', 'Вебмайстер', window.location.search.indexOf('webmaster') >= 0 ? 'webmaster' : 'register']);
+_paq.push(['trackPageView']);
+_paq.push(['enableLinkTracking']);
+(function() {
+  var g = document.createElement('script');
+  g.async = true; g.src = 'https://analytics.newsgroup.site/matomo.js';
+  var s = document.getElementsByTagName('script')[0];
+  s.parentNode.insertBefore(g, s);
+})();
+</script>
+<!-- End Matomo -->
 </head>
 <body class="min-h-screen bg-white text-gray-900 flex flex-col">
 
@@ -15,11 +33,28 @@
   <div class="max-w-md mx-auto">
 
     <h1 class="text-3xl font-light tracking-tight mb-2">Створити акаунт</h1>
-    <p class="text-sm text-gray-500 mb-8">
-      Безкоштовно. Звичайний акаунт дає закладки та персональний пошук.
-      Позначте «вебмайстер» — і зможете подавати домени на сканування.
+    <p class="text-sm text-gray-500 mb-6">Один VIR ID — доступ до всіх сервісів VIR.GROUP: пошук, соцмережа, розробники, спільнота.</p>
+
+    <a href="https://social.vir.group/auth/sign_up?redirect_after_sign_in=https%3A%2F%2Fsearch.newsgroup.site%2Fvir-auth-bridge%2Fstart%3Freturn_to%3Dhttps%253A%252F%252Fsearch.newsgroup.site%252FCrawlRequest.html"
+       class="w-full inline-flex justify-center items-center gap-2 px-5 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-md transition mb-4">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+      Створити VIR ID
+    </a>
+
+    <p class="text-center text-sm text-gray-500 mb-6">
+      Уже маєте VIR ID?
+      <a href="/vir-auth-bridge/start?return_to=/CrawlRequest.html" class="text-blue-600 hover:underline">Увійти</a>
     </p>
 
+    <details class="rounded-lg border border-gray-200 p-3 mb-4">
+      <summary class="cursor-pointer text-xs font-medium text-gray-500 hover:text-gray-700">
+        Локальна реєстрація YaCy (застаріле)
+      </summary>
+      <div class="pt-4">
+        <p class="text-sm text-gray-500 mb-4">
+          Звичайний акаунт дає закладки та персональний пошук.
+          Позначте «вебмайстер» — і зможете подавати домени на сканування.
+        </p>
     #(submitted)#::
       #(submitted_ok)#
         <div class="mb-4 rounded-md bg-red-50 border border-red-200 p-3 text-sm text-red-800">
@@ -82,12 +117,9 @@
               class="w-full inline-flex justify-center items-center px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition disabled:opacity-50 disabled:cursor-not-allowed">
         <span id="register-submit-label">Створити акаунт</span>
       </button>
-
-      <p class="text-center text-sm text-gray-500">
-        Уже маєте акаунт?
-        <a href="User.html" class="text-blue-600 hover:underline">Увійти</a>
-      </p>
-    </form>
+      </form>
+    </div>
+    </details>
 
     <script>
       // Block double-submit and skip browser save-password prompt by using
