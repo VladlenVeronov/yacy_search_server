@@ -7,19 +7,20 @@ Allow: /pryvatnyi-poshuk.html
 Allow: /anonimnyi-poshuk.html
 Allow: /poshuk-bez-reklamy.html
 Allow: /ukrainskyi-poshukovyk.html
-Allow: /Register.html
-Allow: /opensearchdescription.xml
+Disallow: /Register.html
+Disallow: /opensearchdescription.xml
 Allow: /sitemap.xml
 Allow: /env/
 
-Disallow: /yacysearch.html
-Disallow: /yacysearch.rss
-Disallow: /yacysearch.atom
-Disallow: /yacysearch.json
-Disallow: /suggest.json
-Disallow: /suggest.xml
+# TEMPORARY 2026-09-27 → ~2026-11-27: allow crawl so Google reads X-Robots-Tag: noindex and drops these URLs
+# After 8 weeks (once GSC shows deindexation), re-disallow to save crawl budget
+Allow: /yacysearch.html
+Allow: /yacysearch.rss
+Allow: /yacysearch.atom
+Allow: /yacysearch.json
+Allow: /suggest.json
+Allow: /suggest.xml
 Disallow: /proxy.html
-Disallow: /*query=
 Disallow: /*_p.html
 Disallow: /*_p.xml
 Disallow: /*_p.json
@@ -40,6 +41,9 @@ Disallow: /Blog.xml
 Disallow: /Surftips.html
 Disallow: /www
 Disallow: /share
+
+Disallow: /api/
+Disallow: /share.html
 
 # High-quality crawlers explicitly welcomed
 User-agent: Googlebot
