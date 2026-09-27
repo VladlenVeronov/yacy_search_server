@@ -44,8 +44,13 @@ public class CrawlRequest {
             if (ip != null) user = sb.userDB.ipAuth(ip);
         }
 
-        final boolean loggedIn = user != null;
-        final boolean isAdmin  = sb.verifyAuthentication(header);
+        // VIR Auth Bridge: Traefik ForwardAuth sets X-Auth-Username on authenticated requests.
+        // Trust it — anyone routed through /check has already been Mastodon-verified upstream.
+        final String virAuthUsername = header.get("X-Auth-Username", "").trim();
+        final boolean virAuthAdmin   = "true".equalsIgnoreCase(header.get("X-Auth-Admin", ""));
+
+        final boolean loggedIn = user != null || !virAuthUsername.isEmpty();
+        final boolean isAdmin  = sb.verifyAuthentication(header) || virAuthAdmin;
 
         // One-click webmaster activation: any logged-in user can flip
         // their own WEBMASTER_RIGHT here. Abuse control lives downstream
@@ -59,13 +64,25 @@ public class CrawlRequest {
         }
 
         final boolean canSubmit = isAdmin
-            || (loggedIn && (user.hasRight(AccessRight.WEBMASTER_RIGHT)
-                            || user.hasRight(AccessRight.ADMIN_RIGHT)));
+            || !virAuthUsername.isEmpty()
+            || (user != null && (user.hasRight(AccessRight.WEBMASTER_RIGHT)
+                              || user.hasRight(AccessRight.ADMIN_RIGHT)));
 
         prop.put("loggedIn", (loggedIn || isAdmin) ? 1 : 0);
         prop.put("loggedIn_canSubmit", canSubmit ? 1 : 0);
 
-        final String username = isAdmin ? "admin" : (loggedIn ? user.getUserName() : "");
+        final String username;
+        if (virAuthAdmin) {
+            username = virAuthUsername.isEmpty() ? "admin" : virAuthUsername;
+        } else if (!virAuthUsername.isEmpty()) {
+            username = virAuthUsername;
+        } else if (isAdmin) {
+            username = "admin";
+        } else if (loggedIn) {
+            username = user.getUserName();
+        } else {
+            username = "";
+        }
         prop.putHTML("loggedIn_canSubmit_username", username);
 
         // Public header auth slot (Cabinet vs Login+Register)

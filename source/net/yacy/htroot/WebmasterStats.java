@@ -39,12 +39,26 @@ public class WebmasterStats {
             final String ip = header.getRemoteAddr();
             if (ip != null) user = sb.userDB.ipAuth(ip);
         }
-        final boolean isAdmin = sb.verifyAuthentication(header);
-        final boolean loggedIn = user != null || isAdmin;
+
+        // VIR Auth Bridge trust: X-Auth-Username set by Traefik ForwardAuth.
+        final String virAuthUsername = header.get("X-Auth-Username", "").trim();
+        final boolean virAuthAdmin   = "true".equalsIgnoreCase(header.get("X-Auth-Admin", ""));
+
+        final boolean isAdmin  = sb.verifyAuthentication(header) || virAuthAdmin;
+        final boolean loggedIn = user != null || isAdmin || !virAuthUsername.isEmpty();
         prop.put("loggedIn", loggedIn ? 1 : 0);
         if (!loggedIn) return prop;
 
-        final String username = isAdmin ? "admin" : user.getUserName();
+        final String username;
+        if (virAuthAdmin) {
+            username = virAuthUsername.isEmpty() ? "admin" : virAuthUsername;
+        } else if (!virAuthUsername.isEmpty()) {
+            username = virAuthUsername;
+        } else if (isAdmin) {
+            username = "admin";
+        } else {
+            username = user.getUserName();
+        }
         prop.putHTML("loggedIn_username", username);
 
         final List<Map<String, String>> hosts = new ArrayList<>();
